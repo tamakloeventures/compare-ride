@@ -1,0 +1,138 @@
+/* Reset & typography */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f8f9fa;
+  color: #1e1e1e;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Hero */
+.hero {
+  background: url('assets/hero-bg.jpg') no-repeat center center/cover;
+  color: white;
+  padding: 80px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hero-overlay {
+  max-width: 600px;
+}
+
+.hero-overlay h1 {
+  font-size: 3rem;
+  margin: 0 0 15px;
+}
+
+.hero-overlay p {
+  font-size: 1.2rem;
+}
+
+/* Booking Card */
+.booking-card {
+  background: white;
+  color: black;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 350px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.booking-card input {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.datetime {
+  display: flex;
+  gap: 10px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn.green {
+  background: linear-gradient(to right, #00b09b, #96c93d);
+  color: white;
+  width: 100%;
+}
+
+.btn.blue {
+  background: #2563eb;
+  color: white;
+}
+
+.btn.pink {
+  background: #ff0080;
+  color: white;
+}
+
+/* Rides */
+.rides {
+  padding: 40px 20px;
+  background: #fff;
+  text-align: center;
+}
+
+.ride-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.ride-option {
+  text-align: center;
+}
+
+.ride-option img {
+  width: 80px;
+  display: block;
+  margin: 0 auto 10px;
+}
+
+/* Footer */
+footer {
+  background: #1e293b;
+  color: white;
+  padding: 40px 20px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+}
+
+footer ul {
+  list-style: none;
+  padding: 0;
+}
+
+footer li {
+  margin-bottom: 6px;
+}
+
+.copyright {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: #bbb;
+}

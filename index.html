@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tamakloe Ventures - Ride Compare</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-overlay">
+      <h1>Find Your Best Ride</h1>
+      <p>Compare Uber and Lyft. Save money and time with real-time ride options.</p>
+    </div>
+
+    <!-- Booking Card -->
+    <div class="booking-card">
+      <h2>Compare & Book Your Ride</h2>
+      <form id="rideForm">
+        <input type="text" id="pickup" placeholder="Pickup location" required />
+        <input type="text" id="dropoff" placeholder="Where to?" required />
+        <div class="datetime">
+          <input type="date" id="rideDate" required />
+          <input type="time" id="rideTime" required />
+        </div>
+        <button type="submit" class="btn green">Find Best Rates</button>
+      </form>
+    </div>
+  </header>
+
+  <!-- Available Rides -->
+  <section class="rides" id="rideOptions">
+    <h2>Available Rides</h2>
+    <div class="ride-buttons">
+      <div class="ride-option">
+        <img src="assets/uber-logo.png" alt="Uber" />
+        <a id="uberLink" target="_blank" class="btn blue">Book with Uber</a>
+      </div>
+      <div class="ride-option">
+        <img src="assets/lyft-logo.png" alt="Lyft" />
+        <a id="lyftLink" target="_blank" class="btn pink">Book with Lyft</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <h4>RideCompare</h4>
+        <p>Find the best ride at the best price.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li>Price Comparison</li>
+          <li>Real-time Tracking</li>
+          <li>Multi-platform Booking</li>
+          <li>Route Optimization</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <ul>
+          <li>Help Center</li>
+          <li>Contact Us</li>
+          <li>Safety Guidelines</li>
+          <li>Driver Resources</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li>About Us</li>
+          <li>Privacy Policy</li>
+          <li>Terms of Service</li>
+          <li>Careers</li>
+        </ul>
+      </div>
+    </div>
+    <p class="copyright">© 2024 Tamakloe Ventures LLC. All rights reserved.</p>
+  </footer>
+
+  <!-- Google Maps API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBz8nr961uD8aCTea3XfLt8hku6BXfKXL4&libraries=places&loading=async" async defer></script>
+  <script src="script.js"></script>
+</body>
+</html>
