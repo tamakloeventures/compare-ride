@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compare Rides - Tamakloe Ventures</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="hero-overlay">
+      <h1>Find Your Best Ride</h1>
+      <p>Compare Uber and Lyft. Save money and time with real-time ride options.</p>
+      <div class="cta-buttons">
+        <a href="#rides" class="btn blue">Compare Rides Now</a>
+      </div>
+    </div>
+
+    <div class="booking-card">
+      <h2>Compare & Book Your Ride</h2>
+      <form id="ride-form">
+        <input type="text" id="pickup" placeholder="Pickup location" required />
+        <input type="text" id="dropoff" placeholder="Dropoff location" required />
+        <div class="datetime">
+          <input type="date" id="date" required />
+          <input type="time" id="time" required />
+        </div>
+        <button type="submit" class="btn green">Find Best Rates</button>
+      </form>
+    </div>
+  </header>
+
+  <!-- Available Rides -->
+  <section id="rides" class="available-rides">
+    <h2>Available Rides</h2>
+    <div class="ride-options">
+      <div class="ride-option">
+        <img src="assets/uber-logo.png" alt="Uber" class="ride-logo" />
+        <a id="uber-btn" class="btn blue" target="_blank">Book with Uber</a>
+      </div>
+      <div class="ride-option">
+        <img src="assets/lyft-logo.png" alt="Lyft" class="ride-logo" />
+        <a id="lyft-btn" class="btn pink" target="_blank">Book with Lyft</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2024 Tamakloe Ventures LLC. All rights reserved.</p>
+  </footer>
+
+  <!-- Google Maps API (replace YOUR_API_KEY) -->
+  <script 
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBz8nr961uD8aCTea3XfLt8hku6BXfKXL4&libraries=places&callback=initAutocomplete" 
+    async 
+    defer>
+  </script>
+
+  <!-- Main Script -->
+  <script src="script.js" defer></script>
+</body>
+</html>

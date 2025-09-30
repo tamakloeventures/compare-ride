@@ -1,0 +1,120 @@
+/* Reset */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f8f9fa;
+  color: #1e1e1e;
+}
+
+a { text-decoration: none; }
+
+/* Hero */
+.hero {
+  position: relative;
+  background: url('assets/hero-bg.jpg') no-repeat center center/cover;
+  color: white;
+  padding: 80px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.hero-overlay {
+  flex: 1 1 400px;
+  max-width: 600px;
+}
+
+.hero-overlay h1 {
+  font-size: 3rem;
+  margin: 0 0 20px;
+}
+
+.hero-overlay p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+}
+
+/* Buttons */
+.btn {
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btn.blue {
+  background: #2563eb;
+  color: white;
+}
+
+.btn.green {
+  background: linear-gradient(to right, #00b09b, #96c93d);
+  color: white;
+  width: 100%;
+}
+
+.btn.pink {
+  background: #ff00bf;
+  color: white;
+}
+
+/* Booking card */
+.booking-card {
+  background: white;
+  color: black;
+  border-radius: 10px;
+  padding: 25px;
+  max-width: 350px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  flex: 0 1 350px;
+}
+
+.booking-card input {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.datetime { display: flex; gap: 10px; }
+
+/* Available Rides */
+.available-rides {
+  padding: 40px 20px;
+  background: white;
+  text-align: center;
+}
+
+.ride-options {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.ride-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.ride-logo {
+  width: 80px;
+  height: auto;
+}
+
+/* Footer */
+footer {
+  background: #1e293b;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
