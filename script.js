@@ -3,53 +3,71 @@ console.log("script.js loaded");
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM fully loaded");
 
-  const pickupInput = document.getElementById("pickup");
-  const dropoffInput = document.getElementById("dropoff");
-  const form = document.getElementById("rideForm");
+  const form = document.getElementById("ride-form");
+  const uberBtn = document.getElementById("uber-btn");
+  const lyftBtn = document.getElementById("lyft-btn");
 
-  // Initialize Google Autocomplete safely
-  try {
-    if (google && google.maps && google.maps.places) {
-      const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput);
-      const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput);
+  let pickupLocation = "";
+  let dropoffLocation = "";
 
-      console.log("Autocomplete initialized");
-    }
-  } catch (err) {
-    console.warn("Google Maps Autocomplete failed:", err.message);
-  }
+  // Google Places Autocomplete init function
+  window.initAutocomplete = function () {
+    console.log("initAutocomplete called");
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
+    const pickupInput = document.getElementById("pickup");
+    const dropoffInput = document.getElementById("dropoff");
 
-    const pickup = pickupInput.value.trim();
-    const dropoff = dropoffInput.value.trim();
-    const date = document.getElementById("rideDate").value;
-    const time = document.getElementById("rideTime").value;
-
-    console.log("Form submitted:", { pickup, dropoff, date, time });
-
-    if (!pickup || !dropoff) {
-      alert("Please enter pickup and dropoff addresses");
+    if (!pickupInput || !dropoffInput) {
+      console.error("Pickup or Dropoff input not found");
       return;
     }
 
-    // Demo coords (replace with geocoding if needed)
-    const pickupLat = 37.775;
-    const pickupLng = -122.418;
-    const dropLat = 37.785;
-    const dropLng = -122.406;
+    const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput);
+    const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput);
 
-    const uberURL = `https://m.uber.com/ul/?action=setPickup&pickup[latitude]=${pickupLat}&pickup[longitude]=${pickupLng}&dropoff[latitude]=${dropLat}&dropoff[longitude]=${dropLng}`;
-    const lyftURL = `https://www.lyft.com/i/ELVIS98387&pickup[latitude]=${pickupLat}&pickup[longitude]=${pickupLng}&destination[latitude]=${dropLat}&destination[longitude]=${dropLng}`;
+    pickupAutocomplete.addListener("place_changed", () => {
+      const place = pickupAutocomplete.getPlace();
+      pickupLocation = place.formatted_address || pickupInput.value;
+      console.log("Pickup selected:", pickupLocation);
+    });
 
-    console.log("Uber deep link:", uberURL);
-    console.log("Lyft deep link:", lyftURL);
+    dropoffAutocomplete.addListener("place_changed", () => {
+      const place = dropoffAutocomplete.getPlace();
+      dropoffLocation = place.formatted_address || dropoffInput.value;
+      console.log("Dropoff selected:", dropoffLocation);
+    });
 
-    // Update buttons
-    document.getElementById("uberLink").href = uberURL;
-    document.getElementById("lyftLink").href = lyftURL;
+    console.log("Autocomplete initialized on inputs:", { pickupAutocomplete, dropoffAutocomplete });
+  };
 
-    document.getElementById("rideOptions").scrollIntoView({ behavior: "smooth" });
-  });
+  // Handle form submission
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      console.log("Form submitted");
+
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+
+      console.log("Pickup:", pickupLocation || document.getElementById("pickup").value);
+      console.log("Dropoff:", dropoffLocation || document.getElementById("dropoff").value);
+      console.log("Date:", date, "Time:", time);
+
+      // Uber deep link
+      const uberLink = `https://m.uber.com/ul/?action=setPickup&pickup=${encodeURIComponent(
+        pickupLocation
+      )}&dropoff=${encodeURIComponent(dropoffLocation)}`;
+      console.log("Uber deep link:", uberLink);
+      uberBtn.setAttribute("href", uberLink);
+
+      // Lyft deep link (with referral)
+      const lyftLink = `https://lyft.com/ride?id=lyft&pickup=${encodeURIComponent(
+        pickupLocation
+      )}&destination=${encodeURIComponent(
+        dropoffLocation
+      )}&referralCode=ELVIS98387`;
+      console.log("Lyft deep link:", lyftLink);
+      lyftBtn.setAttribute("href", lyftLink);
+    });
+  }
 });
