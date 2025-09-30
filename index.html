@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tamakloe Ventures - Ride Compare</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compare Rides - Tamakloe Ventures</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -12,78 +12,50 @@
     <div class="hero-overlay">
       <h1>Find Your Best Ride</h1>
       <p>Compare Uber and Lyft. Save money and time with real-time ride options.</p>
+      <div class="cta-buttons">
+        <button class="btn blue">Compare Rides Now</button>
+      </div>
     </div>
-
-    <!-- Booking Card -->
     <div class="booking-card">
       <h2>Compare & Book Your Ride</h2>
-      <form id="rideForm">
-        <input type="text" id="pickup" placeholder="Pickup location" required />
-        <input type="text" id="dropoff" placeholder="Where to?" required />
-        <div class="datetime">
-          <input type="date" id="rideDate" required />
-          <input type="time" id="rideTime" required />
-        </div>
-        <button type="submit" class="btn green">Find Best Rates</button>
-      </form>
+      <input type="text" id="pickup" placeholder="Pickup location" />
+      <input type="text" id="dropoff" placeholder="Where to?" />
+      <div class="datetime">
+        <input type="date" id="date" />
+        <input type="time" id="time" />
+      </div>
+      <button id="find-rates" class="btn green">Find Best Rates</button>
     </div>
   </header>
 
-  <!-- Available Rides -->
-  <section class="rides" id="rideOptions">
+  <!-- Available Rides Section -->
+  <section class="rides">
     <h2>Available Rides</h2>
-    <div class="ride-buttons">
+    <div class="ride-options">
       <div class="ride-option">
         <img src="assets/uber-logo.png" alt="Uber" />
-        <a id="uberLink" target="_blank" class="btn blue">Book with Uber</a>
+        <button id="uber-link" class="btn blue">Book with Uber</button>
       </div>
       <div class="ride-option">
         <img src="assets/lyft-logo.png" alt="Lyft" />
-        <a id="lyftLink" target="_blank" class="btn pink">Book with Lyft</a>
+        <button id="lyft-link" class="btn pink">Book with Lyft</button>
       </div>
     </div>
   </section>
 
   <!-- Footer -->
   <footer>
-    <div class="footer-grid">
-      <div>
-        <h4>RideCompare</h4>
-        <p>Find the best ride at the best price.</p>
-      </div>
-      <div>
-        <h4>Services</h4>
-        <ul>
-          <li>Price Comparison</li>
-          <li>Real-time Tracking</li>
-          <li>Multi-platform Booking</li>
-          <li>Route Optimization</li>
-        </ul>
-      </div>
-      <div>
-        <h4>Support</h4>
-        <ul>
-          <li>Help Center</li>
-          <li>Contact Us</li>
-          <li>Safety Guidelines</li>
-          <li>Driver Resources</li>
-        </ul>
-      </div>
-      <div>
-        <h4>Company</h4>
-        <ul>
-          <li>About Us</li>
-          <li>Privacy Policy</li>
-          <li>Terms of Service</li>
-          <li>Careers</li>
-        </ul>
-      </div>
-    </div>
-    <p class="copyright">© 2024 Tamakloe Ventures LLC. All rights reserved.</p>
+    <p>© 2024 Tamakloe Ventures LLC. All rights reserved.</p>
   </footer>
 
   <!-- Google Maps API -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBz8nr961uD8aCTea3XfLt8hku6BXfKXL4&libraries=places&loading=async" async defer></script>
-  <script src="script.js"></script>
+  <script 
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBz8nr961uD8aCTea3XfLt8hku6BXfKXL4&libraries=places&callback=initAutocomplete" 
+    async 
+    defer>
+  </script>
+
+  <!-- Your App Script -->
+  <script src="script.js" defer></script>
 </body>
 </html>
