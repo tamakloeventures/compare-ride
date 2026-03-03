@@ -3,59 +3,612 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Compare Rides - Tamakloe Ventures</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>RideCompare — Tamakloe Ventures LLC</title>
+  <meta name="description" content="Compare Uber and Lyft. Save money and time with ride options." />
+
+  <style>
+    :root{
+      --bg:#0b1220;
+      --text:#0f172a;
+      --muted:#475569;
+      --card:#ffffff;
+      --shadow: 0 14px 40px rgba(0,0,0,.18);
+      --radius:16px;
+      --blue:#2563eb;
+      --blue2:#1d4ed8;
+      --pink:#ff00b8;
+      --green1:#10b981;
+      --green2:#84cc16;
+      --border:rgba(15,23,42,.12);
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+      color:var(--text);
+      background:#f6f7fb;
+    }
+
+    /* HERO */
+    .hero{
+      position:relative;
+      min-height: 78vh;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:48px;
+      padding: 64px 56px;
+      color:#fff;
+
+      /* ✅ your required background line */
+      background: url("hero-bg.jpg") center/cover no-repeat;
+      overflow:hidden;
+    }
+
+    /* dark overlay for readability */
+    .hero::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background: linear-gradient(90deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.35) 55%, rgba(0,0,0,.15) 100%);
+      pointer-events:none;
+    }
+
+    .hero > *{ position:relative; z-index:1; }
+
+    .hero-left{
+      max-width: 720px;
+    }
+    .hero-left h1{
+      margin:0 0 14px;
+      font-size: clamp(36px, 5vw, 64px);
+      line-height:1.05;
+      letter-spacing:-0.02em;
+      text-shadow: 0 10px 28px rgba(0,0,0,.32);
+    }
+    .hero-left p{
+      margin:0 0 22px;
+      font-size: clamp(16px, 2vw, 20px);
+      line-height:1.45;
+      color: rgba(255,255,255,.88);
+      max-width: 600px;
+    }
+
+    .hero-cta{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .btn{
+      border:0;
+      cursor:pointer;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      box-shadow: 0 10px 22px rgba(0,0,0,.18);
+      transition: transform .12s ease, filter .12s ease;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn:hover{ filter: brightness(1.03); }
+
+    .btn-primary{
+      background: linear-gradient(90deg, var(--blue), var(--blue2));
+      color:#fff;
+    }
+    .btn-outline{
+      background: rgba(255,255,255,.92);
+      color: var(--blue);
+      border: 2px solid rgba(37,99,235,.35);
+      box-shadow:none;
+    }
+
+    /* BOOKING CARD */
+    .booking-card{
+      width:min(520px, 94vw);
+      background: var(--card);
+      color: var(--text);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 26px 26px 22px;
+    }
+    .booking-card h2{
+      margin: 2px 0 16px;
+      font-size: 28px;
+      letter-spacing:-0.01em;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-bottom: 12px;
+    }
+    .field label{
+      font-size: 12px;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      color: var(--muted);
+      font-weight: 800;
+    }
+    input, select{
+      width:100%;
+      padding: 14px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      outline: none;
+      font-size: 16px;
+      background:#fff;
+    }
+    input:focus, select:focus{
+      border-color: rgba(37,99,235,.55);
+      box-shadow: 0 0 0 4px rgba(37,99,235,.12);
+    }
+
+    .datetime{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+
+    .btn-find{
+      width:100%;
+      margin-top: 4px;
+      background: linear-gradient(90deg, var(--green1), var(--green2));
+      color:#fff;
+    }
+
+    .helper{
+      margin-top:10px;
+      font-size: 12.5px;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    /* AVAILABLE RIDES */
+    .section{
+      padding: 54px 18px;
+      background:#fff;
+    }
+    .container{
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section h3{
+      margin: 0 0 18px;
+      font-size: 34px;
+      letter-spacing:-0.02em;
+      text-align:center;
+    }
+
+    .rides-row{
+      display:flex;
+      gap: 18px;
+      justify-content:center;
+      align-items:stretch;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .ride-card{
+      width: min(520px, 92vw);
+      border: 1px solid rgba(15,23,42,.10);
+      border-radius: 18px;
+      padding: 18px 18px 16px;
+      box-shadow: 0 10px 24px rgba(15,23,42,.08);
+      background:#fff;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .ride-top{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .logo-badge{
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display:grid;
+      place-items:center;
+      flex: 0 0 auto;
+    }
+
+    .logo-badge.uber{ background:#111; }
+    .logo-badge.lyft{ background: var(--pink); }
+
+    .logo-badge svg{ width: 22px; height: 22px; }
+
+    .ride-meta{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .ride-meta strong{ font-size: 18px; }
+    .ride-meta span{ font-size: 13px; color:#64748b; }
+
+    .ride-actions{
+      margin-top:auto;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .btn-uber{
+      background: #111;
+      color:#fff;
+      flex:1;
+      min-width: 200px;
+    }
+    .btn-lyft{
+      background: var(--pink);
+      color:#fff;
+      flex:1;
+      min-width: 200px;
+    }
+
+    .smallnote{
+      text-align:center;
+      margin-top: 14px;
+      color:#64748b;
+      font-size: 13px;
+    }
+
+    footer{
+      background:#0f172a;
+      color:#cbd5e1;
+      padding: 26px 18px;
+      text-align:center;
+      font-size: 13px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 980px){
+      .hero{
+        padding: 44px 18px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .booking-card{
+        align-self: center;
+      }
+      .hero::before{
+        background: linear-gradient(180deg, rgba(0,0,0,.70), rgba(0,0,0,.25));
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <!-- Hero Section -->
-  <header class="hero">
-    <div class="hero-overlay">
+  <header class="hero" id="top">
+    <div class="hero-left">
       <h1>Find Your Best Ride</h1>
       <p>Compare Uber and Lyft. Save money and time with real-time ride options.</p>
-      <div class="cta-buttons">
-        <button class="btn blue">Compare Rides Now</button>
+
+      <div class="hero-cta">
+        <button class="btn btn-primary" id="btnCompare">Compare Rides Now</button>
+        <button class="btn btn-outline" id="btnScrollBooking">Find Best Rates</button>
       </div>
     </div>
-    <div class="booking-card">
-      <h2>Compare & Book Your Ride</h2>
-      <input type="text" id="pickup" placeholder="Pickup location" />
-      <input type="text" id="dropoff" placeholder="Where to?" />
-      <div class="datetime">
-        <input type="date" id="date" />
-        <input type="time" id="time" />
-      </div>
-      <button id="find-rates" class="btn green">Find Best Rates</button>
+
+    <div class="booking-card" id="bookingCard">
+      <h2>Compare &amp; Book Your Ride</h2>
+
+      <form id="rideForm">
+        <div class="field">
+          <label for="pickup">Pickup</label>
+          <input id="pickup" name="pickup" type="text" placeholder="Pickup location" autocomplete="off" required />
+        </div>
+
+        <div class="field">
+          <label for="dropoff">Dropoff</label>
+          <input id="dropoff" name="dropoff" type="text" placeholder="Where to?" autocomplete="off" required />
+        </div>
+
+        <div class="datetime">
+          <div class="field">
+            <label for="rideDate">Date</label>
+            <input id="rideDate" name="rideDate" type="date" required />
+          </div>
+          <div class="field">
+            <label for="rideTime">Time</label>
+            <input id="rideTime" name="rideTime" type="time" required />
+          </div>
+        </div>
+
+        <button class="btn btn-find" type="submit" id="btnFindRates">Find Best Rates</button>
+        <div class="helper">
+          Tip: If autocomplete doesn’t appear, the app still works — it will open Uber/Lyft using addresses.
+        </div>
+      </form>
     </div>
   </header>
 
-  <!-- Available Rides Section -->
-  <section class="rides">
-    <h2>Available Rides</h2>
-    <div class="ride-options">
-      <div class="ride-option">
-        <img src="assets/uber-logo.png" alt="Uber" />
-        <button id="uber-link" class="btn blue">Book with Uber</button>
+  <section class="section" id="available">
+    <div class="container">
+      <h3>Available Rides</h3>
+
+      <div class="rides-row">
+        <div class="ride-card">
+          <div class="ride-top">
+            <div class="logo-badge uber" aria-hidden="true" title="Uber">
+              <!-- simple original icon (NOT Uber trademark) -->
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M6 7v10a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V7" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+                <path d="M9 7h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="ride-meta">
+              <strong>Uber</strong>
+              <span>Deep link booking</span>
+            </div>
+          </div>
+
+          <div class="ride-actions">
+            <button class="btn btn-uber" id="btnUber" type="button">Book with Uber</button>
+          </div>
+        </div>
+
+        <div class="ride-card">
+          <div class="ride-top">
+            <div class="logo-badge lyft" aria-hidden="true" title="Lyft">
+              <!-- simple original icon (NOT Lyft trademark) -->
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M7 6v12h10" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M7 14h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="ride-meta">
+              <strong>Lyft</strong>
+              <span>Deep link booking</span>
+            </div>
+          </div>
+
+          <div class="ride-actions">
+            <button class="btn btn-lyft" id="btnLyft" type="button">Book with Lyft</button>
+          </div>
+        </div>
       </div>
-      <div class="ride-option">
-        <img src="assets/lyft-logo.png" alt="Lyft" />
-        <button id="lyft-link" class="btn pink">Book with Lyft</button>
-      </div>
+
+      <div class="smallnote" id="statusNote">Enter pickup &amp; dropoff above, then click “Find Best Rates”.</div>
     </div>
   </section>
 
-  <!-- Footer -->
   <footer>
-    <p>© 2024 Tamakloe Ventures LLC. All rights reserved.</p>
+    © 2024 Tamakloe Ventures LLC. All rights reserved.
   </footer>
 
-  <!-- Google Maps API -->
-  <script 
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBz8nr961uD8aCTea3XfLt8hku6BXfKXL4&libraries=places&callback=initAutocomplete" 
-    async 
-    defer>
+  <script>
+    /************************************************************
+     * OPTIONAL: Google Places Autocomplete
+     * Insert your key below in the script src line at bottom.
+     * This page still works without Google.
+     ************************************************************/
+
+    console.log("[RideCompare] inline script loaded");
+
+    const els = {
+      pickup: document.getElementById("pickup"),
+      dropoff: document.getElementById("dropoff"),
+      date: document.getElementById("rideDate"),
+      time: document.getElementById("rideTime"),
+      rideForm: document.getElementById("rideForm"),
+      btnCompare: document.getElementById("btnCompare"),
+      btnScrollBooking: document.getElementById("btnScrollBooking"),
+      btnUber: document.getElementById("btnUber"),
+      btnLyft: document.getElementById("btnLyft"),
+      statusNote: document.getElementById("statusNote"),
+      available: document.getElementById("available"),
+      bookingCard: document.getElementById("bookingCard")
+    };
+
+    // store last known coordinates if we get them from Google Places
+    const coords = {
+      pickup: null,   // {lat,lng}
+      dropoff: null
+    };
+
+    function scrollToBooking(){
+      els.bookingCard.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    function scrollToAvailable(){
+      els.available.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    els.btnCompare.addEventListener("click", () => {
+      console.log("[RideCompare] Compare Rides Now clicked");
+      scrollToAvailable();
+    });
+
+    els.btnScrollBooking.addEventListener("click", () => {
+      console.log("[RideCompare] Find Best Rates (hero) clicked");
+      scrollToBooking();
+    });
+
+    function safeEncode(v){ return encodeURIComponent((v || "").trim()); }
+
+    function buildUberLink(pickupText, dropoffText){
+      // Works best on mobile; on desktop it opens Uber web flow.
+      // If coords exist, use them. Otherwise use addresses.
+      const base = "https://m.uber.com/ul/";
+      const params = new URLSearchParams();
+      params.set("action", "setPickup");
+
+      if (coords.pickup){
+        params.set("pickup[latitude]", String(coords.pickup.lat));
+        params.set("pickup[longitude]", String(coords.pickup.lng));
+      } else {
+        params.set("pickup", "my_location");
+        if (pickupText) params.set("pickup[formatted_address]", pickupText);
+      }
+
+      if (coords.dropoff){
+        params.set("dropoff[latitude]", String(coords.dropoff.lat));
+        params.set("dropoff[longitude]", String(coords.dropoff.lng));
+      } else {
+        if (dropoffText) params.set("dropoff[formatted_address]", dropoffText);
+      }
+
+      return base + "?" + params.toString();
+    }
+
+    function buildLyftLink(pickupText, dropoffText){
+      // Lyft deep link format using addresses if no coords.
+      // If anything fails, we’ll use your referral link.
+      const base = "https://lyft.com/ride";
+      const params = new URLSearchParams();
+      params.set("id", "lyft");
+
+      if (coords.pickup){
+        params.set("pickup[latitude]", String(coords.pickup.lat));
+        params.set("pickup[longitude]", String(coords.pickup.lng));
+      } else if (pickupText){
+        params.set("pickup[formatted_address]", pickupText);
+      }
+
+      if (coords.dropoff){
+        params.set("destination[latitude]", String(coords.dropoff.lat));
+        params.set("destination[longitude]", String(coords.dropoff.lng));
+      } else if (dropoffText){
+        params.set("destination[formatted_address]", dropoffText);
+      }
+
+      return base + "?" + params.toString();
+    }
+
+    function setStatus(msg){
+      els.statusNote.textContent = msg;
+    }
+
+    function validateInputs(){
+      const pickup = els.pickup.value.trim();
+      const dropoff = els.dropoff.value.trim();
+      if (!pickup || !dropoff){
+        setStatus("Please enter both pickup and dropoff.");
+        return null;
+      }
+      return { pickup, dropoff };
+    }
+
+    // Buttons open deep links using current inputs
+    function openUber(){
+      const v = validateInputs();
+      if (!v) return;
+      const url = buildUberLink(v.pickup, v.dropoff);
+      console.log("[RideCompare] Uber deep link:", url);
+      window.open(url, "_blank", "noopener");
+    }
+
+    function openLyft(){
+      const v = validateInputs();
+      if (!v) return;
+
+      let url = buildLyftLink(v.pickup, v.dropoff);
+      console.log("[RideCompare] Lyft deep link:", url);
+
+      // fallback to your referral link if something is empty
+      if (!url || url.length < 10){
+        url = "https://www.lyft.com/i/ELVIS98387";
+        console.log("[RideCompare] Lyft fallback referral:", url);
+      }
+
+      window.open(url, "_blank", "noopener");
+    }
+
+    els.btnUber.addEventListener("click", openUber);
+    els.btnLyft.addEventListener("click", openLyft);
+
+    // Form submission scrolls to Available Rides and updates status
+    els.rideForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      console.log("[RideCompare] Form submitted");
+      const v = validateInputs();
+      if (!v) return;
+
+      setStatus(`Ready to book: ${v.pickup} → ${v.dropoff}`);
+      scrollToAvailable();
+    });
+
+    // Google Places Autocomplete callback (called by Google script if loaded)
+    window.initAutocomplete = function initAutocomplete(){
+      console.log("[RideCompare] initAutocomplete called");
+
+      if (!window.google || !google.maps || !google.maps.places){
+        console.warn("[RideCompare] Google Places not available.");
+        return;
+      }
+
+      const opts = { fields: ["geometry", "formatted_address", "name"] };
+
+      try{
+        const acPickup = new google.maps.places.Autocomplete(els.pickup, opts);
+        const acDropoff = new google.maps.places.Autocomplete(els.dropoff, opts);
+
+        acPickup.addListener("place_changed", () => {
+          const place = acPickup.getPlace();
+          const addr = place.formatted_address || place.name || els.pickup.value;
+          els.pickup.value = addr;
+
+          if (place.geometry && place.geometry.location){
+            coords.pickup = {
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng()
+            };
+          } else {
+            coords.pickup = null;
+          }
+
+          console.log("[RideCompare] pickup selected:", els.pickup.value, coords.pickup);
+        });
+
+        acDropoff.addListener("place_changed", () => {
+          const place = acDropoff.getPlace();
+          const addr = place.formatted_address || place.name || els.dropoff.value;
+          els.dropoff.value = addr;
+
+          if (place.geometry && place.geometry.location){
+            coords.dropoff = {
+              lat: place.geometry.location.lat(),
+              lng: place.geometry.location.lng()
+            };
+          } else {
+            coords.dropoff = null;
+          }
+
+          console.log("[RideCompare] dropoff selected:", els.dropoff.value, coords.dropoff);
+        });
+
+        console.log("[RideCompare] Autocomplete initialized");
+      } catch (err){
+        console.error("[RideCompare] Autocomplete init error:", err);
+      }
+    };
+
+    // If user didn't load Google script, keep running with plain inputs.
+    window.addEventListener("load", () => {
+      console.log("[RideCompare] DOM fully loaded");
+    });
   </script>
 
-  <!-- Your App Script -->
-  <script src="script.js" defer></script>
+  <!-- ✅ OPTIONAL: Google Places script (only if you want autocomplete) -->
+  <!-- Replace YOUR_GOOGLE_MAPS_API_KEY with your real key -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW_4DpiwSByLqnPWhsxEZboFacnFhQQh8&libraries=places&callback=initAutocomplete"
+    async
+    defer>
+  </script>
 </body>
 </html>
