@@ -41,12 +41,12 @@
       padding: 64px 56px;
       color:#fff;
 
-      /* ✅ your required background line */
-      background: url("hero-bg.jpg") center/cover no-repeat;
+      /* ✅ FIX: match your deployed folder structure (assets/) */
+      background: url("assets/hero-bg.jpg") center/cover no-repeat;
+
       overflow:hidden;
     }
 
-    /* dark overlay for readability */
     .hero::before{
       content:"";
       position:absolute;
@@ -57,9 +57,7 @@
 
     .hero > *{ position:relative; z-index:1; }
 
-    .hero-left{
-      max-width: 720px;
-    }
+    .hero-left{ max-width: 720px; }
     .hero-left h1{
       margin:0 0 14px;
       font-size: clamp(36px, 5vw, 64px);
@@ -275,16 +273,13 @@
       font-size: 13px;
     }
 
-    /* RESPONSIVE */
     @media (max-width: 980px){
       .hero{
         padding: 44px 18px;
         flex-direction: column;
         align-items: flex-start;
       }
-      .booking-card{
-        align-self: center;
-      }
+      .booking-card{ align-self: center; }
       .hero::before{
         background: linear-gradient(180deg, rgba(0,0,0,.70), rgba(0,0,0,.25));
       }
@@ -299,8 +294,8 @@
       <p>Compare Uber and Lyft. Save money and time with real-time ride options.</p>
 
       <div class="hero-cta">
-        <button class="btn btn-primary" id="btnCompare">Compare Rides Now</button>
-        <button class="btn btn-outline" id="btnScrollBooking">Find Best Rates</button>
+        <button class="btn btn-primary" id="btnCompare" type="button">Compare Rides Now</button>
+        <button class="btn btn-outline" id="btnScrollBooking" type="button">Find Best Rates</button>
       </div>
     </div>
 
@@ -330,8 +325,8 @@
         </div>
 
         <button class="btn btn-find" type="submit" id="btnFindRates">Find Best Rates</button>
-        <div class="helper">
-          Tip: If autocomplete doesn’t appear, the app still works — it will open Uber/Lyft using addresses.
+        <div class="helper" id="googleStatus">
+          Loading address autocomplete…
         </div>
       </form>
     </div>
@@ -345,7 +340,6 @@
         <div class="ride-card">
           <div class="ride-top">
             <div class="logo-badge uber" aria-hidden="true" title="Uber">
-              <!-- simple original icon (NOT Uber trademark) -->
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M6 7v10a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3V7" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
                 <path d="M9 7h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
@@ -365,7 +359,6 @@
         <div class="ride-card">
           <div class="ride-top">
             <div class="logo-badge lyft" aria-hidden="true" title="Lyft">
-              <!-- simple original icon (NOT Lyft trademark) -->
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M7 6v12h10" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M7 14h7" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
@@ -392,19 +385,11 @@
   </footer>
 
   <script>
-    /************************************************************
-     * OPTIONAL: Google Places Autocomplete
-     * Insert your key below in the script src line at bottom.
-     * This page still works without Google.
-     ************************************************************/
-
     console.log("[RideCompare] inline script loaded");
 
     const els = {
       pickup: document.getElementById("pickup"),
       dropoff: document.getElementById("dropoff"),
-      date: document.getElementById("rideDate"),
-      time: document.getElementById("rideTime"),
       rideForm: document.getElementById("rideForm"),
       btnCompare: document.getElementById("btnCompare"),
       btnScrollBooking: document.getElementById("btnScrollBooking"),
@@ -412,14 +397,14 @@
       btnLyft: document.getElementById("btnLyft"),
       statusNote: document.getElementById("statusNote"),
       available: document.getElementById("available"),
-      bookingCard: document.getElementById("bookingCard")
+      bookingCard: document.getElementById("bookingCard"),
+      googleStatus: document.getElementById("googleStatus"),
     };
 
-    // store last known coordinates if we get them from Google Places
-    const coords = {
-      pickup: null,   // {lat,lng}
-      dropoff: null
-    };
+    const coords = { pickup: null, dropoff: null };
+
+    function setGoogleStatus(msg){ els.googleStatus.textContent = msg; }
+    function setStatus(msg){ els.statusNote.textContent = msg; }
 
     function scrollToBooking(){
       els.bookingCard.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -438,11 +423,17 @@
       scrollToBooking();
     });
 
-    function safeEncode(v){ return encodeURIComponent((v || "").trim()); }
+    function validateInputs(){
+      const pickup = els.pickup.value.trim();
+      const dropoff = els.dropoff.value.trim();
+      if (!pickup || !dropoff){
+        setStatus("Please enter both pickup and dropoff.");
+        return null;
+      }
+      return { pickup, dropoff };
+    }
 
     function buildUberLink(pickupText, dropoffText){
-      // Works best on mobile; on desktop it opens Uber web flow.
-      // If coords exist, use them. Otherwise use addresses.
       const base = "https://m.uber.com/ul/";
       const params = new URLSearchParams();
       params.set("action", "setPickup");
@@ -466,8 +457,6 @@
     }
 
     function buildLyftLink(pickupText, dropoffText){
-      // Lyft deep link format using addresses if no coords.
-      // If anything fails, we’ll use your referral link.
       const base = "https://lyft.com/ride";
       const params = new URLSearchParams();
       params.set("id", "lyft");
@@ -489,21 +478,6 @@
       return base + "?" + params.toString();
     }
 
-    function setStatus(msg){
-      els.statusNote.textContent = msg;
-    }
-
-    function validateInputs(){
-      const pickup = els.pickup.value.trim();
-      const dropoff = els.dropoff.value.trim();
-      if (!pickup || !dropoff){
-        setStatus("Please enter both pickup and dropoff.");
-        return null;
-      }
-      return { pickup, dropoff };
-    }
-
-    // Buttons open deep links using current inputs
     function openUber(){
       const v = validateInputs();
       if (!v) return;
@@ -519,7 +493,6 @@
       let url = buildLyftLink(v.pickup, v.dropoff);
       console.log("[RideCompare] Lyft deep link:", url);
 
-      // fallback to your referral link if something is empty
       if (!url || url.length < 10){
         url = "https://www.lyft.com/i/ELVIS98387";
         console.log("[RideCompare] Lyft fallback referral:", url);
@@ -531,7 +504,6 @@
     els.btnUber.addEventListener("click", openUber);
     els.btnLyft.addEventListener("click", openLyft);
 
-    // Form submission scrolls to Available Rides and updates status
     els.rideForm.addEventListener("submit", (e) => {
       e.preventDefault();
       console.log("[RideCompare] Form submitted");
@@ -542,18 +514,18 @@
       scrollToAvailable();
     });
 
-    // Google Places Autocomplete callback (called by Google script if loaded)
+    // ✅ Google Places callback
     window.initAutocomplete = function initAutocomplete(){
       console.log("[RideCompare] initAutocomplete called");
 
       if (!window.google || !google.maps || !google.maps.places){
         console.warn("[RideCompare] Google Places not available.");
+        setGoogleStatus("Autocomplete unavailable (Google not loaded). You can still type addresses.");
         return;
       }
 
-      const opts = { fields: ["geometry", "formatted_address", "name"] };
-
       try{
+        const opts = { fields: ["geometry", "formatted_address", "name"] };
         const acPickup = new google.maps.places.Autocomplete(els.pickup, opts);
         const acDropoff = new google.maps.places.Autocomplete(els.dropoff, opts);
 
@@ -591,24 +563,37 @@
           console.log("[RideCompare] dropoff selected:", els.dropoff.value, coords.dropoff);
         });
 
+        setGoogleStatus("Autocomplete enabled ✅");
         console.log("[RideCompare] Autocomplete initialized");
       } catch (err){
         console.error("[RideCompare] Autocomplete init error:", err);
+        setGoogleStatus("Autocomplete error. Check API restrictions/billing. You can still type addresses.");
       }
     };
 
-    // If user didn't load Google script, keep running with plain inputs.
+    // ✅ Detect Google load failure (very helpful)
+    window.__gmapsFail = function(){
+      console.error("[RideCompare] Google Maps script failed to load.");
+      setGoogleStatus("Autocomplete failed to load. You can still type addresses.");
+    };
+
     window.addEventListener("load", () => {
       console.log("[RideCompare] DOM fully loaded");
+      // If Google didn't call initAutocomplete within a moment, show fallback message.
+      setTimeout(() => {
+        if (!(window.google && google.maps && google.maps.places)) {
+          setGoogleStatus("Autocomplete not active. You can still type addresses.");
+        }
+      }, 1200);
     });
   </script>
 
-  <!-- ✅ OPTIONAL: Google Places script (only if you want autocomplete) -->
-  <!-- Replace YOUR_GOOGLE_MAPS_API_KEY with your real key -->
+  <!-- ✅ Google Places (Autocomplete) -->
   <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCW_4DpiwSByLqnPWhsxEZboFacnFhQQh8&libraries=places&callback=initAutocomplete"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBz8nr961uD8aCTea3XfLt8hku6BXfKXL4&libraries=places&callback=initAutocomplete"
     async
-    defer>
+    defer
+    onerror="window.__gmapsFail()">
   </script>
 </body>
 </html>
