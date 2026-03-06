@@ -211,7 +211,8 @@
         <div class="ride-card" id="lyftCard">
   <div class="ride-top">
     <div class="logo-badge lyft" aria-hidden="true" title="Lyft">
-      <img src="lyft-logo.svg" alt="Lyft logo" onerror="this.style.display='none'; this.parentNode.textContent='L';" />
+      <img src="lyft-logo.svg" alt="Lyft logo"
+           onerror="this.style.display='none'; this.parentNode.textContent='L';" />
     </div>
     <div class="ride-meta">
       <strong>Lyft</strong>
@@ -507,6 +508,44 @@ function updateLyftButtonUI() {
   }
 }
 
+function isMobileDevice() {
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+function updateLyftButtonUI() {
+  const lyftBtn = document.getElementById("btnLyft");
+  const lyftSubtitle = document.getElementById("lyftSubtitle");
+
+  if (!lyftBtn || !lyftSubtitle) return;
+
+  if (isMobileDevice()) {
+    lyftBtn.textContent = "Book with Lyft";
+    lyftSubtitle.textContent = "Open in Lyft app";
+  } else {
+    lyftBtn.textContent = "Get Lyft App";
+    lyftSubtitle.textContent = "Continue with Lyft app";
+  }
+}
+
+function isMobileDevice() {
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+function updateLyftButtonUI() {
+  const lyftBtn = document.getElementById("btnLyft");
+  const lyftSubtitle = document.getElementById("lyftSubtitle");
+
+  if (!lyftBtn || !lyftSubtitle) return;
+
+  if (isMobileDevice()) {
+    lyftBtn.textContent = "Book with Lyft";
+    lyftSubtitle.textContent = "Open in Lyft app";
+  } else {
+    lyftBtn.textContent = "Get Lyft App";
+    lyftSubtitle.textContent = "Continue with Lyft app";
+  }
+}
+
 function openLyft() {
   const v = validateInputs();
   if (!v) return;
@@ -516,7 +555,6 @@ function openLyft() {
 
   console.log("[RideCompare] Lyft deep link:", deepLink);
 
-  // Desktop users should not hit Lyft's broken web booking page
   if (!isMobileDevice()) {
     console.log("[RideCompare] Desktop detected. Opening referral/app page instead.");
     logEvent("ride_click", { provider: "Lyft", url: referralUrl, mode: "desktop_referral" });
@@ -524,7 +562,6 @@ function openLyft() {
     return;
   }
 
-  // Mobile: try deep link first, then fallback
   logEvent("ride_click", { provider: "Lyft", url: deepLink, mode: "mobile_deeplink" });
 
   const start = Date.now();
@@ -537,7 +574,6 @@ function openLyft() {
     }
   }, 1200);
 }
-
     els.btnUber.addEventListener("click", openUber);
     els.btnLyft.addEventListener("click", openLyft);
 
@@ -610,6 +646,7 @@ function openLyft() {
   </script>
 </body>
 </html>
+
 
 
 
