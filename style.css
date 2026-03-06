@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: #f8f9fa;
+  background: #eef2f7;
   color: #1e1e1e;
 }
 
@@ -135,8 +135,8 @@ a {
 
 /* Rides */
 .rides {
-  padding: 40px 20px;
-  background: #fff;
+  padding: 60px 20px;
+  background: #f8fafc;
   text-align: center;
 }
 
@@ -184,6 +184,17 @@ footer li {
   margin-top: 20px;
   font-size: 0.9rem;
   color: #bbb;
+}
+
+/* subtle startup background texture */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(37,99,235,.06), transparent 40%),
+    radial-gradient(circle at 80% 60%, rgba(16,185,129,.06), transparent 40%);
+  z-index:-1;
 }
 
 
