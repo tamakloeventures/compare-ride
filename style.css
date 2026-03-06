@@ -48,15 +48,33 @@ a {
 .booking-card{
   position:absolute;
   z-index:2;
-  right: 56px;
-  top: 70px;
+  right:56px;
+  top:70px;
 
   width:min(460px, 92vw);
-  background: var(--card);
-  color: var(--text);
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-  padding: 26px 26px 22px;
+  background:#ffffff;
+  border-radius:18px;
+  box-shadow:0 14px 40px rgba(0,0,0,.18);
+  padding:26px 26px 22px;
+
+  /* glow highlight */
+  backdrop-filter: blur(6px);
+}
+
+.booking-card::before{
+  content:"";
+  position:absolute;
+  inset:-20px;
+  z-index:-1;
+
+  background: radial-gradient(
+    circle at center,
+    rgba(37,99,235,.35) 0%,
+    rgba(37,99,235,.18) 35%,
+    rgba(37,99,235,0) 70%
+  );
+
+  filter: blur(40px);
 }
 
 /* Responsive: stack card under text on small screens */
@@ -76,6 +94,10 @@ a {
     right:auto;
     margin-top: 22px;
   }
+.booking-card h2{
+  margin:2px 0 18px;
+  font-size:26px;
+  letter-spacing:-0.01em;
 }
 
 .datetime{
@@ -163,5 +185,6 @@ footer li {
   font-size: 0.9rem;
   color: #bbb;
 }
+
 
 
