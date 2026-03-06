@@ -482,30 +482,85 @@
       setStatus(`Estimated fares ready for: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`);
     }
 
-    function openUber(){
-      const v = validateInputs(); if (!v) return;
-      const url = buildUberLink(v.pickup, v.dropoff);
-      logEvent("ride_click", { provider:"Uber", url });
-      window.open(url, "_blank", "noopener");
-    }
+    const UBER_CLIENT_ID = "PASTE_YOUR_UBER_CLIENT_ID_HERE";
 
-    function isMobileDevice() {
-  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+async function geocodeAddress(address) {
+  if (!window.google || !google.maps || !google.maps.Geocoder) return null;
+
+  const geocoder = new google.maps.Geocoder();
+
+  return new Promise((resolve) => {
+    geocoder.geocode({ address }, (results, status) => {
+      if (status === "OK" && results && results[0]) {
+        const loc = results[0].geometry.location;
+        resolve({
+          lat: loc.lat(),
+          lng: loc.lng(),
+          formatted: results[0].formatted_address || address
+        });
+      } else {
+        resolve(null);
+      }
+    });
+  });
 }
 
-function updateLyftButtonUI() {
-  const lyftBtn = document.getElementById("btnLyft");
-  const lyftSubtitle = document.getElementById("lyftSubtitle");
-
-  if (!lyftBtn || !lyftSubtitle) return;
-
-  if (isMobileDevice()) {
-    lyftBtn.textContent = "Book with Lyft";
-    lyftSubtitle.textContent = "Open in Lyft app";
-  } else {
-    lyftBtn.textContent = "Get Lyft App";
-    lyftSubtitle.textContent = "Continue with Lyft app";
+async function ensureUberCoords(pickupText, dropoffText) {
+  if (!coords.pickup) {
+    const p = await geocodeAddress(pickupText);
+    if (p) coords.pickup = { lat: p.lat, lng: p.lng };
   }
+
+  if (!coords.dropoff) {
+    const d = await geocodeAddress(dropoffText);
+    if (d) coords.dropoff = { lat: d.lat, lng: d.lng };
+  }
+
+  return !!(coords.pickup && coords.dropoff);
+}
+
+function buildUberLink(pickupText, dropoffText) {
+  if (!UBER_CLIENT_ID || UBER_CLIENT_ID === "PASTE_YOUR_UBER_CLIENT_ID_HERE") {
+    console.warn("[RideCompare] Missing Uber client_id. Falling back to generic Uber page.");
+    return "https://m.uber.com/";
+  }
+
+  if (!coords.pickup || !coords.dropoff) {
+    console.warn("[RideCompare] Missing coords. Falling back to generic Uber page.");
+    return "https://m.uber.com/";
+  }
+
+  const pickupObj = {
+    latitude: coords.pickup.lat,
+    longitude: coords.pickup.lng,
+    addressLine1: "Pickup",
+    addressLine2: pickupText
+  };
+
+  const dropObj = {
+    latitude: coords.dropoff.lat,
+    longitude: coords.dropoff.lng,
+    addressLine1: "Dropoff",
+    addressLine2: dropoffText
+  };
+
+  const pickupEncoded = encodeURIComponent(JSON.stringify(pickupObj));
+  const dropEncoded = encodeURIComponent(JSON.stringify(dropObj));
+
+  return `https://m.uber.com/looking?client_id=${encodeURIComponent(UBER_CLIENT_ID)}&pickup=${pickupEncoded}&drop[0]=${dropEncoded}`;
+}
+
+async function openUber() {
+  const v = validateInputs();
+  if (!v) return;
+
+  await ensureUberCoords(v.pickup, v.dropoff);
+
+  const url = buildUberLink(v.pickup, v.dropoff);
+  console.log("[RideCompare] Uber deep link:", url);
+
+  logEvent("ride_click", { provider: "Uber", url });
+  window.open(url, "_blank", "noopener");
 }
 
 function isMobileDevice() {
@@ -703,6 +758,7 @@ function openLyft() {
   </script>
 </body>
 </html>
+
 
 
 
