@@ -51,7 +51,7 @@ a {
   right: 56px;
   top: 70px;
 
-  width:min(520px, 94vw);
+  width:min(460px, 92vw);
   background: var(--card);
   color: var(--text);
   border-radius: 18px;
@@ -78,9 +78,11 @@ a {
   }
 }
 
-.datetime {
-  display: flex;
-  gap: 10px;
+.datetime{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  align-items:center;
 }
 
 /* Buttons */
@@ -161,4 +163,5 @@ footer li {
   font-size: 0.9rem;
   color: #bbb;
 }
+
 
