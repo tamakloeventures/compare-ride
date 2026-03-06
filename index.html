@@ -704,8 +704,112 @@
     </div>
   </section>
 
+    </section>
+
+  <section class="section" id="privacy">
+    <div class="container">
+      <h2 class="section-title">Privacy Policy</h2>
+
+      <div class="faq">
+        <div class="faq-item">
+          <h4>What information RideCompare collects</h4>
+          <p>
+            RideCompare may collect search details such as pickup and dropoff locations, general usage analytics, and device/browser information to improve the platform experience.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>How we use that information</h4>
+          <p>
+            We use collected information to understand platform usage, improve the quality of ride comparisons, and refine future product features.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Payments and bookings</h4>
+          <p>
+            RideCompare does not process ride payments. Final booking, pricing, and payment are completed inside the official ride provider’s app or website.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Third-party services</h4>
+          <p>
+            RideCompare may redirect users to third-party services such as Uber and Lyft. Those services operate under their own privacy policies and terms.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt" id="terms">
+    <div class="container">
+      <h2 class="section-title">Terms of Use</h2>
+
+      <div class="faq">
+        <div class="faq-item">
+          <h4>Service description</h4>
+          <p>
+            RideCompare is a comparison platform designed to help users quickly review ride options and launch bookings through official transportation providers.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>No affiliation</h4>
+          <p>
+            RideCompare is not affiliated with, endorsed by, or operated by Uber, Lyft, or any other ride provider shown on the platform.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Fare estimates</h4>
+          <p>
+            Fare estimates shown on RideCompare are approximate and may differ from the final fare displayed by the ride provider.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>User responsibility</h4>
+          <p>
+            Users are responsible for verifying all ride details, availability, and final pricing directly with the provider before booking.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="contact">
+    <div class="container">
+      <h2 class="section-title">Contact</h2>
+
+      <div class="faq">
+        <div class="faq-item">
+          <h4>Tamakloe Ventures LLC</h4>
+          <p>
+            RideCompare is developed and operated by <strong>Tamakloe Ventures LLC</strong>.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Support</h4>
+          <p>
+            Support email coming soon. Until then, you can prepare to use:
+            <strong>support@tamakloeventures.com</strong>
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h4>Feedback and partnerships</h4>
+          <p>
+            We welcome product feedback, partnership opportunities, and suggestions to improve the RideCompare experience.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <footer>
-    © 2024 Tamakloe Ventures LLC. All rights reserved.
+    © 2024–2026 Tamakloe Ventures LLC. All rights reserved.
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -757,14 +861,14 @@
     let lastRoute = { distance_m: null, duration_s: null };
 
     function setStatus(msg){ els.statusNote.textContent = msg; }
-    function setHelper(msg){ els.helperText.textContent = msg; }
-    function scrollToBooking(){ els.bookingCard.scrollIntoView({ behavior:"smooth", block:"center" }); }
-    function scrollToAvailable(){ els.available.scrollIntoView({ behavior:"smooth", block:"start" }); }
+function setHelper(msg){ els.helperText.textContent = msg; }
+function scrollToBooking(){ els.bookingCard.scrollIntoView({ behavior:"smooth", block:"center" }); }
+function scrollToAvailable(){ els.available.scrollIntoView({ behavior:"smooth", block:"start" }); }
 
-    function isMobileDevice() {
-      return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    }
-
+function isMobileDevice() {
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+   
     function updateLyftButtonUI() {
       if (!els.btnLyft || !els.lyftSubtitle) return;
 
@@ -1172,6 +1276,7 @@
   </script>
 </body>
 </html>
+
 
 
 
