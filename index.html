@@ -546,6 +546,44 @@ function updateLyftButtonUI() {
   }
 }
 
+function isMobileDevice() {
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+function updateLyftButtonUI() {
+  const lyftBtn = document.getElementById("btnLyft");
+  const lyftSubtitle = document.getElementById("lyftSubtitle");
+
+  if (!lyftBtn || !lyftSubtitle) return;
+
+  if (isMobileDevice()) {
+    lyftBtn.textContent = "Book with Lyft";
+    lyftSubtitle.textContent = "Open in Lyft app";
+  } else {
+    lyftBtn.textContent = "Get Lyft App";
+    lyftSubtitle.textContent = "Continue with Lyft app";
+  }
+}
+
+function isMobileDevice() {
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+function updateLyftButtonUI() {
+  const lyftBtn = document.getElementById("btnLyft");
+  const lyftSubtitle = document.getElementById("lyftSubtitle");
+
+  if (!lyftBtn || !lyftSubtitle) return;
+
+  if (isMobileDevice()) {
+    lyftBtn.textContent = "Book with Lyft";
+    lyftSubtitle.textContent = "Open in Lyft app";
+  } else {
+    lyftBtn.textContent = "Get Lyft App";
+    lyftSubtitle.textContent = "Continue with Lyft app";
+  }
+}
+
 function openLyft() {
   const v = validateInputs();
   if (!v) return;
@@ -646,6 +684,7 @@ function openLyft() {
   </script>
 </body>
 </html>
+
 
 
 
