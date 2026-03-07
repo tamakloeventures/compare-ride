@@ -61,18 +61,17 @@ body::before{
 
     /* HERO */
     .hero{
-      position:relative;
-      min-height:78vh;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:48px;
-      padding:64px 56px;
-      color:#fff;
-      background: url("hero-bg.jpg") center/cover no-repeat;
-      overflow:hidden;
-    }
-
+  position:relative;
+  min-height:78vh;
+  display:grid;
+  grid-template-columns: minmax(0, 1fr) 460px;
+  align-items:center;
+  gap:48px;
+  padding:64px 56px;
+  color:#fff;
+  background: url("hero-bg.jpg") center/cover no-repeat;
+  overflow:hidden;
+}
     .hero::before{
       content:"";
       position:absolute;
@@ -87,8 +86,9 @@ body::before{
     }
 
     .hero-left{
-      max-width:720px;
-    }
+  max-width:560px;
+  min-width:0;
+}
 
     .eyebrow{
       display:inline-block;
@@ -171,13 +171,15 @@ body::before{
     }
 
     .booking-card{
-      width:min(520px, 94vw);
-      background:var(--card);
-      color:var(--text);
-      border-radius:18px;
-      box-shadow:var(--shadow);
-      padding:26px 26px 22px;
-    }
+  width:100%;
+  max-width:460px;
+  justify-self:end;
+  background:var(--card);
+  color:var(--text);
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  padding:26px 26px 22px;
+}
 
     .booking-card h2{
       margin:2px 0 16px;
@@ -482,14 +484,16 @@ body::before{
 
     @media (max-width: 980px){
       .hero{
-        padding:44px 18px;
-        flex-direction:column;
-        align-items:flex-start;
-      }
+  padding:44px 18px;
+  min-height:auto;
+  grid-template-columns:1fr;
+  gap:22px;
+}
 
       .booking-card{
-        align-self:center;
-      }
+  max-width:100%;
+  justify-self:start;
+}
 
       .hero::before{
         background:linear-gradient(180deg, rgba(0,0,0,.70), rgba(0,0,0,.25));
@@ -1216,6 +1220,7 @@ function isMobileDevice() {
   </script>
 </body>
 </html>
+
 
 
 
