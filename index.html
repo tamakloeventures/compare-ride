@@ -472,12 +472,13 @@ body::before{
     }
 
     footer{
-      background:#0f172a;
-      color:#cbd5e1;
-      padding:28px 18px;
-      text-align:center;
-      font-size:13px;
-    }
+  background:#020617;
+  color:#cbd5e1;
+  padding:28px 18px;
+  text-align:center;
+  font-size:13px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
 
     @media (max-width: 980px){
       .hero{
@@ -666,148 +667,76 @@ body::before{
     </div>
   </section>
 
-  <section class="section">
-    <div class="container">
-      <h2 class="section-title">Get early access to new cities and features</h2>
-      <p class="section-subtitle">
-        Join the RideCompare waitlist to hear about cheaper ride alerts, new providers, and future city rollouts.
-      </p>
+  <section class="accordion-section" id="info">
+  <div class="accordion-wrap">
+    <div class="accordion-grid">
 
-      <div class="waitlist-box">
-        <h3 style="margin:0 0 8px;font-size:24px;">Join the waitlist</h3>
-        <p style="margin:0;color:#64748b;">We’ll let you know when RideCompare expands and introduces more ride options.</p>
+      <details class="accordion-item">
+        <summary>Get early access to new cities and features</summary>
+        <div class="accordion-content">
+          <p>Join the RideCompare waitlist to hear about cheaper ride alerts, new providers, and future city rollouts.</p>
 
-        <form id="waitlistForm" class="waitlist-form">
-          <input type="email" id="waitlistEmail" placeholder="Enter your email" required />
-          <button type="submit" class="btn btn-primary">Join Waitlist</button>
-        </form>
+          <form id="waitlistForm" class="waitlist-form" style="margin-top:16px;">
+            <input type="email" id="waitlistEmail" placeholder="Enter your email" required />
+            <button type="submit" class="btn btn-primary">Join Waitlist</button>
+          </form>
 
-        <div class="smallnote" id="waitlistStatus" style="margin-top:12px;">No spam. Just product updates and launch news.</div>
-      </div>
+          <div class="smallnote" id="waitlistStatus" style="margin-top:12px; text-align:left; color:#cbd5e1;">
+            No spam. Just product updates and launch news.
+          </div>
+        </div>
+      </details>
+
+      <details class="accordion-item">
+        <summary>Frequently Asked Questions</summary>
+        <div class="accordion-content">
+          <p><strong>Are these live fares?</strong><br>
+          These are estimated fares based on route distance and time. Final pricing and availability are confirmed inside Uber and Lyft.</p>
+
+          <p><strong>Do I book inside RideCompare?</strong><br>
+          No. RideCompare helps you compare quickly, then launches the provider so you can complete booking there.</p>
+
+          <p><strong>Why does Lyft sometimes redirect differently on desktop?</strong><br>
+          Lyft is increasingly app-first. On desktop, RideCompare sends users to Lyft’s app or referral flow instead of a broken web booking page.</p>
+
+          <p><strong>Who is RideCompare for?</strong><br>
+          Anyone who wants to save time comparing rides — commuters, students, airport travelers, and people who simply want a better ride-booking workflow.</p>
+        </div>
+      </details>
+
+      <details class="accordion-item">
+        <summary>Privacy Policy</summary>
+        <div class="accordion-content">
+          <p>RideCompare is operated by <strong>Tamakloe Ventures LLC</strong>.</p>
+          <p>We may collect search details such as pickup and dropoff locations, general usage analytics, and device/browser information to improve the platform experience.</p>
+          <p>RideCompare does not process ride payments. Final booking, pricing, and payment are completed inside the official ride provider’s app or website.</p>
+          <p>RideCompare may redirect users to third-party services such as Uber and Lyft. Those services operate under their own privacy policies and terms.</p>
+        </div>
+      </details>
+
+      <details class="accordion-item">
+        <summary>Terms of Use</summary>
+        <div class="accordion-content">
+          <p>RideCompare is a comparison platform designed to help users quickly review ride options and launch bookings through official transportation providers.</p>
+          <p>RideCompare is not affiliated with, endorsed by, or operated by Uber, Lyft, or any other ride provider shown on the platform.</p>
+          <p>Fare estimates shown on RideCompare are approximate and may differ from the final fare displayed by the ride provider.</p>
+          <p>Users are responsible for verifying ride details, availability, and final pricing directly with the provider before booking.</p>
+        </div>
+      </details>
+
+      <details class="accordion-item">
+        <summary>Contact</summary>
+        <div class="accordion-content">
+          <p>RideCompare is developed and operated by <strong>Tamakloe Ventures LLC</strong>.</p>
+          <p>Support email coming soon. Planned contact address:</p>
+          <p><strong>support@tamakloeventures.com</strong></p>
+          <p>We welcome feedback, product suggestions, and partnership inquiries.</p>
+        </div>
+      </details>
+
     </div>
-  </section>
-
-  <section class="section alt">
-    <div class="container">
-      <h2 class="section-title">Frequently Asked Questions</h2>
-
-      <div class="faq">
-        <div class="faq-item">
-          <h4>Are these live fares?</h4>
-          <p>These are estimated fares based on route distance and time. Final pricing and availability are confirmed inside Uber and Lyft.</p>
-        </div>
-
-        <div class="faq-item">
-          <h4>Do I book inside RideCompare?</h4>
-          <p>No. RideCompare helps you compare quickly, then launches the provider so you can complete booking there.</p>
-        </div>
-
-        <div class="faq-item">
-          <h4>Why does Lyft sometimes redirect differently on desktop?</h4>
-          <p>Lyft is increasingly app-first. On desktop, RideCompare sends users to Lyft’s app/referral flow instead of a broken web booking page.</p>
-        </div>
-
-        <div class="faq-item">
-          <h4>Who is RideCompare for?</h4>
-          <p>Anyone who wants to save time comparing rides — commuters, students, airport travelers, and people who simply want a better ride-booking workflow.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-    </section>
-
-  <section class="section" id="privacy">
-    <div class="container">
-      <h2 class="section-title">Privacy Policy</h2>
-
-      <div class="faq">
-        <div class="faq-item">
-          <h4>What information RideCompare collects</h4>
-          <p>
-            RideCompare may collect search details such as pickup and dropoff locations, general usage analytics, and device/browser information to improve the platform experience.
-          </p>
-        </div>
-
-        <div class="faq-item">
-          <h4>How we use that information</h4>
-          <p>
-            We use collected information to understand platform usage, improve the quality of ride comparisons, and refine future product features.
-          </p>
-        </div>
-
-        <div class="faq-item">
-          <h4>Payments and bookings</h4>
-          <p>
-            RideCompare does not process ride payments. Final booking, pricing, and payment are completed inside the official ride provider’s app or website.
-          </p>
-        </div>
-
-        <div class="faq-item">
-          <h4>Third-party services</h4>
-          <p>
-            RideCompare may redirect users to third-party services such as Uber and Lyft. Those services operate under their own privacy policies and terms.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section alt" id="terms">
-    <div class="container">
-      <h2 class="section-title">Terms of Use</h2>
-
-      <div class="faq">
-        <div class="faq-item">
-          <h4>Service description</h4>
-          <p>
-            RideCompare is a comparison platform designed to help users quickly review ride options and launch bookings through official transportation providers.
-          </p>
-        </div>
-
-        <div class="faq-item">
-          <h4>No affiliation</h4>
-          <p>
-            RideCompare is not affiliated with, endorsed by, or operated by Uber, Lyft, or any other ride provider shown on the platform.
-          </p>
-        </div>
-
-        <div class="faq-item">
-          <h4>Fare estimates</h4>
-          <p>
-            Fare estimates shown on RideCompare are approximate and may differ from the final fare displayed by the ride provider.
-          </p>
-        </div>
-
-        <div class="faq-item">
-          <h4>User responsibility</h4>
-          <p>
-            Users are responsible for verifying all ride details, availability, and final pricing directly with the provider before booking.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="contact">
-    <div class="container">
-      <h2 class="section-title">Contact</h2>
-
-      <div class="faq">
-        <div class="faq-item">
-          <h4>Tamakloe Ventures LLC</h4>
-          <p>
-            RideCompare is developed and operated by <strong>Tamakloe Ventures LLC</strong>.
-          </p>
-        </div>
-
-        <div class="faq-item">
-          <h4>Support</h4>
-          <p>
-            Support email coming soon. Until then, you can prepare to use:
-            <strong>support@tamakloeventures.com</strong>
-          </p>
-        </div>
+  </div>
+</section>
 
         <div class="faq-item">
           <h4>Feedback and partnerships</h4>
@@ -1287,6 +1216,7 @@ function isMobileDevice() {
   </script>
 </body>
 </html>
+
 
 
 
