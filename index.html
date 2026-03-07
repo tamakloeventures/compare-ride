@@ -26,10 +26,21 @@
       --green1:#10b981;
       --green2:#84cc16;
       --border:rgba(15,23,42,.12);
-      --bg:#f6f7fb;
+      --bg:#e7edf5;
       --dark:#0f172a;
     }
 
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(37,99,235,.06), transparent 35%),
+    radial-gradient(circle at 80% 60%, rgba(16,185,129,.05), transparent 35%);
+  z-index:-1;
+  pointer-events:none;
+}
+   
     *{ box-sizing:border-box; }
     html{ scroll-behavior:smooth; }
     body{
@@ -1276,6 +1287,7 @@ function isMobileDevice() {
   </script>
 </body>
 </html>
+
 
 
 
