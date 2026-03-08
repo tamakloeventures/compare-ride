@@ -1242,27 +1242,29 @@ function isMobileDevice() {
       scrollToAvailable();
     });
 
-    els.waitlistForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = els.waitlistEmail.value.trim();
+    if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
+  els.waitlistForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = els.waitlistEmail.value.trim();
 
-      if (!email) {
-        els.waitlistStatus.textContent = "Please enter a valid email address.";
-        return;
-      }
+    if (!email) {
+      els.waitlistStatus.textContent = "Please enter a valid email address.";
+      return;
+    }
 
-      els.waitlistStatus.textContent = "Joining waitlist…";
+    els.waitlistStatus.textContent = "Joining waitlist…";
 
-      const result = await saveWaitlist(email);
-      if (result.ok) {
-        els.waitlistStatus.textContent = "You're on the waitlist ✅";
-        els.waitlistEmail.value = "";
-        logEvent("waitlist_signup");
-      } else {
-        els.waitlistStatus.textContent = "Waitlist signup failed. Please try again later.";
-        console.warn("[RideCompare] waitlist failed:", result.error);
-      }
-    });
+    const result = await saveWaitlist(email);
+    if (result.ok) {
+      els.waitlistStatus.textContent = "You're on the waitlist ✅";
+      els.waitlistEmail.value = "";
+      logEvent("waitlist_signup");
+    } else {
+      els.waitlistStatus.textContent = "Waitlist signup failed. Please try again later.";
+      console.warn("[RideCompare] waitlist failed:", result.error);
+    }
+  });
+}
 
     // Google autocomplete callback
     window.initAutocomplete = function initAutocomplete(){
@@ -1344,6 +1346,7 @@ function isMobileDevice() {
   
 </body>
 </html>
+
 
 
 
