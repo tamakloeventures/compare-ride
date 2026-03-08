@@ -1122,21 +1122,56 @@ function isMobileDevice() {
     }
 
     async function refreshEstimates(){
-      els.uberPrice.textContent = "$ —";
-      els.lyftPrice.textContent = "$ —";
-      els.uberEta.textContent = "ETA —";
-      els.lyftEta.textContent = "ETA —";
-      els.uberTag.textContent = "Estimate";
-      els.lyftTag.textContent = "Estimate";
-      els.uberTag.classList.remove("best");
-      els.lyftTag.classList.remove("best");
+  setLoading(true);
 
-      const route = await computeRouteIfPossible();
-      if (!route){
-        lastRoute = { distance_m: null, duration_s: null };
-        setStatus("Ready to book. Fare estimates unavailable until route is computed.");
-        return;
-      }
+  els.uberPrice.textContent = "$ —";
+  els.lyftPrice.textContent = "$ —";
+  els.uberEta.textContent = "ETA —";
+  els.lyftEta.textContent = "ETA —";
+  els.uberTag.textContent = "Estimate";
+  els.lyftTag.textContent = "Estimate";
+  els.uberTag.classList.remove("best");
+  els.lyftTag.classList.remove("best");
+
+  let route = await computeRouteIfPossible();
+
+  // Stronger fallback if Directions API does not return
+  if (!route && coords.pickup && coords.dropoff){
+    const miles = haversineMiles(
+      coords.pickup.lat,
+      coords.pickup.lng,
+      coords.dropoff.lat,
+      coords.dropoff.lng
+    );
+
+    // simple fallback assumptions
+    const approxMinutes = Math.max(8, Math.round((miles / 22) * 60));
+    route = {
+      distance_m: miles * 1609.344,
+      duration_s: approxMinutes * 60
+    };
+  }
+
+  if (!route){
+    lastRoute = { distance_m: null, duration_s: null };
+    setStatus("Ready to book. Fare estimates unavailable until route is computed.");
+    setLoading(false);
+    return;
+  }
+
+  lastRoute = route;
+  const est = estimateFares(route.distance_m, route.duration_s);
+  applyFareUI(est);
+
+  const uberMid = (est.uber.low + est.uber.high) / 2;
+  const lyftMid = (est.lyft.low + est.lyft.high) / 2;
+  const bestProvider = uberMid <= lyftMid ? "Uber" : "Lyft";
+
+  setStatus(`Estimated fares ready for: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`);
+  updateMobileStickyCTA(bestProvider);
+  incrementRideCounter();
+  setLoading(false);
+}
 
       lastRoute = route;
       const est = estimateFares(route.distance_m, route.duration_s);
@@ -1308,6 +1343,7 @@ function isMobileDevice() {
   
 </body>
 </html>
+
 
 
 
