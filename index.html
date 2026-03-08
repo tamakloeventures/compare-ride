@@ -636,14 +636,19 @@ body::before{
 
           <div class="ride-actions">
             <button class="btn btn-lyft" id="btnLyft" type="button">Get Lyft App</button>
-            <a
-              href="https://www.lyft.com/i/ELVIS98387"
-              target="_blank"
-              rel="noopener"
-              style="font-size:12px;font-weight:700;color:#2563eb;text-decoration:underline;align-self:center;"
-            >
-              Use referral link
-            </a>
+            <div style="display:flex;flex-direction:column;gap:4px;align-self:center;">
+  <a
+    href="https://www.lyft.com/i/ELVIS98387"
+    target="_blank"
+    rel="noopener"
+    style="font-size:12px;font-weight:700;color:#2563eb;text-decoration:underline;"
+  >
+    Use referral link
+  </a>
+  <span style="font-size:11px;color:#64748b;">
+    Affiliate disclosure: RideCompare may benefit from some referral links.
+  </span>
+</div>
           </div>
         </div>
       </div>
@@ -652,9 +657,11 @@ body::before{
         Enter pickup &amp; dropoff above, then click “Find Best Rates”.
       </div>
 
-      <div class="smallnote" style="margin-top:10px;">
-        Disclaimer: Fare estimates are approximate. Official pricing and availability are shown inside Uber/Lyft.
-      </div>
+      <div class="notice-bar">
+  <strong>Important:</strong> RideCompare is an independent comparison tool and is not affiliated with Uber or Lyft.
+  Fare estimates are approximate, and final pricing, availability, and booking are completed inside the official provider experience.
+  Lyft links may include a referral code.
+</div>
     </div>
   </section>
 
@@ -1236,6 +1243,7 @@ function isMobileDevice() {
   </script>
 </body>
 </html>
+
 
 
 
