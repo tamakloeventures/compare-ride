@@ -1219,28 +1219,34 @@ function isMobileDevice() {
       }, 1200);
     }
 
-    els.btnUber.addEventListener("click", openUber);
-    els.btnLyft.addEventListener("click", openLyft);
+    if (els.btnUber) els.btnUber.addEventListener("click", openUber);
+if (els.btnLyft) els.btnLyft.addEventListener("click", openLyft);
 
-    els.btnCompare.addEventListener("click", () => {
-      logEvent("cta_compare_click");
-      scrollToAvailable();
-    });
+if (els.btnCompare) {
+  els.btnCompare.addEventListener("click", () => {
+    logEvent("cta_compare_click");
+    scrollToAvailable();
+  });
+}
 
-    els.btnScrollBooking.addEventListener("click", () => {
-      logEvent("cta_find_click");
-      scrollToBooking();
-    });
+if (els.btnScrollBooking) {
+  els.btnScrollBooking.addEventListener("click", () => {
+    logEvent("cta_find_click");
+    scrollToBooking();
+  });
+}
 
-    els.rideForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const v = validateInputs();
-      if (!v) return;
+if (els.rideForm) {
+  els.rideForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const v = validateInputs();
+    if (!v) return;
 
-      logEvent("search_submit");
-      await refreshEstimates();
-      scrollToAvailable();
-    });
+    logEvent("search_submit");
+    await refreshEstimates();
+    scrollToAvailable();
+  });
+}
 
     if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
   els.waitlistForm.addEventListener("submit", async (e) => {
@@ -1346,6 +1352,7 @@ function isMobileDevice() {
   
 </body>
 </html>
+
 
 
 
