@@ -1318,16 +1318,17 @@ function isMobileDevice() {
     };
 
     window.addEventListener("load", () => {
-      updateLyftButtonUI();
-      logEvent("page_view", { supabaseEnabled });
-      console.log("[RideCompare] DOM fully loaded");
+  updateLyftButtonUI();
+  hydrateRideCounter();
+  logEvent("page_view", { supabaseEnabled });
+  console.log("[RideCompare] DOM fully loaded");
 
-      setTimeout(() => {
-        if (!(window.google && google.maps && google.maps.places)) {
-          setHelper("Autocomplete not active. You can still type addresses manually.");
-        }
-      }, 1500);
-    });
+  setTimeout(() => {
+    if (!(window.google && google.maps && google.maps.places)) {
+      setHelper("Autocomplete not active. You can still type addresses manually.");
+    }
+  }, 1500);
+});
   </script>
 
   <script
@@ -1343,6 +1344,7 @@ function isMobileDevice() {
   
 </body>
 </html>
+
 
 
 
