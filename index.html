@@ -831,6 +831,66 @@ body::before{
 function setHelper(msg){ els.helperText.textContent = msg; }
 function scrollToBooking(){ els.bookingCard.scrollIntoView({ behavior:"smooth", block:"center" }); }
 function scrollToAvailable(){ els.available.scrollIntoView({ behavior:"smooth", block:"start" }); }
+    function setLoading(isLoading){
+  const btn = document.getElementById("btnFindRates");
+  if (!btn) return;
+
+  if (isLoading){
+    btn.classList.add("btn-loading");
+    btn.textContent = "Calculating";
+  } else {
+    btn.classList.remove("btn-loading");
+    btn.textContent = "Find Best Rates";
+  }
+}
+
+function incrementRideCounter(){
+  const current = Number(localStorage.getItem("rc_compare_count") || "0") + 1;
+  localStorage.setItem("rc_compare_count", String(current));
+  const el = document.getElementById("ridesComparedCount");
+  if (el) el.textContent = current.toLocaleString();
+}
+
+function hydrateRideCounter(){
+  const current = Number(localStorage.getItem("rc_compare_count") || "0");
+  const el = document.getElementById("ridesComparedCount");
+  if (el) el.textContent = current.toLocaleString();
+}
+
+function haversineMiles(lat1, lng1, lat2, lng2){
+  const toRad = (d) => d * Math.PI / 180;
+  const R = 3958.8;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLng / 2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+function updateMobileStickyCTA(bestProvider){
+  const wrap = document.getElementById("mobileStickyCta");
+  const bestBtn = document.getElementById("mobileBestRideBtn");
+  const compareBtn = document.getElementById("mobileCompareBtn");
+
+  if (!wrap || !bestBtn || !compareBtn) return;
+
+  wrap.style.display = "flex";
+
+  bestBtn.textContent = bestProvider === "Uber" ? "Open Uber" : "Open Lyft";
+  bestBtn.onclick = () => {
+    if (bestProvider === "Uber") {
+      openUber();
+    } else {
+      openLyft();
+    }
+  };
+
+  compareBtn.onclick = () => {
+    document.getElementById("available").scrollIntoView({ behavior:"smooth", block:"start" });
+  };
+}
 
 function isMobileDevice() {
   return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
@@ -1248,6 +1308,7 @@ function isMobileDevice() {
   
 </body>
 </html>
+
 
 
 
