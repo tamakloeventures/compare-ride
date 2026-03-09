@@ -1024,7 +1024,6 @@ function isMobileDevice() {
           } else {
             resolve(null);
           }
-        });
       });
     }
 
@@ -1118,7 +1117,6 @@ function isMobileDevice() {
           const leg = res.routes[0].legs[0];
           resolve({ distance_m: leg.distance.value, duration_s: leg.duration.value });
         });
-      });
     }
 
     async function refreshEstimates(){
@@ -1373,6 +1371,7 @@ if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
   
 </body>
 </html>
+
 
 
 
