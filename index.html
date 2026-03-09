@@ -1182,14 +1182,17 @@ function buildUberLink(pickupText, dropoffText) {
   }
 
   async function openUber() {
-    const v = validateInputs();
-    if (!v) return;
+  const v = validateInputs();
+  if (!v) return;
 
-    await ensureUberCoords(v.pickup, v.dropoff);
-    const url = buildUberLink(v.pickup, v.dropoff);
-    logEvent("ride_click", { provider: "Uber", url });
-    window.open(url, "_blank", "noopener");
-  }
+  await ensureUberCoords(v.pickup, v.dropoff);
+
+  const url = buildUberLink(v.pickup, v.dropoff);
+  console.log("[RideCompare] Uber deep link:", url);
+
+  logEvent("ride_click", { provider: "Uber", url, mode: "product_selection" });
+  window.open(url, "_blank", "noopener");
+}
 
   function openLyft() {
     const v = validateInputs();
@@ -1345,6 +1348,7 @@ function buildUberLink(pickupText, dropoffText) {
   
 </body>
 </html>
+
 
 
 
