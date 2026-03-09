@@ -1267,7 +1267,7 @@ if (els.rideForm) {
     logEvent("search_submit");
     await refreshEstimates();
     scrollToAvailable();
-  });
+
 }
 
 if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
@@ -1291,7 +1291,7 @@ if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
       els.waitlistStatus.textContent = "Waitlist signup failed. Please try again later.";
       console.warn("[RideCompare] waitlist failed:", result.error);
     }
-  });
+  
 }
     // Google autocomplete callback
     window.initAutocomplete = function initAutocomplete(){
@@ -1373,6 +1373,7 @@ if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
   
 </body>
 </html>
+
 
 
 
