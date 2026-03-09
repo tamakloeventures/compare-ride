@@ -1053,37 +1053,35 @@ body::before{
     return !!(coords.pickup && coords.dropoff);
   }
 
-  function buildUberLink(pickupText, dropoffText) {
-    if (!UBER_CLIENT_ID || UBER_CLIENT_ID === "PASTE_YOUR_UBER_CLIENT_ID_HERE") {
-      const base = "https://m.uber.com/ul/";
-      const params = new URLSearchParams();
-      params.set("action", "setPickup");
-      params.set("pickup", "my_location");
-      params.set("dropoff[formatted_address]", dropoffText);
-      return `${base}?${params.toString()}`;
-    }
+  function splitAddressLines(address) {
+  const parts = String(address || "").split(",");
+  const line1 = parts.shift()?.trim() || address || "";
+  const line2 = parts.join(",").trim() || address || "";
+  return { line1, line2 };
+}
 
-    if (!coords.pickup || !coords.dropoff) {
-      return "https://m.uber.com/";
-    }
+function buildUberPlaceObject(addressText, coordObj) {
+  const { line1, line2 } = splitAddressLines(addressText);
 
-    const pickupObj = {
-      latitude: coords.pickup.lat,
-      longitude: coords.pickup.lng,
-      addressLine1: "Pickup",
-      addressLine2: pickupText
-    };
+  return {
+    addressLine1: line1,
+    addressLine2: line2,
+    source: "SEARCH",
+    latitude: coordObj?.lat ?? null,
+    longitude: coordObj?.lng ?? null
+  };
+}
 
-    const dropObj = {
-      latitude: coords.dropoff.lat,
-      longitude: coords.dropoff.lng,
-      addressLine1: "Dropoff",
-      addressLine2: dropoffText
-    };
+function buildUberLink(pickupText, dropoffText) {
+  const pickupObj = buildUberPlaceObject(pickupText, coords.pickup);
+  const dropoffObj = buildUberPlaceObject(dropoffText, coords.dropoff);
 
-    return `https://m.uber.com/looking?client_id=${encodeURIComponent(UBER_CLIENT_ID)}&pickup=${encodeURIComponent(JSON.stringify(pickupObj))}&drop[0]=${encodeURIComponent(JSON.stringify(dropObj))}`;
-  }
+  const params = new URLSearchParams();
+  params.set("pickup", JSON.stringify(pickupObj));
+  params.set("drop[0]", JSON.stringify(dropoffObj));
 
+  return `https://m.uber.com/go/product-selection?${params.toString()}`;
+}
   function buildLyftLink(pickupText, dropoffText) {
     const base = "https://lyft.com/ride";
     const params = new URLSearchParams();
@@ -1347,6 +1345,7 @@ body::before{
   
 </body>
 </html>
+
 
 
 
