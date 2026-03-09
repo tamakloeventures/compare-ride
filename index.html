@@ -1236,6 +1236,28 @@ if (els.btnScrollBooking) {
   });
 }
 
+if (els.btnUber) {
+  els.btnUber.addEventListener("click", openUber);
+}
+
+if (els.btnLyft) {
+  els.btnLyft.addEventListener("click", openLyft);
+}
+
+if (els.btnCompare) {
+  els.btnCompare.addEventListener("click", () => {
+    logEvent("cta_compare_click");
+    scrollToAvailable();
+  });
+}
+
+if (els.btnScrollBooking) {
+  els.btnScrollBooking.addEventListener("click", () => {
+    logEvent("cta_find_click");
+    scrollToBooking();
+  });
+}
+
 if (els.rideForm) {
   els.rideForm.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -1248,7 +1270,7 @@ if (els.rideForm) {
   });
 }
 
-    if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
+if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
   els.waitlistForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = els.waitlistEmail.value.trim();
@@ -1271,7 +1293,6 @@ if (els.rideForm) {
     }
   });
 }
-
     // Google autocomplete callback
     window.initAutocomplete = function initAutocomplete(){
       console.log("[RideCompare] initAutocomplete called");
@@ -1352,6 +1373,7 @@ if (els.rideForm) {
   
 </body>
 </html>
+
 
 
 
