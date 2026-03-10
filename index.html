@@ -523,8 +523,76 @@ body::before{
     @media (max-width: 640px){
       .datetime{
         grid-template-columns:1fr;
-      }
-    }
+
+        .social-proof{
+  margin-top:12px;
+  font-size:14px;
+  color:rgba(255,255,255,.88);
+  font-weight:700;
+}
+
+.notice-bar{
+  max-width:900px;
+  margin:18px auto 0;
+  padding:12px 14px;
+  border-radius:14px;
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  color:#9a3412;
+  font-size:13px;
+  line-height:1.5;
+}
+
+.notice-bar strong{
+  color:#7c2d12;
+}
+
+.btn-loading{
+  opacity:.88;
+  pointer-events:none;
+  position:relative;
+}
+
+.btn-loading::after{
+  content:"";
+  width:16px;
+  height:16px;
+  border:2px solid rgba(255,255,255,.45);
+  border-top-color:#fff;
+  border-radius:50%;
+  display:inline-block;
+  animation:spin .8s linear infinite;
+  margin-left:8px;
+}
+
+@keyframes spin{
+  to{ transform:rotate(360deg); }
+}
+
+.mobile-sticky-cta{
+  display:none;
+}
+
+@media (max-width: 768px){
+  .mobile-sticky-cta{
+    display:flex;
+    position:fixed;
+    left:12px;
+    right:12px;
+    bottom:12px;
+    z-index:999;
+    gap:10px;
+    padding:12px;
+    border-radius:16px;
+    background:rgba(15,23,42,.92);
+    backdrop-filter:blur(8px);
+    box-shadow:0 12px 30px rgba(0,0,0,.28);
+  }
+
+  .mobile-sticky-cta .btn{
+    flex:1;
+  }
+}
   </style>
 </head>
 
@@ -1365,6 +1433,7 @@ function buildUberLink(pickupText, dropoffText) {
   
 </body>
 </html>
+
 
 
 
