@@ -1195,59 +1195,97 @@ body::before{
   }
 
   async function computeRoute() {
-    const ok = await ensureCoordsFromInputs();
-    if (!ok) return null;
+  const v = validateInputs();
+  if (!v) return null;
 
-    const miles = haversineMiles(
-      coords.pickup.lat,
-      coords.pickup.lng,
-      coords.dropoff.lat,
-      coords.dropoff.lng
-    );
+  // First try Google Directions with plain text addresses
+  if (window.google && google.maps && google.maps.DirectionsService) {
+    const ds = new google.maps.DirectionsService();
 
-    const approxMinutes = Math.max(8, Math.round((miles / 22) * 60));
-    return {
-      distance_m: miles * 1609.344,
-      duration_s: approxMinutes * 60
-    };
+    const route = await new Promise((resolve) => {
+      ds.route(
+        {
+          origin: v.pickup,
+          destination: v.dropoff,
+          travelMode: google.maps.TravelMode.DRIVING
+        },
+        (res, status) => {
+          if (status === "OK" && res?.routes?.[0]?.legs?.[0]) {
+            const leg = res.routes[0].legs[0];
+            resolve({
+              distance_m: leg.distance.value,
+              duration_s: leg.duration.value
+            });
+          } else {
+            resolve(null);
+          }
+        }
+      );
+    });
+
+    if (route) {
+      return route;
+    }
   }
+
+  // Fallback: geocode both and estimate from straight-line distance
+  const ok = await ensureCoordsFromInputs();
+  if (!ok) return null;
+
+  const miles = haversineMiles(
+    coords.pickup.lat,
+    coords.pickup.lng,
+    coords.dropoff.lat,
+    coords.dropoff.lng
+  );
+
+  const approxMinutes = Math.max(8, Math.round((miles / 22) * 60));
+
+  return {
+    distance_m: miles * 1609.344,
+    duration_s: approxMinutes * 60
+  };
+}
 
   async function refreshEstimates() {
-    setLoading(true);
+  setLoading(true);
 
-    if (els.uberPrice) els.uberPrice.textContent = "$ —";
-    if (els.lyftPrice) els.lyftPrice.textContent = "$ —";
-    if (els.uberEta) els.uberEta.textContent = "ETA —";
-    if (els.lyftEta) els.lyftEta.textContent = "ETA —";
-    if (els.uberTag) {
-      els.uberTag.textContent = "Estimate";
-      els.uberTag.classList.remove("best");
-    }
-    if (els.lyftTag) {
-      els.lyftTag.textContent = "Estimate";
-      els.lyftTag.classList.remove("best");
-    }
+  if (els.uberPrice) els.uberPrice.textContent = "$ —";
+  if (els.lyftPrice) els.lyftPrice.textContent = "$ —";
+  if (els.uberEta) els.uberEta.textContent = "ETA —";
+  if (els.lyftEta) els.lyftEta.textContent = "ETA —";
 
-    const route = await computeRoute();
-
-    if (!route) {
-      lastRoute = { distance_m: null, duration_s: null };
-      setStatus("Could not estimate this route yet. Please try a more complete address.");
-      setLoading(false);
-      return;
-    }
-
-    lastRoute = route;
-    const est = estimateFares(route.distance_m, route.duration_s);
-    applyFareUI(est);
-    incrementRideCounter();
-    setStatus(`Estimated fares ready for: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`);
-    setLoading(false);
-
-    if (els.mobileStickyCta) {
-      els.mobileStickyCta.style.display = "flex";
-    }
+  if (els.uberTag) {
+    els.uberTag.textContent = "Estimate";
+    els.uberTag.classList.remove("best");
   }
+
+  if (els.lyftTag) {
+    els.lyftTag.textContent = "Estimate";
+    els.lyftTag.classList.remove("best");
+  }
+
+  const route = await computeRoute();
+
+  if (!route) {
+    lastRoute = { distance_m: null, duration_s: null };
+    setStatus("Could not estimate this route yet. Please enter a more complete pickup and dropoff address.");
+    setLoading(false);
+    return;
+  }
+
+  lastRoute = route;
+  const est = estimateFares(route.distance_m, route.duration_s);
+  applyFareUI(est);
+  incrementRideCounter();
+
+  setStatus(`Estimated fares ready for: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`);
+  setLoading(false);
+
+  if (els.mobileStickyCta) {
+    els.mobileStickyCta.style.display = "flex";
+  }
+}
 
   async function openUber() {
     const v = validateInputs();
@@ -1436,6 +1474,7 @@ body::before{
   
 </body>
 </html>
+
 
 
 
