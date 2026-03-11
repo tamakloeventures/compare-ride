@@ -1354,24 +1354,24 @@ body::before{
   }
 
   window.initAutocomplete = function initAutocomplete() {
-    console.log("[RideCompare] autocomplete fallback mode");
+  console.log("[RideCompare] Google Maps loaded");
 
-    setHelper("Address lookup enabled ✅");
+  setHelper("Type full addresses, then click Find Best Rates. Live dropdown autocomplete is temporarily disabled.");
 
-    if (els.pickup) {
-      els.pickup.addEventListener("blur", async () => {
-        const p = await geocodeAddress(els.pickup.value);
-        if (p) coords.pickup = { lat: p.lat, lng: p.lng };
-      });
-    }
+  if (els.pickup) {
+    els.pickup.addEventListener("blur", async () => {
+      const p = await geocodeAddress(els.pickup.value);
+      if (p) coords.pickup = { lat: p.lat, lng: p.lng };
+    });
+  }
 
-    if (els.dropoff) {
-      els.dropoff.addEventListener("blur", async () => {
-        const d = await geocodeAddress(els.dropoff.value);
-        if (d) coords.dropoff = { lat: d.lat, lng: d.lng };
-      });
-    }
-  };
+  if (els.dropoff) {
+    els.dropoff.addEventListener("blur", async () => {
+      const d = await geocodeAddress(els.dropoff.value);
+      if (d) coords.dropoff = { lat: d.lat, lng: d.lng };
+    });
+  }
+};
 
   window.__gmapsFail = function () {
     setHelper("Address lookup failed to load. You can still type addresses manually.");
@@ -1474,6 +1474,7 @@ body::before{
   
 </body>
 </html>
+
 
 
 
