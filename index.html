@@ -19,604 +19,19 @@
   <meta property="og:image" content="https://tamakloeventures.com/og-image.jpg" />
   <meta name="theme-color" content="#0f172a" />
   <meta name="robots" content="index,follow" />
-  <link rel="icon" href="https://tamakloeventures.com/uber-logo.svg" />
+
+  <link rel="icon" href="assets/uber-logo.svg" />
+  <link rel="stylesheet" href="style.css" />
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
+    function gtag() {
+      dataLayer.push(arguments);
+    }
     gtag("js", new Date());
     gtag("config", "G-XXXXXXXXXX");
   </script>
-
-  <style>
-    :root{
-      --text:#0f172a;
-      --muted:#475569;
-      --muted-2:#64748b;
-      --card:#ffffff;
-      --shadow:0 14px 40px rgba(0,0,0,.18);
-      --blue:#2563eb;
-      --blue2:#1d4ed8;
-      --pink:#ff00b8;
-      --pink2:#e600a7;
-      --green1:#10b981;
-      --green2:#84cc16;
-      --border:rgba(15,23,42,.12);
-      --bg:#e7edf5;
-      --dark:#0f172a;
-    }
-
-    *{ box-sizing:border-box; }
-    html{ scroll-behavior:smooth; }
-
-    body{
-      margin:0;
-      font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
-      color:var(--text);
-      background:var(--bg);
-    }
-
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(37,99,235,.06), transparent 35%),
-        radial-gradient(circle at 80% 60%, rgba(16,185,129,.05), transparent 35%);
-      z-index:-1;
-      pointer-events:none;
-    }
-
-    img{ max-width:100%; display:block; }
-    a{ color:inherit; text-decoration:none; }
-
-    .container{
-      max-width:1100px;
-      margin:0 auto;
-      padding:0 18px;
-    }
-
-    .hero{
-      position:relative;
-      min-height:78vh;
-      display:grid;
-      grid-template-columns:minmax(0,1fr) 460px;
-      align-items:center;
-      gap:48px;
-      padding:64px 56px;
-      color:#fff;
-      background:url("hero-bg.jpg") center/cover no-repeat;
-      overflow:hidden;
-    }
-
-    .hero::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:linear-gradient(90deg, rgba(0,0,0,.74) 0%, rgba(0,0,0,.40) 55%, rgba(0,0,0,.18) 100%);
-      pointer-events:none;
-    }
-
-    .hero > *{
-      position:relative;
-      z-index:1;
-    }
-
-    .hero-left{
-      max-width:560px;
-      min-width:0;
-    }
-
-    .eyebrow{
-      display:inline-block;
-      margin-bottom:14px;
-      padding:7px 12px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:800;
-      letter-spacing:.1em;
-      text-transform:uppercase;
-      background:rgba(255,255,255,.12);
-      border:1px solid rgba(255,255,255,.18);
-      color:rgba(255,255,255,.96);
-      backdrop-filter:blur(6px);
-    }
-
-    .hero-left h1{
-      margin:0 0 14px;
-      font-size:clamp(38px, 5vw, 66px);
-      line-height:1.04;
-      letter-spacing:-0.02em;
-      text-shadow:0 10px 28px rgba(0,0,0,.32);
-    }
-
-    .hero-left p{
-      margin:0 0 22px;
-      font-size:clamp(16px, 2vw, 20px);
-      line-height:1.5;
-      color:rgba(255,255,255,.9);
-      max-width:620px;
-    }
-
-    .hero-cta{
-      display:flex;
-      gap:14px;
-      align-items:center;
-      flex-wrap:wrap;
-      margin-top:20px;
-    }
-
-    .trust-line{
-      margin-top:16px;
-      font-size:14px;
-      color:rgba(255,255,255,.82);
-      line-height:1.5;
-      max-width:620px;
-    }
-
-    .social-proof{
-      margin-top:12px;
-      font-size:14px;
-      color:rgba(255,255,255,.88);
-      font-weight:700;
-    }
-
-    .btn{
-      border:0;
-      cursor:pointer;
-      border-radius:12px;
-      padding:14px 18px;
-      font-weight:800;
-      letter-spacing:.04em;
-      text-transform:uppercase;
-      box-shadow:0 10px 22px rgba(0,0,0,.18);
-      transition:transform .12s ease, filter .12s ease;
-      display:inline-flex;
-      gap:10px;
-      align-items:center;
-      justify-content:center;
-      user-select:none;
-      font-size:14px;
-    }
-
-    .btn:active{ transform:translateY(1px); }
-    .btn:hover{ filter:brightness(1.03); }
-
-    .btn-primary{
-      background:linear-gradient(90deg, var(--blue), var(--blue2));
-      color:#fff;
-    }
-
-    .btn-outline{
-      background:rgba(255,255,255,.92);
-      color:var(--blue);
-      border:2px solid rgba(37,99,235,.35);
-      box-shadow:none;
-    }
-
-    .booking-card{
-      width:100%;
-      max-width:460px;
-      justify-self:end;
-      background:var(--card);
-      color:var(--text);
-      border-radius:18px;
-      box-shadow:var(--shadow);
-      padding:26px 26px 22px;
-    }
-
-    .booking-card h2{
-      margin:2px 0 16px;
-      font-size:28px;
-      letter-spacing:-0.01em;
-    }
-
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      margin-bottom:12px;
-    }
-
-    .field label{
-      font-size:12px;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      color:var(--muted);
-      font-weight:800;
-    }
-
-    input{
-      width:100%;
-      padding:14px 14px;
-      border-radius:10px;
-      border:1px solid var(--border);
-      outline:none;
-      font-size:16px;
-      background:#fff;
-    }
-
-    input:focus{
-      border-color:rgba(37,99,235,.55);
-      box-shadow:0 0 0 4px rgba(37,99,235,.12);
-    }
-
-    .datetime{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-    }
-
-    .btn-find{
-      width:100%;
-      margin-top:4px;
-      background:linear-gradient(90deg, var(--green1), var(--green2));
-      color:#fff;
-    }
-
-    .helper{
-      margin-top:10px;
-      font-size:12.5px;
-      color:var(--muted-2);
-      line-height:1.45;
-    }
-
-    .section{
-      padding:60px 0;
-      background:#eef2f7;
-    }
-
-    .section.alt{
-      background:#e8edf4;
-    }
-
-    .section-title{
-      margin:0 0 12px;
-      font-size:36px;
-      letter-spacing:-0.02em;
-      text-align:center;
-      color:var(--dark);
-    }
-
-    .section-subtitle{
-      margin:0 auto 30px;
-      max-width:780px;
-      text-align:center;
-      color:var(--muted);
-      line-height:1.6;
-    }
-
-    .rides-row{
-      display:flex;
-      gap:18px;
-      justify-content:center;
-      align-items:stretch;
-      flex-wrap:wrap;
-      margin-top:10px;
-    }
-
-    .ride-card{
-      width:min(520px, 92vw);
-      border:1px solid rgba(15,23,42,.10);
-      border-radius:18px;
-      padding:18px 18px 16px;
-      box-shadow:0 10px 24px rgba(15,23,42,.08);
-      background:#fff;
-      display:flex;
-      flex-direction:column;
-      gap:12px;
-    }
-
-    .ride-top{
-      display:flex;
-      align-items:center;
-      gap:12px;
-    }
-
-    .logo-badge{
-      width:44px;
-      height:44px;
-      border-radius:12px;
-      display:grid;
-      place-items:center;
-      flex:0 0 auto;
-      overflow:hidden;
-      font-weight:900;
-      font-size:18px;
-      color:#fff;
-    }
-
-    .logo-badge img{
-      width:24px;
-      height:24px;
-      object-fit:contain;
-      display:block;
-    }
-
-    .logo-badge.uber{ background:#111; }
-    .logo-badge.lyft{ background:var(--pink); }
-
-    .ride-meta{
-      display:flex;
-      flex-direction:column;
-      gap:2px;
-    }
-
-    .ride-meta strong{ font-size:18px; }
-    .ride-meta span{ font-size:13px; color:var(--muted-2); }
-
-    .pricebox{
-      border:1px dashed rgba(15,23,42,.18);
-      border-radius:14px;
-      padding:12px 12px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      background:#fbfcff;
-    }
-
-    .pricebox b{ font-size:16px; }
-
-    .tag{
-      font-size:12px;
-      font-weight:900;
-      letter-spacing:.08em;
-      text-transform:uppercase;
-      padding:6px 10px;
-      border-radius:999px;
-      background:#e2e8f0;
-      color:#0f172a;
-      white-space:nowrap;
-    }
-
-    .tag.best{
-      background:#dcfce7;
-      color:#14532d;
-    }
-
-    .ride-actions{
-      margin-top:auto;
-      display:flex;
-      gap:12px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .btn-uber{
-      background:#111;
-      color:#fff;
-      flex:1;
-      min-width:200px;
-    }
-
-    .btn-lyft{
-      background:linear-gradient(90deg, var(--pink), var(--pink2));
-      color:#fff;
-      flex:1;
-      min-width:200px;
-    }
-
-    .smallnote{
-      text-align:center;
-      margin-top:14px;
-      color:var(--muted-2);
-      font-size:13px;
-      line-height:1.5;
-    }
-
-    .steps{
-      display:grid;
-      grid-template-columns:repeat(3, 1fr);
-      gap:18px;
-      margin-top:18px;
-    }
-
-    .step-card{
-      background:#fff;
-      border:1px solid rgba(15,23,42,.08);
-      border-radius:18px;
-      padding:22px;
-      box-shadow:0 8px 20px rgba(15,23,42,.06);
-    }
-
-    .step-number{
-      width:40px;
-      height:40px;
-      border-radius:12px;
-      display:grid;
-      place-items:center;
-      font-weight:900;
-      background:#dbeafe;
-      color:#1d4ed8;
-      margin-bottom:14px;
-    }
-
-    .step-card h4{
-      margin:0 0 8px;
-      font-size:20px;
-    }
-
-    .step-card p{
-      margin:0;
-      color:var(--muted);
-      line-height:1.55;
-    }
-
-    .waitlist-form{
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      flex-wrap:wrap;
-      margin-top:16px;
-    }
-
-    .waitlist-form input{
-      min-width:280px;
-    }
-
-    .notice-bar{
-      max-width:900px;
-      margin:18px auto 0;
-      padding:12px 14px;
-      border-radius:14px;
-      background:#fff7ed;
-      border:1px solid #fed7aa;
-      color:#9a3412;
-      font-size:13px;
-      line-height:1.5;
-    }
-
-    .notice-bar strong{
-      color:#7c2d12;
-    }
-
-    .accordion-section{
-      padding:60px 18px;
-      background:#0f172a;
-      color:#fff;
-    }
-
-    .accordion-wrap{
-      max-width:980px;
-      margin:0 auto;
-    }
-
-    .accordion-grid{
-      display:grid;
-      gap:14px;
-    }
-
-    .accordion-item{
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.1);
-      border-radius:16px;
-      overflow:hidden;
-    }
-
-    .accordion-item summary{
-      cursor:pointer;
-      list-style:none;
-      padding:18px 20px;
-      font-weight:800;
-      font-size:16px;
-    }
-
-    .accordion-item summary::-webkit-details-marker{
-      display:none;
-    }
-
-    .accordion-content{
-      padding:0 20px 20px;
-      color:#cbd5e1;
-      line-height:1.6;
-    }
-
-    .faq-item{
-      margin-top:16px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.1);
-      border-radius:16px;
-      padding:18px;
-      color:#cbd5e1;
-    }
-
-    .faq-item h4{
-      margin:0 0 8px;
-      color:#fff;
-      font-size:18px;
-    }
-
-    .faq-item p{
-      margin:0;
-      line-height:1.6;
-    }
-
-    .btn-loading{
-      opacity:.88;
-      pointer-events:none;
-      position:relative;
-    }
-
-    .btn-loading::after{
-      content:"";
-      width:16px;
-      height:16px;
-      border:2px solid rgba(255,255,255,.45);
-      border-top-color:#fff;
-      border-radius:50%;
-      display:inline-block;
-      animation:spin .8s linear infinite;
-      margin-left:8px;
-    }
-
-    @keyframes spin{
-      to{ transform:rotate(360deg); }
-    }
-
-    .mobile-sticky-cta{
-      display:none;
-    }
-
-    footer{
-      background:#020617;
-      color:#cbd5e1;
-      padding:28px 18px;
-      text-align:center;
-      font-size:13px;
-      border-top:1px solid rgba(255,255,255,0.08);
-    }
-
-    @media (max-width: 980px){
-      .hero{
-        padding:44px 18px;
-        min-height:auto;
-        grid-template-columns:1fr;
-        gap:22px;
-      }
-
-      .booking-card{
-        max-width:100%;
-        justify-self:start;
-      }
-
-      .hero::before{
-        background:linear-gradient(180deg, rgba(0,0,0,.70), rgba(0,0,0,.25));
-      }
-
-      .steps{
-        grid-template-columns:1fr;
-      }
-    }
-
-    @media (max-width: 768px){
-      .mobile-sticky-cta{
-        display:flex;
-        position:fixed;
-        left:12px;
-        right:12px;
-        bottom:12px;
-        z-index:999;
-        gap:10px;
-        padding:12px;
-        border-radius:16px;
-        background:rgba(15,23,42,.92);
-        backdrop-filter:blur(8px);
-        box-shadow:0 12px 30px rgba(0,0,0,.28);
-      }
-
-      .mobile-sticky-cta .btn{
-        flex:1;
-      }
-    }
-
-    @media (max-width: 640px){
-      .datetime{
-        grid-template-columns:1fr;
-      }
-    }
-  </style>
 </head>
 <body>
   <header class="hero" id="top">
@@ -649,12 +64,26 @@
       <form id="rideForm">
         <div class="field">
           <label for="pickup">Pickup</label>
-          <input id="pickup" name="pickup" type="text" placeholder="Pickup location" autocomplete="off" required />
+          <input
+            id="pickup"
+            name="pickup"
+            type="text"
+            placeholder="Pickup location"
+            autocomplete="off"
+            required
+          />
         </div>
 
         <div class="field">
           <label for="dropoff">Dropoff</label>
-          <input id="dropoff" name="dropoff" type="text" placeholder="Where to?" autocomplete="off" required />
+          <input
+            id="dropoff"
+            name="dropoff"
+            type="text"
+            placeholder="Where to?"
+            autocomplete="off"
+            required
+          />
         </div>
 
         <div class="datetime">
@@ -662,6 +91,7 @@
             <label for="rideDate">Date</label>
             <input id="rideDate" name="rideDate" type="date" required />
           </div>
+
           <div class="field">
             <label for="rideTime">Time</label>
             <input id="rideTime" name="rideTime" type="time" required />
@@ -671,7 +101,7 @@
         <button class="btn btn-find" type="submit" id="btnFindRates">Find Best Rates</button>
 
         <div class="helper" id="helperText">
-          Start typing pickup and dropoff, then choose a suggested address for the best transfer.
+          Start typing pickup and dropoff, then select a suggested address for the best result.
         </div>
       </form>
     </div>
@@ -689,8 +119,13 @@
         <div class="ride-card" id="uberCard">
           <div class="ride-top">
             <div class="logo-badge uber" aria-hidden="true" title="Uber">
-              <img src="uber-logo.svg" alt="Uber logo" onerror="this.style.display='none'; this.parentNode.textContent='U';" />
+              <img
+                src="assets/uber-logo.svg"
+                alt="Uber logo"
+                onerror="this.style.display='none'; this.parentNode.textContent='U';"
+              />
             </div>
+
             <div class="ride-meta">
               <strong>Uber</strong>
               <span>Book instantly with Uber</span>
@@ -699,9 +134,9 @@
 
           <div class="pricebox">
             <div>
-              <div style="font-size:12px;color:#64748b;font-weight:800;text-transform:uppercase;letter-spacing:.08em;">Estimated Fare</div>
+              <div class="price-label">Estimated Fare</div>
               <b id="uberPrice">$ —</b>
-              <div style="font-size:12px;color:#64748b" id="uberEta">ETA —</div>
+              <div class="price-eta" id="uberEta">ETA —</div>
             </div>
             <span class="tag" id="uberTag">Estimate</span>
           </div>
@@ -714,8 +149,13 @@
         <div class="ride-card" id="lyftCard">
           <div class="ride-top">
             <div class="logo-badge lyft" aria-hidden="true" title="Lyft">
-              <img src="lyft-logo.svg" alt="Lyft logo" onerror="this.style.display='none'; this.parentNode.textContent='L';" />
+              <img
+                src="assets/lyft-logo.svg"
+                alt="Lyft logo"
+                onerror="this.style.display='none'; this.parentNode.textContent='L';"
+              />
             </div>
+
             <div class="ride-meta">
               <strong>Lyft</strong>
               <span id="lyftSubtitle">Open in Lyft app</span>
@@ -724,25 +164,26 @@
 
           <div class="pricebox">
             <div>
-              <div style="font-size:12px;color:#64748b;font-weight:800;text-transform:uppercase;letter-spacing:.08em;">Estimated Fare</div>
+              <div class="price-label">Estimated Fare</div>
               <b id="lyftPrice">$ —</b>
-              <div style="font-size:12px;color:#64748b" id="lyftEta">ETA —</div>
+              <div class="price-eta" id="lyftEta">ETA —</div>
             </div>
             <span class="tag" id="lyftTag">Estimate</span>
           </div>
 
           <div class="ride-actions">
             <button class="btn btn-lyft" id="btnLyft" type="button">Get Lyft App</button>
-            <div style="display:flex;flex-direction:column;gap:4px;align-self:center;">
+
+            <div class="referral-wrap">
               <a
                 href="https://www.lyft.com/i/ELVIS98387"
                 target="_blank"
-                rel="noopener"
-                style="font-size:12px;font-weight:700;color:#2563eb;text-decoration:underline;"
+                rel="noopener noreferrer"
+                class="referral-link"
               >
                 Use referral link
               </a>
-              <span style="font-size:11px;color:#64748b;">
+              <span class="referral-note">
                 Affiliate disclosure: RideCompare may benefit from some referral links.
               </span>
             </div>
@@ -751,11 +192,13 @@
       </div>
 
       <div class="smallnote" id="statusNote">
-        Enter pickup &amp; dropoff above, then click “Find Best Rates”.
+        Enter pickup and dropoff above, then click “Find Best Rates”.
       </div>
 
-      <div class="smallnote" style="margin-top:12px;">
-        <button class="btn btn-outline" id="btnShareCompare" type="button">Share This Comparison</button>
+      <div class="smallnote" style="margin-top: 12px;">
+        <button class="btn btn-outline" id="btnShareCompare" type="button">
+          Share This Comparison
+        </button>
       </div>
 
       <div class="notice-bar">
@@ -807,12 +250,12 @@
               and future city rollouts.
             </p>
 
-            <form id="waitlistForm" class="waitlist-form" style="margin-top:16px;">
+            <form id="waitlistForm" class="waitlist-form">
               <input type="email" id="waitlistEmail" placeholder="Enter your email" required />
               <button type="submit" class="btn btn-primary">Join Waitlist</button>
             </form>
 
-            <div class="smallnote" id="waitlistStatus" style="margin-top:12px; text-align:left; color:#cbd5e1;">
+            <div class="smallnote waitlist-status" id="waitlistStatus">
               No spam. Just product updates and launch news.
             </div>
           </div>
@@ -821,10 +264,26 @@
         <details class="accordion-item">
           <summary>Frequently Asked Questions</summary>
           <div class="accordion-content">
-            <p><strong>Are these live fares?</strong><br>These are estimated fares based on route distance and time. Final pricing and availability are confirmed inside Uber and Lyft.</p>
-            <p><strong>Do I book inside RideCompare?</strong><br>No. RideCompare helps you compare quickly, then launches the provider so you can complete booking there.</p>
-            <p><strong>Why does Lyft sometimes redirect differently on desktop?</strong><br>Lyft is increasingly app-first. On desktop, RideCompare sends users to Lyft’s app or referral flow instead of a broken web booking page.</p>
-            <p><strong>Who is RideCompare for?</strong><br>Anyone who wants to save time comparing rides — commuters, students, airport travelers, and people who simply want a better ride-booking workflow.</p>
+            <p>
+              <strong>Are these live fares?</strong><br />
+              These are estimated fares based on route distance and time. Final pricing and
+              availability are confirmed inside Uber and Lyft.
+            </p>
+            <p>
+              <strong>Do I book inside RideCompare?</strong><br />
+              No. RideCompare helps you compare quickly, then launches the provider so you can
+              complete booking there.
+            </p>
+            <p>
+              <strong>Why does Lyft sometimes redirect differently on desktop?</strong><br />
+              Lyft is increasingly app-first. On desktop, RideCompare sends users to Lyft’s app
+              or referral flow instead of a broken web booking page.
+            </p>
+            <p>
+              <strong>Who is RideCompare for?</strong><br />
+              Anyone who wants to save time comparing rides — commuters, students, airport
+              travelers, and people who simply want a better ride-booking workflow.
+            </p>
           </div>
         </details>
 
@@ -832,19 +291,40 @@
           <summary>Privacy Policy</summary>
           <div class="accordion-content">
             <p>RideCompare is operated by <strong>Tamakloe Ventures LLC</strong>.</p>
-            <p>We may collect search details such as pickup and dropoff locations, general usage analytics, and device/browser information to improve the platform experience.</p>
-            <p>RideCompare does not process ride payments. Final booking, pricing, and payment are completed inside the official ride provider’s app or website.</p>
-            <p>RideCompare may redirect users to third-party services such as Uber and Lyft. Those services operate under their own privacy policies and terms.</p>
+            <p>
+              We may collect search details such as pickup and dropoff locations, general usage
+              analytics, and device/browser information to improve the platform experience.
+            </p>
+            <p>
+              RideCompare does not process ride payments. Final booking, pricing, and payment are
+              completed inside the official ride provider’s app or website.
+            </p>
+            <p>
+              RideCompare may redirect users to third-party services such as Uber and Lyft. Those
+              services operate under their own privacy policies and terms.
+            </p>
           </div>
         </details>
 
         <details class="accordion-item">
           <summary>Terms of Use</summary>
           <div class="accordion-content">
-            <p>RideCompare is a comparison platform designed to help users quickly review ride options and launch bookings through official transportation providers.</p>
-            <p>RideCompare is not affiliated with, endorsed by, or operated by Uber, Lyft, or any other ride provider shown on the platform.</p>
-            <p>Fare estimates shown on RideCompare are approximate and may differ from the final fare displayed by the ride provider.</p>
-            <p>Users are responsible for verifying ride details, availability, and final pricing directly with the provider before booking.</p>
+            <p>
+              RideCompare is a comparison platform designed to help users quickly review ride
+              options and launch bookings through official transportation providers.
+            </p>
+            <p>
+              RideCompare is not affiliated with, endorsed by, or operated by Uber, Lyft, or any
+              other ride provider shown on the platform.
+            </p>
+            <p>
+              Fare estimates shown on RideCompare are approximate and may differ from the final
+              fare displayed by the ride provider.
+            </p>
+            <p>
+              Users are responsible for verifying ride details, availability, and final pricing
+              directly with the provider before booking.
+            </p>
           </div>
         </details>
 
@@ -873,679 +353,31 @@
     © 2024–2026 Tamakloe Ventures LLC. All rights reserved.
   </footer>
 
-  <div class="mobile-sticky-cta" id="mobileStickyCta" style="display:none;">
+  <div class="mobile-sticky-cta" id="mobileStickyCta" style="display: none;">
     <button class="btn btn-primary" id="mobileBestRideBtn" type="button">Open Best Value</button>
     <button class="btn btn-outline" id="mobileCompareBtn" type="button">Compare</button>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = "https://prglhlctcswjccajsvxr.supabase.co";
-    const SUPABASE_ANON_KEY = "sb_publishable_BM9ApnCCqHYai5ZaZPf0Pw_l1N4Vatk";
-    const LYFT_REFERRAL_URL = "https://www.lyft.com/i/ELVIS98387";
-
-    const supabaseEnabled = SUPABASE_URL.startsWith("http") && SUPABASE_ANON_KEY.length > 30;
-    const sb = supabaseEnabled ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
-
-    const els = {
-      pickup: document.getElementById("pickup"),
-      dropoff: document.getElementById("dropoff"),
-      date: document.getElementById("rideDate"),
-      time: document.getElementById("rideTime"),
-      rideForm: document.getElementById("rideForm"),
-      btnCompare: document.getElementById("btnCompare"),
-      btnScrollBooking: document.getElementById("btnScrollBooking"),
-      btnFindRates: document.getElementById("btnFindRates"),
-      btnUber: document.getElementById("btnUber"),
-      btnLyft: document.getElementById("btnLyft"),
-      btnShareCompare: document.getElementById("btnShareCompare"),
-      statusNote: document.getElementById("statusNote"),
-      helperText: document.getElementById("helperText"),
-      available: document.getElementById("available"),
-      bookingCard: document.getElementById("bookingCard"),
-      uberPrice: document.getElementById("uberPrice"),
-      lyftPrice: document.getElementById("lyftPrice"),
-      uberEta: document.getElementById("uberEta"),
-      lyftEta: document.getElementById("lyftEta"),
-      uberTag: document.getElementById("uberTag"),
-      lyftTag: document.getElementById("lyftTag"),
-      waitlistForm: document.getElementById("waitlistForm"),
-      waitlistEmail: document.getElementById("waitlistEmail"),
-      waitlistStatus: document.getElementById("waitlistStatus"),
-      lyftSubtitle: document.getElementById("lyftSubtitle"),
-      ridesComparedCount: document.getElementById("ridesComparedCount"),
-      mobileStickyCta: document.getElementById("mobileStickyCta"),
-      mobileBestRideBtn: document.getElementById("mobileBestRideBtn"),
-      mobileCompareBtn: document.getElementById("mobileCompareBtn")
+    window.RIDECOMPARE_CONFIG = {
+      SUPABASE_URL: "https://prglhlctcswjccajsvxr.supabase.co",
+      SUPABASE_ANON_KEY: "YOUR_SUPABASE_ANON_KEY",
+      LYFT_REFERRAL_URL: "https://www.lyft.com/i/ELVIS98387"
     };
-
-    const sessionId = localStorage.getItem("rc_session") || crypto.randomUUID();
-    localStorage.setItem("rc_session", sessionId);
-
-    const coords = { pickup: null, dropoff: null };
-    const selectedPlaces = { pickup: null, dropoff: null };
-    let lastRoute = { distance_m: null, duration_s: null };
-    let lastBestProvider = "Uber";
-
-    function setStatus(msg) {
-      if (els.statusNote) els.statusNote.textContent = msg;
-    }
-
-    function setHelper(msg) {
-      if (els.helperText) els.helperText.textContent = msg;
-    }
-
-    function scrollToBooking() {
-      els.bookingCard?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-
-    function scrollToAvailable() {
-      els.available?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    function isMobileDevice() {
-      return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    }
-
-    function updateLyftButtonUI() {
-      if (!els.btnLyft || !els.lyftSubtitle) return;
-
-      if (isMobileDevice()) {
-        els.btnLyft.textContent = "Book with Lyft";
-        els.lyftSubtitle.textContent = "Open in Lyft app";
-      } else {
-        els.btnLyft.textContent = "Get Lyft App";
-        els.lyftSubtitle.textContent = "Continue with Lyft app";
-      }
-    }
-
-    function setLoading(isLoading) {
-      if (!els.btnFindRates) return;
-
-      if (isLoading) {
-        els.btnFindRates.classList.add("btn-loading");
-        els.btnFindRates.disabled = true;
-        els.btnFindRates.textContent = "Calculating";
-      } else {
-        els.btnFindRates.classList.remove("btn-loading");
-        els.btnFindRates.disabled = false;
-        els.btnFindRates.textContent = "Find Best Rates";
-      }
-    }
-
-    async function logEvent(eventName, extra = {}) {
-      if (!supabaseEnabled || !sb) return;
-
-      try {
-        await sb.from("app_events").insert({
-          session_id: sessionId,
-          event_name: eventName,
-          page: location.pathname,
-          pickup_text: els.pickup?.value?.trim() || null,
-          dropoff_text: els.dropoff?.value?.trim() || null,
-          pickup_lat: coords.pickup?.lat ?? null,
-          pickup_lng: coords.pickup?.lng ?? null,
-          dropoff_lat: coords.dropoff?.lat ?? null,
-          dropoff_lng: coords.dropoff?.lng ?? null,
-          distance_meters: lastRoute.distance_m ?? null,
-          duration_seconds: lastRoute.duration_s ?? null,
-          provider: extra.provider ?? null,
-          user_agent: navigator.userAgent,
-          referrer: document.referrer || null,
-          extra
-        });
-      } catch (err) {
-        console.warn("[RideCompare] logEvent failed:", err);
-      }
-    }
-
-    async function saveWaitlist(email) {
-      if (!supabaseEnabled || !sb) return { ok: false, error: "Supabase not configured" };
-
-      try {
-        const { error } = await sb.from("waitlist").insert({
-          email,
-          source: "ridecompare_homepage"
-        });
-
-        if (error) return { ok: false, error: error.message };
-        return { ok: true };
-      } catch (err) {
-        return { ok: false, error: String(err) };
-      }
-    }
-
-    function validateInputs() {
-      const pickup = els.pickup?.value?.trim() || "";
-      const dropoff = els.dropoff?.value?.trim() || "";
-
-      if (!pickup || !dropoff) {
-        setStatus("Please enter both pickup and dropoff.");
-        return null;
-      }
-
-      return { pickup, dropoff };
-    }
-
-    function milesFromMeters(meters) {
-      return meters / 1609.344;
-    }
-
-    function formatMoneyRange(min, max) {
-      return `$${min.toFixed(2)}–$${max.toFixed(2)}`;
-    }
-
-    function estimateFares(distanceMeters, durationSeconds) {
-      const miles = milesFromMeters(distanceMeters);
-      const minutes = durationSeconds / 60;
-
-      const uber = { base: 2.5, perMile: 1.75, perMin: 0.25, surge: 1.0 };
-      const lyft = { base: 2.3, perMile: 1.8, perMin: 0.24, surge: 1.0 };
-
-      function calc(model) {
-        const raw = (model.base + model.perMile * miles + model.perMin * minutes) * model.surge;
-        return {
-          low: raw * 0.92,
-          high: raw * 1.12
-        };
-      }
-
-      return {
-        uber: calc(uber),
-        lyft: calc(lyft),
-        miles,
-        minutes
-      };
-    }
-
-    function applyFareUI(est) {
-      els.uberPrice.textContent = formatMoneyRange(est.uber.low, est.uber.high);
-      els.lyftPrice.textContent = formatMoneyRange(est.lyft.low, est.lyft.high);
-
-      const tripText = `Trip ~${Math.round(est.minutes)} min · ${est.miles.toFixed(1)} mi`;
-      els.uberEta.textContent = tripText;
-      els.lyftEta.textContent = tripText;
-
-      const uberMid = (est.uber.low + est.uber.high) / 2;
-      const lyftMid = (est.lyft.low + est.lyft.high) / 2;
-
-      if (uberMid <= lyftMid) {
-        lastBestProvider = "Uber";
-        els.uberTag.textContent = "Best value";
-        els.uberTag.classList.add("best");
-        els.lyftTag.textContent = "Estimate";
-        els.lyftTag.classList.remove("best");
-      } else {
-        lastBestProvider = "Lyft";
-        els.lyftTag.textContent = "Best value";
-        els.lyftTag.classList.add("best");
-        els.uberTag.textContent = "Estimate";
-        els.uberTag.classList.remove("best");
-      }
-    }
-
-    function haversineMiles(lat1, lng1, lat2, lng2) {
-      const toRad = (d) => (d * Math.PI) / 180;
-      const R = 3958.8;
-      const dLat = toRad(lat2 - lat1);
-      const dLng = toRad(lng2 - lng1);
-      const a =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
-      return 2 * R * Math.asin(Math.sqrt(a));
-    }
-
-    function incrementRideCounter() {
-      const current = Number(localStorage.getItem("rc_compare_count") || "0") + 1;
-      localStorage.setItem("rc_compare_count", String(current));
-      els.ridesComparedCount.textContent = current.toLocaleString();
-    }
-
-    function hydrateRideCounter() {
-      const current = Number(localStorage.getItem("rc_compare_count") || "0");
-      els.ridesComparedCount.textContent = current.toLocaleString();
-    }
-
-    async function geocodeAddress(address) {
-      if (!window.google || !google.maps || !google.maps.Geocoder) return null;
-
-      const geocoder = new google.maps.Geocoder();
-
-      return new Promise((resolve) => {
-        geocoder.geocode({ address }, (results, status) => {
-          if (status === "OK" && results && results[0]) {
-            const loc = results[0].geometry.location;
-            resolve({
-              lat: loc.lat(),
-              lng: loc.lng(),
-              formatted: results[0].formatted_address || address
-            });
-          } else {
-            resolve(null);
-          }
-        });
-      });
-    }
-
-    function splitAddressLines(address) {
-      const parts = String(address || "").split(",").map(s => s.trim()).filter(Boolean);
-      const line1 = parts.shift() || address || "";
-      const line2 = parts.join(", ") || "";
-      return { line1, line2 };
-    }
-
-    function clearStoredPlace(kind) {
-      selectedPlaces[kind] = null;
-      coords[kind] = null;
-    }
-
-    function setSelectedPlace(kind, place, inputEl) {
-      const hasGeometry =
-        place &&
-        place.geometry &&
-        place.geometry.location &&
-        typeof place.geometry.location.lat === "function" &&
-        typeof place.geometry.location.lng === "function";
-
-      if (!hasGeometry) {
-        clearStoredPlace(kind);
-        return false;
-      }
-
-      const formattedAddress = place.formatted_address || place.name || inputEl.value.trim();
-      const lat = place.geometry.location.lat();
-      const lng = place.geometry.location.lng();
-
-      selectedPlaces[kind] = {
-        name: place.name || "",
-        formattedAddress,
-        lat,
-        lng
-      };
-
-      coords[kind] = { lat, lng };
-      inputEl.value = formattedAddress;
-      return true;
-    }
-
-    function attachManualEditReset(inputEl, kind) {
-      inputEl.addEventListener("input", () => {
-        const selected = selectedPlaces[kind];
-        if (!selected) return;
-
-        if (inputEl.value.trim() !== selected.formattedAddress.trim()) {
-          clearStoredPlace(kind);
-        }
-      });
-    }
-
-    function attachAutocomplete(inputEl, kind) {
-      if (!window.google || !google.maps || !google.maps.places) return null;
-
-      const autocomplete = new google.maps.places.Autocomplete(inputEl, {
-        types: ["geocode"],
-        fields: ["formatted_address", "geometry", "name"]
-      });
-
-      autocomplete.addListener("place_changed", () => {
-        const place = autocomplete.getPlace();
-        const ok = setSelectedPlace(kind, place, inputEl);
-
-        if (ok) {
-          setHelper("Autocomplete active. Select a suggested address for the best Uber transfer.");
-        }
-      });
-
-      attachManualEditReset(inputEl, kind);
-      return autocomplete;
-    }
-
-    async function ensureCoordsFromInputs() {
-      const v = validateInputs();
-      if (!v) return false;
-
-      if (!coords.pickup) {
-        const p = await geocodeAddress(v.pickup);
-        if (p) {
-          coords.pickup = { lat: p.lat, lng: p.lng };
-          selectedPlaces.pickup = {
-            name: splitAddressLines(p.formatted).line1,
-            formattedAddress: p.formatted,
-            lat: p.lat,
-            lng: p.lng
-          };
-        }
-      }
-
-      if (!coords.dropoff) {
-        const d = await geocodeAddress(v.dropoff);
-        if (d) {
-          coords.dropoff = { lat: d.lat, lng: d.lng };
-          selectedPlaces.dropoff = {
-            name: splitAddressLines(d.formatted).line1,
-            formattedAddress: d.formatted,
-            lat: d.lat,
-            lng: d.lng
-          };
-        }
-      }
-
-      return !!(coords.pickup && coords.dropoff);
-    }
-
-    function buildUberPlaceObject(addressText, coordObj, selectedPlaceObj) {
-      const bestAddress = selectedPlaceObj?.formattedAddress || addressText || "";
-      const { line1, line2 } = splitAddressLines(bestAddress);
-
-      return {
-        addressLine1: selectedPlaceObj?.name || line1,
-        addressLine2: line2 || line1,
-        id: crypto.randomUUID(),
-        source: "SEARCH",
-        latitude: coordObj?.lat ?? null,
-        longitude: coordObj?.lng ?? null,
-        provider: "uber_places"
-      };
-    }
-
-    function buildUberLink(pickupText, dropoffText) {
-      const pickupObj = buildUberPlaceObject(pickupText, coords.pickup, selectedPlaces.pickup);
-      const dropoffObj = buildUberPlaceObject(dropoffText, coords.dropoff, selectedPlaces.dropoff);
-
-      const params = new URLSearchParams();
-      params.set("pickup", JSON.stringify(pickupObj));
-      params.set("drop[0]", JSON.stringify(dropoffObj));
-
-      return `https://m.uber.com/go/product-selection?${params.toString()}`;
-    }
-
-    function buildLyftLink(pickupText, dropoffText) {
-      const base = "https://lyft.com/ride";
-      const params = new URLSearchParams();
-      params.set("id", "lyft");
-
-      if (coords.pickup) {
-        params.set("pickup[latitude]", String(coords.pickup.lat));
-        params.set("pickup[longitude]", String(coords.pickup.lng));
-      } else {
-        params.set("pickup[formatted_address]", pickupText);
-      }
-
-      if (coords.dropoff) {
-        params.set("destination[latitude]", String(coords.dropoff.lat));
-        params.set("destination[longitude]", String(coords.dropoff.lng));
-      } else {
-        params.set("destination[formatted_address]", dropoffText);
-      }
-
-      return `${base}?${params.toString()}`;
-    }
-
-    async function computeRoute() {
-      const v = validateInputs();
-      if (!v) return null;
-
-      if (window.google && google.maps && google.maps.DirectionsService) {
-        const ds = new google.maps.DirectionsService();
-
-        const route = await new Promise((resolve) => {
-          ds.route(
-            {
-              origin: coords.pickup
-                ? new google.maps.LatLng(coords.pickup.lat, coords.pickup.lng)
-                : v.pickup,
-              destination: coords.dropoff
-                ? new google.maps.LatLng(coords.dropoff.lat, coords.dropoff.lng)
-                : v.dropoff,
-              travelMode: google.maps.TravelMode.DRIVING
-            },
-            (res, status) => {
-              if (status === "OK" && res?.routes?.[0]?.legs?.[0]) {
-                const leg = res.routes[0].legs[0];
-                resolve({
-                  distance_m: leg.distance.value,
-                  duration_s: leg.duration.value
-                });
-              } else {
-                resolve(null);
-              }
-            }
-          );
-        });
-
-        if (route) return route;
-      }
-
-      const ok = await ensureCoordsFromInputs();
-      if (!ok) return null;
-
-      const miles = haversineMiles(
-        coords.pickup.lat,
-        coords.pickup.lng,
-        coords.dropoff.lat,
-        coords.dropoff.lng
-      );
-
-      const approxMinutes = Math.max(8, Math.round((miles / 22) * 60));
-
-      return {
-        distance_m: miles * 1609.344,
-        duration_s: approxMinutes * 60
-      };
-    }
-
-    async function refreshEstimates() {
-      setLoading(true);
-
-      els.uberPrice.textContent = "$ —";
-      els.lyftPrice.textContent = "$ —";
-      els.uberEta.textContent = "ETA —";
-      els.lyftEta.textContent = "ETA —";
-      els.uberTag.textContent = "Estimate";
-      els.lyftTag.textContent = "Estimate";
-      els.uberTag.classList.remove("best");
-      els.lyftTag.classList.remove("best");
-
-      const route = await computeRoute();
-
-      if (!route) {
-        lastRoute = { distance_m: null, duration_s: null };
-        setStatus("Could not estimate this route yet. Please enter a more complete pickup and dropoff address.");
-        setLoading(false);
-        return;
-      }
-
-      lastRoute = route;
-      applyFareUI(estimateFares(route.distance_m, route.duration_s));
-      incrementRideCounter();
-      setStatus(`Estimated fares ready for: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`);
-      setLoading(false);
-
-      if (els.mobileStickyCta) {
-        els.mobileStickyCta.style.display = "flex";
-      }
-    }
-
-    async function openUber() {
-      const v = validateInputs();
-      if (!v) return;
-
-      const ok = await ensureCoordsFromInputs();
-      if (!ok) {
-        setStatus("Please enter a more complete pickup and dropoff address.");
-        return;
-      }
-
-      const url = buildUberLink(v.pickup, v.dropoff);
-      logEvent("ride_click", { provider: "Uber", url });
-      window.open(url, "_blank", "noopener");
-    }
-
-    function openLyft() {
-      const v = validateInputs();
-      if (!v) return;
-
-      const deepLink = buildLyftLink(v.pickup, v.dropoff);
-
-      if (!isMobileDevice()) {
-        logEvent("ride_click", { provider: "Lyft", url: LYFT_REFERRAL_URL, mode: "desktop_referral" });
-        window.open(LYFT_REFERRAL_URL, "_blank", "noopener");
-        return;
-      }
-
-      logEvent("ride_click", { provider: "Lyft", url: deepLink, mode: "mobile_deeplink" });
-
-      const start = Date.now();
-      window.location.href = deepLink;
-
-      setTimeout(() => {
-        if (Date.now() - start < 1800) {
-          window.location.href = LYFT_REFERRAL_URL;
-        }
-      }, 1200);
-    }
-
-    async function shareComparison() {
-      const v = validateInputs();
-      if (!v) return;
-
-      const url = new URL(window.location.origin + window.location.pathname);
-      url.searchParams.set("pickup", v.pickup);
-      url.searchParams.set("dropoff", v.dropoff);
-      if (els.date.value) url.searchParams.set("rideDate", els.date.value);
-      if (els.time.value) url.searchParams.set("rideTime", els.time.value);
-
-      try {
-        await navigator.clipboard.writeText(url.toString());
-        setStatus("Comparison link copied to clipboard ✅");
-        logEvent("share_compare", { url: url.toString() });
-      } catch (err) {
-        setStatus("Could not copy link. You can copy the URL from your browser.");
-      }
-    }
-
-    function hydrateFromQueryParams() {
-      const params = new URLSearchParams(window.location.search);
-      const pickup = params.get("pickup");
-      const dropoff = params.get("dropoff");
-      const rideDate = params.get("rideDate");
-      const rideTime = params.get("rideTime");
-
-      if (pickup) els.pickup.value = pickup;
-      if (dropoff) els.dropoff.value = dropoff;
-      if (rideDate) els.date.value = rideDate;
-      if (rideTime) els.time.value = rideTime;
-    }
-
-    window.initAutocomplete = function initAutocomplete() {
-      setHelper("Start typing pickup and dropoff, then select a suggested address.");
-
-      attachAutocomplete(els.pickup, "pickup");
-      attachAutocomplete(els.dropoff, "dropoff");
-
-      els.pickup.addEventListener("blur", async () => {
-        if (!coords.pickup && els.pickup.value.trim()) {
-          const p = await geocodeAddress(els.pickup.value.trim());
-          if (p) {
-            coords.pickup = { lat: p.lat, lng: p.lng };
-            selectedPlaces.pickup = {
-              name: splitAddressLines(p.formatted).line1,
-              formattedAddress: p.formatted,
-              lat: p.lat,
-              lng: p.lng
-            };
-          }
-        }
-      });
-
-      els.dropoff.addEventListener("blur", async () => {
-        if (!coords.dropoff && els.dropoff.value.trim()) {
-          const d = await geocodeAddress(els.dropoff.value.trim());
-          if (d) {
-            coords.dropoff = { lat: d.lat, lng: d.lng };
-            selectedPlaces.dropoff = {
-              name: splitAddressLines(d.formatted).line1,
-              formattedAddress: d.formatted,
-              lat: d.lat,
-              lng: d.lng
-            };
-          }
-        }
-      });
-    };
-
-    window.__gmapsFail = function () {
-      setHelper("Address lookup failed to load. You can still type addresses manually.");
-    };
-
-    els.btnUber.addEventListener("click", openUber);
-    els.btnLyft.addEventListener("click", openLyft);
-    els.btnCompare.addEventListener("click", () => {
-      logEvent("cta_compare_click");
-      scrollToAvailable();
-    });
-    els.btnScrollBooking.addEventListener("click", () => {
-      logEvent("cta_find_click");
-      scrollToBooking();
-    });
-    els.btnShareCompare.addEventListener("click", shareComparison);
-
-    els.mobileBestRideBtn.addEventListener("click", () => {
-      if (lastBestProvider === "Uber") openUber();
-      else openLyft();
-    });
-
-    els.mobileCompareBtn.addEventListener("click", scrollToAvailable);
-
-    els.rideForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const v = validateInputs();
-      if (!v) return;
-
-      logEvent("search_submit");
-      await refreshEstimates();
-      scrollToAvailable();
-    });
-
-    if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
-      els.waitlistForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const email = els.waitlistEmail.value.trim();
-
-        if (!email) {
-          els.waitlistStatus.textContent = "Please enter a valid email address.";
-          return;
-        }
-
-        els.waitlistStatus.textContent = "Joining waitlist...";
-        const result = await saveWaitlist(email);
-
-        if (result.ok) {
-          els.waitlistStatus.textContent = "You're on the waitlist ✅";
-          els.waitlistEmail.value = "";
-          logEvent("waitlist_signup");
-        } else {
-          els.waitlistStatus.textContent = "Waitlist signup failed. Please try again later.";
-        }
-      });
-    }
-
-    window.addEventListener("load", () => {
-      updateLyftButtonUI();
-      hydrateRideCounter();
-      hydrateFromQueryParams();
-      logEvent("page_view", { supabaseEnabled });
-    });
   </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
 
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBz8nr961uD8aCTea3XfLt8hku6BXfKXL4&libraries=places&callback=initAutocomplete"
     async
     defer
-    onerror="window.__gmapsFail()"
+    onerror="window.__gmapsFail && window.__gmapsFail()"
   ></script>
 </body>
 </html>
+
 
 
 
