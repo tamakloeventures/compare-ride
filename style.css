@@ -331,23 +331,42 @@ input:focus {
 /* Ride cards */
 .rides-row {
   display: flex;
-  gap: 18px;
+  gap: 24px;
   justify-content: center;
   align-items: stretch;
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: 18px;
 }
 
 .ride-card {
   width: min(520px, 92vw);
   border: 1px solid rgba(15, 23, 42, 0.1);
-  border-radius: 18px;
-  padding: 18px 18px 16px;
+  border-radius: 22px;
+  padding: 22px 22px 18px;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   background: #fff;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.ride-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.12);
+}
+
+.ride-card.best-pick {
+  border: 2px solid rgba(16, 185, 129, 0.45);
+  box-shadow:
+    0 18px 40px rgba(16, 185, 129, 0.14),
+    0 10px 24px rgba(15, 23, 42, 0.09);
+  transform: translateY(-3px);
+}
+
+.ride-card.best-pick .pricebox {
+  background: linear-gradient(90deg, #f0fdf4, #fbfdff);
+  border-color: rgba(16, 185, 129, 0.28);
 }
 
 .ride-top {
@@ -356,10 +375,21 @@ input:focus {
   gap: 12px;
 }
 
+.ride-top.with-badge {
+  justify-content: space-between;
+}
+
+.ride-top-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
 .logo-badge {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
   display: grid;
   place-items: center;
   flex: 0 0 auto;
@@ -370,8 +400,8 @@ input:focus {
 }
 
 .logo-badge img {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
   display: block;
 }
@@ -399,19 +429,35 @@ input:focus {
   color: var(--muted-2);
 }
 
+.best-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 1px rgba(22, 101, 52, 0.12);
+}
+
 .pricebox {
   border: 1px dashed rgba(15, 23, 42, 0.18);
-  border-radius: 14px;
-  padding: 12px;
+  border-radius: 18px;
+  padding: 16px 16px;
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
   background: #fbfcff;
 }
 
 .pricebox b {
-  font-size: 16px;
+  font-size: 20px;
 }
 
 .price-label {
@@ -425,7 +471,7 @@ input:focus {
 .price-eta {
   font-size: 12px;
   color: #64748b;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .tag {
@@ -433,7 +479,7 @@ input:focus {
   font-weight: 900;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 6px 10px;
+  padding: 8px 12px;
   border-radius: 999px;
   background: #e2e8f0;
   color: #0f172a;
@@ -478,6 +524,22 @@ input:focus {
   color: var(--muted-2);
   font-size: 13px;
   line-height: 1.5;
+}
+
+/* Result banner using existing statusNote element */
+#statusNote {
+  max-width: 920px;
+  margin: 28px auto 0;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: linear-gradient(90deg, #eff6ff, #ecfeff);
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  color: #0f172a;
+  text-align: center;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.08);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.6;
 }
 
 .notice-bar {
@@ -684,6 +746,28 @@ footer {
     min-width: 0;
     width: 100%;
   }
+
+  .ride-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ride-top.with-badge {
+    align-items: flex-start;
+  }
+
+  .best-badge {
+    margin-top: 6px;
+  }
+
+  #statusNote {
+    padding: 14px;
+    font-size: 14px;
+  }
+
+  .ride-card.best-pick {
+    transform: none;
+  }
 }
 
 @media (max-width: 640px) {
@@ -701,6 +785,7 @@ footer {
 }
 
   
+
 
 
 
