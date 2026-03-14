@@ -758,15 +758,19 @@ function initAppEvents() {
   els.mobileCompareBtn?.addEventListener("click", scrollToAvailable);
 
   els.rideForm?.addEventListener("submit", async (event) => {
-    event.preventDefault();
+  event.preventDefault();
+  const values = validateInputs();
+  if (!values) return;
 
-    const values = validateInputs();
-    if (!values) return;
-
-    logEvent("search_submit");
-    await refreshEstimates();
-    scrollToAvailable();
+  logEvent("search_submit");
+  trackEvent("ride_search", {
+    pickup_present: Boolean(values.pickup),
+    dropoff_present: Boolean(values.dropoff)
   });
+
+  await refreshEstimates();
+  scrollToAvailable();
+});
 
   if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
     els.waitlistForm.addEventListener("submit", async (event) => {
@@ -843,6 +847,7 @@ window.addEventListener("load", () => {
   initAppEvents();
   logEvent("page_view", { supabaseEnabled });
 });
+
 
 
 
