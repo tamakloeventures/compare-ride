@@ -778,15 +778,12 @@ function initAppEvents() {
       const result = await saveWaitlist(email);
 
       if (result.ok) {
-        els.waitlistStatus.textContent = "You're on the waitlist ✅";
-        els.waitlistEmail.value = "";
-        logEvent("waitlist_signup");
-      } else {
-        els.waitlistStatus.textContent =
-          "Waitlist signup failed. Please try again later.";
-      }
-    });
-  }
+  els.waitlistStatus.textContent = "You're on the waitlist ✅";
+  els.waitlistEmail.value = "";
+  logEvent("waitlist_signup");
+} else {
+  console.error("Waitlist error:", result.error);
+  els.waitlistStatus.textContent = "Waitlist signup failed. Please try again later.";
 }
 
 window.initAutocomplete = function initAutocomplete() {
@@ -840,4 +837,5 @@ window.addEventListener("load", () => {
   initAppEvents();
   logEvent("page_view", { supabaseEnabled });
 });
+
 
