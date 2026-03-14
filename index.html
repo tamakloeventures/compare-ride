@@ -870,6 +870,9 @@ body::before{
   const supabaseEnabled = SUPABASE_URL.startsWith("http") && SUPABASE_ANON_KEY.length > 30;
   const sb = supabaseEnabled ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
+  const coords = { pickup: null, dropoff: null };
+  const selectedPlaces = { pickup: null, dropoff: null };
+  
   const els = {
     pickup: document.getElementById("pickup"),
     dropoff: document.getElementById("dropoff"),
@@ -1214,41 +1217,33 @@ body::before{
   }
 
   function buildUberLink(pickupText, dropoffText) {
-    const params = new URLSearchParams();
+  const pickupObj = {
+    addressLine1: splitAddressLines(selectedPlaces.pickup?.formattedAddress || pickupText).line1,
+    addressLine2: splitAddressLines(selectedPlaces.pickup?.formattedAddress || pickupText).line2,
+    id: crypto.randomUUID(),
+    source: "SEARCH",
+    latitude: coords.pickup?.lat ?? null,
+    longitude: coords.pickup?.lng ?? null,
+    provider: "uber_places"
+  };
 
-    params.set("action", "setPickup");
+  const dropoffObj = {
+    addressLine1: splitAddressLines(selectedPlaces.dropoff?.formattedAddress || dropoffText).line1,
+    addressLine2: splitAddressLines(selectedPlaces.dropoff?.formattedAddress || dropoffText).line2,
+    id: crypto.randomUUID(),
+    source: "SEARCH",
+    latitude: coords.dropoff?.lat ?? null,
+    longitude: coords.dropoff?.lng ?? null,
+    provider: "uber_places"
+  };
 
-    if (UBER_CLIENT_ID && UBER_CLIENT_ID !== "PASTE_YOUR_UBER_CLIENT_ID_HERE") {
-      params.set("client_id", UBER_CLIENT_ID);
-    }
+  const params = new URLSearchParams();
+  params.set("pickup", JSON.stringify(pickupObj));
+  params.set("drop[0]", JSON.stringify(dropoffObj));
+  params.set("vehicle", "326");
 
-    if (coords.pickup?.lat != null && coords.pickup?.lng != null) {
-      params.set("pickup[latitude]", String(coords.pickup.lat));
-      params.set("pickup[longitude]", String(coords.pickup.lng));
-      params.set(
-        "pickup[formatted_address]",
-        selectedPlaces.pickup?.formattedAddress || pickupText
-      );
-      params.set("pickup[nickname]", "Pickup");
-    } else {
-      params.set("pickup", "my_location");
-    }
-
-    if (coords.dropoff?.lat != null && coords.dropoff?.lng != null) {
-      params.set("dropoff[latitude]", String(coords.dropoff.lat));
-      params.set("dropoff[longitude]", String(coords.dropoff.lng));
-      params.set(
-        "dropoff[formatted_address]",
-        selectedPlaces.dropoff?.formattedAddress || dropoffText
-      );
-      params.set("dropoff[nickname]", "Dropoff");
-    } else if (dropoffText) {
-      params.set("dropoff[formatted_address]", dropoffText);
-      params.set("dropoff[nickname]", "Dropoff");
-    }
-
-    return `https://m.uber.com/ul/?${params.toString()}`;
-  }
+  return `https://m.uber.com/go/product-selection?${params.toString()}`;
+}
 
   function buildLyftLink(pickupText, dropoffText) {
     const base = "https://lyft.com/ride";
@@ -1373,7 +1368,7 @@ body::before{
 
     const ok = await ensureCoordsFromInputs();
     if (!ok) {
-      setStatus("Please choose a more complete pickup and dropoff address before opening Uber.");
+      setStatus("Please enter a more complete pickup and dropoff address.");
       return;
     }
 
@@ -1381,7 +1376,7 @@ body::before{
     logEvent("ride_click", { provider: "Uber", url });
     window.open(url, "_blank", "noopener");
   }
-
+  
   function openLyft() {
     const v = validateInputs();
     if (!v) return;
@@ -1619,6 +1614,7 @@ body::before{
   
 </body>
 </html>
+
 
 
 
