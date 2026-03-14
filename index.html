@@ -1459,6 +1459,28 @@ body::before{
     return autocomplete;
   }
 
+  function splitAddressLines(address) {
+    const parts = String(address || "").split(",").map(s => s.trim()).filter(Boolean);
+    const line1 = parts.shift() || address || "";
+    const line2 = parts.join(", ") || "";
+    return { line1, line2 };
+  }
+
+  function buildUberPlaceObject(addressText, coordObj, selectedPlaceObj) {
+    const bestAddress = selectedPlaceObj?.formattedAddress || addressText || "";
+    const { line1, line2 } = splitAddressLines(bestAddress);
+
+    return {
+      addressLine1: selectedPlaceObj?.name || line1,
+      addressLine2: line2 || line1,
+      id: crypto.randomUUID(),
+      source: "SEARCH",
+      latitude: coordObj?.lat ?? null,
+      longitude: coordObj?.lng ?? null,
+      provider: "uber_places"
+    };
+  }
+  
   window.initAutocomplete = function initAutocomplete() {
     console.log("[RideCompare] Google Maps loaded");
 
@@ -1597,6 +1619,7 @@ body::before{
   
 </body>
 </html>
+
 
 
 
