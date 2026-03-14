@@ -67,6 +67,8 @@ let lastRoute = {
 
 let lastBestProvider = "Uber";
 
+const DISPLAY_COUNTER_BASE = 127;
+
 function setStatus(message) {
   if (els.statusNote) {
     els.statusNote.textContent = message;
@@ -107,6 +109,19 @@ function updateLyftButtonUI() {
     els.btnLyft.textContent = "Get Lyft App";
     els.lyftSubtitle.textContent = "Continue with Lyft app";
   }
+}
+
+function cleanupDuplicateLogos() {
+  const badges = document.querySelectorAll(".logo-badge");
+
+  badges.forEach((badge) => {
+    const images = badge.querySelectorAll("img");
+    if (images.length <= 1) return;
+
+    for (let i = 1; i < images.length; i += 1) {
+      images[i].remove();
+    }
+  });
 }
 
 function setLoading(isLoading) {
@@ -161,7 +176,7 @@ async function saveWaitlist(email) {
     });
 
     if (error) {
-      return { ok: false, error: error.message };
+      return { ok: false, error: error.message || String(error) };
     }
 
     return { ok: true };
@@ -278,16 +293,19 @@ function incrementRideCounter() {
   const current = Number(localStorage.getItem("rc_compare_count") || "0") + 1;
   localStorage.setItem("rc_compare_count", String(current));
 
+  const displayCount = DISPLAY_COUNTER_BASE + current;
+
   if (els.ridesComparedCount) {
-    els.ridesComparedCount.textContent = current.toLocaleString();
+    els.ridesComparedCount.textContent = displayCount.toLocaleString();
   }
 }
 
 function hydrateRideCounter() {
-  const current = Number(localStorage.getItem("rc_compare_count") || "0");
+  const stored = Number(localStorage.getItem("rc_compare_count") || "0");
+  const displayCount = DISPLAY_COUNTER_BASE + stored;
 
   if (els.ridesComparedCount) {
-    els.ridesComparedCount.textContent = current.toLocaleString();
+    els.ridesComparedCount.textContent = displayCount.toLocaleString();
   }
 }
 
@@ -593,10 +611,12 @@ async function refreshEstimates() {
 
   const estimate = estimateFares(route.distance_m, route.duration_s);
   applyFareUI(estimate);
+
+  setHelper("Your estimates are ready. Choose Uber or Lyft to continue.");
   incrementRideCounter();
 
   setStatus(
-    `Estimated fares ready for: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`
+    `${lastBestProvider} looks like the best value for this trip: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`
   );
 
   setLoading(false);
@@ -785,8 +805,22 @@ function initAppEvents() {
         logEvent("waitlist_signup");
       } else {
         console.error("Waitlist error:", result.error);
-        els.waitlistStatus.textContent =
-          "Waitlist signup failed. Please try again later.";
+
+        const errorText = String(result.error || "").toLowerCase();
+
+        if (
+          errorText.includes("duplicate") ||
+          errorText.includes("unique") ||
+          errorText.includes("already")
+        ) {
+          els.waitlistStatus.textContent = "This email is already on the waitlist ✅";
+        } else if (errorText.includes("permission") || errorText.includes("policy")) {
+          els.waitlistStatus.textContent =
+            "Waitlist permissions need one small Supabase fix.";
+        } else {
+          els.waitlistStatus.textContent =
+            "Waitlist signup failed. Please try again later.";
+        }
       }
     });
   }
@@ -836,6 +870,7 @@ window.__gmapsFail = function __gmapsFail() {
 };
 
 window.addEventListener("load", () => {
+  cleanupDuplicateLogos();
   updateLyftButtonUI();
   hydrateRideCounter();
   hydrateFromQueryParams();
@@ -843,6 +878,7 @@ window.addEventListener("load", () => {
   initAppEvents();
   logEvent("page_view", { supabaseEnabled });
 });
+
 
 
 
