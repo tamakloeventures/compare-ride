@@ -621,10 +621,11 @@ async function openUber() {
   }
 
   const url = buildUberLink(values.pickup, values.dropoff);
-  logEvent("ride_click", {
-    provider: "Uber",
-    url
-  });
+  logEvent("ride_click", { provider: "Uber", url });
+trackEvent("ride_click", {
+  provider: "Uber"
+});
+window.open(url, "_blank", "noopener,noreferrer");
 
   window.open(url, "_blank", "noopener,noreferrer");
 }
@@ -643,20 +644,29 @@ async function openLyft() {
 
   if (!isMobileDevice()) {
     logEvent("ride_click", {
-      provider: "Lyft",
-      url: LYFT_REFERRAL_URL,
-      mode: "desktop_referral"
-    });
+  provider: "Lyft",
+  url: LYFT_REFERRAL_URL,
+  mode: "desktop_referral"
+});
+trackEvent("ride_click", {
+  provider: "Lyft",
+  mode: "desktop_referral"
+});
+window.open(LYFT_REFERRAL_URL, "_blank", "noopener,noreferrer");
 
     window.open(LYFT_REFERRAL_URL, "_blank", "noopener,noreferrer");
     return;
   }
 
   logEvent("ride_click", {
-    provider: "Lyft",
-    url: deepLink,
-    mode: "mobile_deeplink"
-  });
+  provider: "Lyft",
+  url: deepLink,
+  mode: "mobile_deeplink"
+});
+trackEvent("ride_click", {
+  provider: "Lyft",
+  mode: "mobile_deeplink"
+});
 
   const startTime = Date.now();
   window.location.href = deepLink;
@@ -791,6 +801,7 @@ function initAppEvents() {
   els.waitlistStatus.textContent = "You're on the waitlist ✅";
   els.waitlistEmail.value = "";
   logEvent("waitlist_signup");
+  trackEvent("waitlist_signup");
 } else {
   console.error("Waitlist error:", result.error);
   els.waitlistStatus.textContent = "Waitlist signup failed. Please try again later.";
@@ -847,6 +858,7 @@ window.addEventListener("load", () => {
   initAppEvents();
   logEvent("page_view", { supabaseEnabled });
 });
+
 
 
 
