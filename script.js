@@ -67,12 +67,6 @@ let lastRoute = {
 
 let lastBestProvider = "Uber";
 
-function trackEvent(eventName, params = {}) {
-  if (typeof window.gtag === "function") {
-    window.gtag("event", eventName, params);
-  }
-}
-
 function setStatus(message) {
   if (els.statusNote) {
     els.statusNote.textContent = message;
@@ -284,14 +278,18 @@ function incrementRideCounter() {
   const current = Number(localStorage.getItem("rc_compare_count") || "0") + 1;
   localStorage.setItem("rc_compare_count", String(current));
 
-  const displayCount = 127 + current;
-
   if (els.ridesComparedCount) {
-    els.ridesComparedCount.textContent = displayCount.toLocaleString();
+    els.ridesComparedCount.textContent = current.toLocaleString();
   }
 }
 
 function hydrateRideCounter() {
+  const current = Number(localStorage.getItem("rc_compare_count") || "0");
+
+  if (els.ridesComparedCount) {
+    els.ridesComparedCount.textContent = current.toLocaleString();
+  }
+}
 
 async function geocodeAddress(address) {
   if (!window.google || !google.maps || !google.maps.Geocoder) {
@@ -376,7 +374,7 @@ function attachManualEditReset(inputEl, kind) {
       clearStoredPlace(kind);
     }
 
-    setStatus("Update your trip details, then click “Find Best Rates”.");
+    setStatus("Update your trip details, then click Find Best Rates.");
   });
 }
 
@@ -565,10 +563,12 @@ async function refreshEstimates() {
   if (els.lyftPrice) els.lyftPrice.textContent = "$ —";
   if (els.uberEta) els.uberEta.textContent = "ETA —";
   if (els.lyftEta) els.lyftEta.textContent = "ETA —";
+
   if (els.uberTag) {
     els.uberTag.textContent = "Estimate";
     els.uberTag.classList.remove("best");
   }
+
   if (els.lyftTag) {
     els.lyftTag.textContent = "Estimate";
     els.lyftTag.classList.remove("best");
@@ -583,8 +583,8 @@ async function refreshEstimates() {
     };
 
     setStatus(
-  `${lastBestProvider} looks like the best value for this trip: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`
-);
+      "Could not estimate this route yet. Please enter a more complete pickup and dropoff address."
+    );
     setLoading(false);
     return;
   }
@@ -593,7 +593,6 @@ async function refreshEstimates() {
 
   const estimate = estimateFares(route.distance_m, route.duration_s);
   applyFareUI(estimate);
-  setHelper("Your estimates are ready. Choose Uber or Lyft to continue.");
   incrementRideCounter();
 
   setStatus(
@@ -618,11 +617,10 @@ async function openUber() {
   }
 
   const url = buildUberLink(values.pickup, values.dropoff);
-  logEvent("ride_click", { provider: "Uber", url });
-trackEvent("ride_click", {
-  provider: "Uber"
-});
-window.open(url, "_blank", "noopener,noreferrer");
+  logEvent("ride_click", {
+    provider: "Uber",
+    url
+  });
 
   window.open(url, "_blank", "noopener,noreferrer");
 }
@@ -641,29 +639,20 @@ async function openLyft() {
 
   if (!isMobileDevice()) {
     logEvent("ride_click", {
-  provider: "Lyft",
-  url: LYFT_REFERRAL_URL,
-  mode: "desktop_referral"
-});
-trackEvent("ride_click", {
-  provider: "Lyft",
-  mode: "desktop_referral"
-});
-window.open(LYFT_REFERRAL_URL, "_blank", "noopener,noreferrer");
+      provider: "Lyft",
+      url: LYFT_REFERRAL_URL,
+      mode: "desktop_referral"
+    });
 
     window.open(LYFT_REFERRAL_URL, "_blank", "noopener,noreferrer");
     return;
   }
 
   logEvent("ride_click", {
-  provider: "Lyft",
-  url: deepLink,
-  mode: "mobile_deeplink"
-});
-trackEvent("ride_click", {
-  provider: "Lyft",
-  mode: "mobile_deeplink"
-});
+    provider: "Lyft",
+    url: deepLink,
+    mode: "mobile_deeplink"
+  });
 
   const startTime = Date.now();
   window.location.href = deepLink;
@@ -765,19 +754,15 @@ function initAppEvents() {
   els.mobileCompareBtn?.addEventListener("click", scrollToAvailable);
 
   els.rideForm?.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const values = validateInputs();
-  if (!values) return;
+    event.preventDefault();
 
-  logEvent("search_submit");
-  trackEvent("ride_search", {
-    pickup_present: Boolean(values.pickup),
-    dropoff_present: Boolean(values.dropoff)
+    const values = validateInputs();
+    if (!values) return;
+
+    logEvent("search_submit");
+    await refreshEstimates();
+    scrollToAvailable();
   });
-
-  await refreshEstimates();
-  scrollToAvailable();
-});
 
   if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
     els.waitlistForm.addEventListener("submit", async (event) => {
@@ -795,13 +780,16 @@ function initAppEvents() {
       const result = await saveWaitlist(email);
 
       if (result.ok) {
-  els.waitlistStatus.textContent = "You're on the waitlist ✅";
-  els.waitlistEmail.value = "";
-  logEvent("waitlist_signup");
-  trackEvent("waitlist_signup");
-} else {
-  console.error("Waitlist error:", result.error);
-  els.waitlistStatus.textContent = "Waitlist signup failed. Please try again later.";
+        els.waitlistStatus.textContent = "You're on the waitlist ✅";
+        els.waitlistEmail.value = "";
+        logEvent("waitlist_signup");
+      } else {
+        console.error("Waitlist error:", result.error);
+        els.waitlistStatus.textContent =
+          "Waitlist signup failed. Please try again later.";
+      }
+    });
+  }
 }
 
 window.initAutocomplete = function initAutocomplete() {
