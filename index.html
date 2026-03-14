@@ -21,11 +21,10 @@
   <meta name="robots" content="index,follow" />
   <link rel="icon" href="https://tamakloeventures.com/uber-logo.svg" />
 
-  <!-- Google Analytics (replace G-XXXXXXXXXX with your GA4 Measurement ID) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
+    function gtag(){ dataLayer.push(arguments); }
     gtag("js", new Date());
     gtag("config", "G-XXXXXXXXXX");
   </script>
@@ -37,7 +36,6 @@
       --muted-2:#64748b;
       --card:#ffffff;
       --shadow:0 14px 40px rgba(0,0,0,.18);
-      --radius:16px;
       --blue:#2563eb;
       --blue2:#1d4ed8;
       --pink:#ff00b8;
@@ -620,7 +618,6 @@
     }
   </style>
 </head>
-
 <body>
   <header class="hero" id="top">
     <div class="hero-left">
@@ -873,365 +870,344 @@
   </section>
 
   <footer>
-  © 2024–2026 Tamakloe Ventures LLC. All rights reserved.
-</footer>
+    © 2024–2026 Tamakloe Ventures LLC. All rights reserved.
+  </footer>
 
-<div class="mobile-sticky-cta" id="mobileStickyCta" style="display:none;">
-  <button class="btn btn-primary" id="mobileBestRideBtn" type="button">Open Best Value</button>
-  <button class="btn btn-outline" id="mobileCompareBtn" type="button">Compare</button>
-</div>
+  <div class="mobile-sticky-cta" id="mobileStickyCta" style="display:none;">
+    <button class="btn btn-primary" id="mobileBestRideBtn" type="button">Open Best Value</button>
+    <button class="btn btn-outline" id="mobileCompareBtn" type="button">Compare</button>
+  </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  console.log("[RideCompare] Clean build loaded");
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = "https://prglhlctcswjccajsvxr.supabase.co";
+    const SUPABASE_ANON_KEY = "sb_publishable_BM9ApnCCqHYai5ZaZPf0Pw_l1N4Vatk";
+    const LYFT_REFERRAL_URL = "https://www.lyft.com/i/ELVIS98387";
 
-  const SUPABASE_URL = "https://prglhlctcswjccajsvxr.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_BM9ApnCCqHYai5ZaZPf0Pw_l1N4Vatk";
-  const LYFT_REFERRAL_URL = "https://www.lyft.com/i/ELVIS98387";
+    const supabaseEnabled = SUPABASE_URL.startsWith("http") && SUPABASE_ANON_KEY.length > 30;
+    const sb = supabaseEnabled ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
-  const supabaseEnabled = SUPABASE_URL.startsWith("http") && SUPABASE_ANON_KEY.length > 30;
-  const sb = supabaseEnabled ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+    const els = {
+      pickup: document.getElementById("pickup"),
+      dropoff: document.getElementById("dropoff"),
+      date: document.getElementById("rideDate"),
+      time: document.getElementById("rideTime"),
+      rideForm: document.getElementById("rideForm"),
+      btnCompare: document.getElementById("btnCompare"),
+      btnScrollBooking: document.getElementById("btnScrollBooking"),
+      btnFindRates: document.getElementById("btnFindRates"),
+      btnUber: document.getElementById("btnUber"),
+      btnLyft: document.getElementById("btnLyft"),
+      btnShareCompare: document.getElementById("btnShareCompare"),
+      statusNote: document.getElementById("statusNote"),
+      helperText: document.getElementById("helperText"),
+      available: document.getElementById("available"),
+      bookingCard: document.getElementById("bookingCard"),
+      uberPrice: document.getElementById("uberPrice"),
+      lyftPrice: document.getElementById("lyftPrice"),
+      uberEta: document.getElementById("uberEta"),
+      lyftEta: document.getElementById("lyftEta"),
+      uberTag: document.getElementById("uberTag"),
+      lyftTag: document.getElementById("lyftTag"),
+      waitlistForm: document.getElementById("waitlistForm"),
+      waitlistEmail: document.getElementById("waitlistEmail"),
+      waitlistStatus: document.getElementById("waitlistStatus"),
+      lyftSubtitle: document.getElementById("lyftSubtitle"),
+      ridesComparedCount: document.getElementById("ridesComparedCount"),
+      mobileStickyCta: document.getElementById("mobileStickyCta"),
+      mobileBestRideBtn: document.getElementById("mobileBestRideBtn"),
+      mobileCompareBtn: document.getElementById("mobileCompareBtn")
+    };
 
-  const els = {
-    pickup: document.getElementById("pickup"),
-    dropoff: document.getElementById("dropoff"),
-    date: document.getElementById("rideDate"),
-    time: document.getElementById("rideTime"),
-    rideForm: document.getElementById("rideForm"),
-    btnCompare: document.getElementById("btnCompare"),
-    btnScrollBooking: document.getElementById("btnScrollBooking"),
-    btnFindRates: document.getElementById("btnFindRates"),
-    btnUber: document.getElementById("btnUber"),
-    btnLyft: document.getElementById("btnLyft"),
-    btnShareCompare: document.getElementById("btnShareCompare"),
-    statusNote: document.getElementById("statusNote"),
-    helperText: document.getElementById("helperText"),
-    available: document.getElementById("available"),
-    bookingCard: document.getElementById("bookingCard"),
-    uberPrice: document.getElementById("uberPrice"),
-    lyftPrice: document.getElementById("lyftPrice"),
-    uberEta: document.getElementById("uberEta"),
-    lyftEta: document.getElementById("lyftEta"),
-    uberTag: document.getElementById("uberTag"),
-    lyftTag: document.getElementById("lyftTag"),
-    waitlistForm: document.getElementById("waitlistForm"),
-    waitlistEmail: document.getElementById("waitlistEmail"),
-    waitlistStatus: document.getElementById("waitlistStatus"),
-    lyftSubtitle: document.getElementById("lyftSubtitle"),
-    ridesComparedCount: document.getElementById("ridesComparedCount"),
-    mobileStickyCta: document.getElementById("mobileStickyCta"),
-    mobileBestRideBtn: document.getElementById("mobileBestRideBtn"),
-    mobileCompareBtn: document.getElementById("mobileCompareBtn")
-  };
+    const sessionId = localStorage.getItem("rc_session") || crypto.randomUUID();
+    localStorage.setItem("rc_session", sessionId);
 
-  const sessionId = localStorage.getItem("rc_session") || crypto.randomUUID();
-  localStorage.setItem("rc_session", sessionId);
+    const coords = { pickup: null, dropoff: null };
+    const selectedPlaces = { pickup: null, dropoff: null };
+    let lastRoute = { distance_m: null, duration_s: null };
+    let lastBestProvider = "Uber";
 
-  const coords = { pickup: null, dropoff: null };
-  const selectedPlaces = { pickup: null, dropoff: null };
-  let lastRoute = { distance_m: null, duration_s: null };
-  let lastBestProvider = "Uber";
-
-  function setStatus(msg) {
-    if (els.statusNote) els.statusNote.textContent = msg;
-  }
-
-  function setHelper(msg) {
-    if (els.helperText) els.helperText.textContent = msg;
-  }
-
-  function scrollToBooking() {
-    if (els.bookingCard) {
-      els.bookingCard.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  }
-
-  function scrollToAvailable() {
-    if (els.available) {
-      els.available.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }
-
-  function isMobileDevice() {
-    return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-  }
-
-  function updateLyftButtonUI() {
-    if (!els.btnLyft || !els.lyftSubtitle) return;
-
-    if (isMobileDevice()) {
-      els.btnLyft.textContent = "Book with Lyft";
-      els.lyftSubtitle.textContent = "Open in Lyft app";
-    } else {
-      els.btnLyft.textContent = "Get Lyft App";
-      els.lyftSubtitle.textContent = "Continue with Lyft app";
-    }
-  }
-
-  function setLoading(isLoading) {
-    if (!els.btnFindRates) return;
-
-    if (isLoading) {
-      els.btnFindRates.classList.add("btn-loading");
-      els.btnFindRates.disabled = true;
-      els.btnFindRates.textContent = "Calculating";
-    } else {
-      els.btnFindRates.classList.remove("btn-loading");
-      els.btnFindRates.disabled = false;
-      els.btnFindRates.textContent = "Find Best Rates";
-    }
-  }
-
-  async function logEvent(eventName, extra = {}) {
-    if (!supabaseEnabled || !sb) return;
-
-    try {
-      await sb.from("app_events").insert({
-        session_id: sessionId,
-        event_name: eventName,
-        page: location.pathname,
-        pickup_text: els.pickup?.value?.trim() || null,
-        dropoff_text: els.dropoff?.value?.trim() || null,
-        pickup_lat: coords.pickup?.lat ?? null,
-        pickup_lng: coords.pickup?.lng ?? null,
-        dropoff_lat: coords.dropoff?.lat ?? null,
-        dropoff_lng: coords.dropoff?.lng ?? null,
-        distance_meters: lastRoute.distance_m ?? null,
-        duration_seconds: lastRoute.duration_s ?? null,
-        provider: extra.provider ?? null,
-        user_agent: navigator.userAgent,
-        referrer: document.referrer || null,
-        extra
-      });
-    } catch (err) {
-      console.warn("[RideCompare] logEvent failed:", err);
-    }
-  }
-
-  async function saveWaitlist(email) {
-    if (!supabaseEnabled || !sb) return { ok: false, error: "Supabase not configured" };
-
-    try {
-      const { error } = await sb.from("waitlist").insert({
-        email,
-        source: "ridecompare_homepage"
-      });
-
-      if (error) return { ok: false, error: error.message };
-      return { ok: true };
-    } catch (err) {
-      return { ok: false, error: String(err) };
-    }
-  }
-
-  function validateInputs() {
-    const pickup = els.pickup?.value?.trim() || "";
-    const dropoff = els.dropoff?.value?.trim() || "";
-
-    if (!pickup || !dropoff) {
-      setStatus("Please enter both pickup and dropoff.");
-      return null;
+    function setStatus(msg) {
+      if (els.statusNote) els.statusNote.textContent = msg;
     }
 
-    return { pickup, dropoff };
-  }
+    function setHelper(msg) {
+      if (els.helperText) els.helperText.textContent = msg;
+    }
 
-  function milesFromMeters(meters) {
-    return meters / 1609.344;
-  }
+    function scrollToBooking() {
+      els.bookingCard?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
 
-  function formatMoneyRange(min, max) {
-    return `$${min.toFixed(2)}–$${max.toFixed(2)}`;
-  }
+    function scrollToAvailable() {
+      els.available?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
 
-  function estimateFares(distanceMeters, durationSeconds) {
-    const miles = milesFromMeters(distanceMeters);
-    const minutes = durationSeconds / 60;
+    function isMobileDevice() {
+      return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    }
 
-    const uber = { base: 2.5, perMile: 1.75, perMin: 0.25, surge: 1.0 };
-    const lyft = { base: 2.3, perMile: 1.8, perMin: 0.24, surge: 1.0 };
+    function updateLyftButtonUI() {
+      if (!els.btnLyft || !els.lyftSubtitle) return;
 
-    function calc(model) {
-      const raw = (model.base + model.perMile * miles + model.perMin * minutes) * model.surge;
+      if (isMobileDevice()) {
+        els.btnLyft.textContent = "Book with Lyft";
+        els.lyftSubtitle.textContent = "Open in Lyft app";
+      } else {
+        els.btnLyft.textContent = "Get Lyft App";
+        els.lyftSubtitle.textContent = "Continue with Lyft app";
+      }
+    }
+
+    function setLoading(isLoading) {
+      if (!els.btnFindRates) return;
+
+      if (isLoading) {
+        els.btnFindRates.classList.add("btn-loading");
+        els.btnFindRates.disabled = true;
+        els.btnFindRates.textContent = "Calculating";
+      } else {
+        els.btnFindRates.classList.remove("btn-loading");
+        els.btnFindRates.disabled = false;
+        els.btnFindRates.textContent = "Find Best Rates";
+      }
+    }
+
+    async function logEvent(eventName, extra = {}) {
+      if (!supabaseEnabled || !sb) return;
+
+      try {
+        await sb.from("app_events").insert({
+          session_id: sessionId,
+          event_name: eventName,
+          page: location.pathname,
+          pickup_text: els.pickup?.value?.trim() || null,
+          dropoff_text: els.dropoff?.value?.trim() || null,
+          pickup_lat: coords.pickup?.lat ?? null,
+          pickup_lng: coords.pickup?.lng ?? null,
+          dropoff_lat: coords.dropoff?.lat ?? null,
+          dropoff_lng: coords.dropoff?.lng ?? null,
+          distance_meters: lastRoute.distance_m ?? null,
+          duration_seconds: lastRoute.duration_s ?? null,
+          provider: extra.provider ?? null,
+          user_agent: navigator.userAgent,
+          referrer: document.referrer || null,
+          extra
+        });
+      } catch (err) {
+        console.warn("[RideCompare] logEvent failed:", err);
+      }
+    }
+
+    async function saveWaitlist(email) {
+      if (!supabaseEnabled || !sb) return { ok: false, error: "Supabase not configured" };
+
+      try {
+        const { error } = await sb.from("waitlist").insert({
+          email,
+          source: "ridecompare_homepage"
+        });
+
+        if (error) return { ok: false, error: error.message };
+        return { ok: true };
+      } catch (err) {
+        return { ok: false, error: String(err) };
+      }
+    }
+
+    function validateInputs() {
+      const pickup = els.pickup?.value?.trim() || "";
+      const dropoff = els.dropoff?.value?.trim() || "";
+
+      if (!pickup || !dropoff) {
+        setStatus("Please enter both pickup and dropoff.");
+        return null;
+      }
+
+      return { pickup, dropoff };
+    }
+
+    function milesFromMeters(meters) {
+      return meters / 1609.344;
+    }
+
+    function formatMoneyRange(min, max) {
+      return `$${min.toFixed(2)}–$${max.toFixed(2)}`;
+    }
+
+    function estimateFares(distanceMeters, durationSeconds) {
+      const miles = milesFromMeters(distanceMeters);
+      const minutes = durationSeconds / 60;
+
+      const uber = { base: 2.5, perMile: 1.75, perMin: 0.25, surge: 1.0 };
+      const lyft = { base: 2.3, perMile: 1.8, perMin: 0.24, surge: 1.0 };
+
+      function calc(model) {
+        const raw = (model.base + model.perMile * miles + model.perMin * minutes) * model.surge;
+        return {
+          low: raw * 0.92,
+          high: raw * 1.12
+        };
+      }
+
       return {
-        low: raw * 0.92,
-        high: raw * 1.12
+        uber: calc(uber),
+        lyft: calc(lyft),
+        miles,
+        minutes
       };
     }
 
-    return {
-      uber: calc(uber),
-      lyft: calc(lyft),
-      miles,
-      minutes
-    };
-  }
+    function applyFareUI(est) {
+      els.uberPrice.textContent = formatMoneyRange(est.uber.low, est.uber.high);
+      els.lyftPrice.textContent = formatMoneyRange(est.lyft.low, est.lyft.high);
 
-  function applyFareUI(est) {
-    if (els.uberPrice) els.uberPrice.textContent = formatMoneyRange(est.uber.low, est.uber.high);
-    if (els.lyftPrice) els.lyftPrice.textContent = formatMoneyRange(est.lyft.low, est.lyft.high);
+      const tripText = `Trip ~${Math.round(est.minutes)} min · ${est.miles.toFixed(1)} mi`;
+      els.uberEta.textContent = tripText;
+      els.lyftEta.textContent = tripText;
 
-    const tripText = `Trip ~${Math.round(est.minutes)} min · ${est.miles.toFixed(1)} mi`;
-    if (els.uberEta) els.uberEta.textContent = tripText;
-    if (els.lyftEta) els.lyftEta.textContent = tripText;
+      const uberMid = (est.uber.low + est.uber.high) / 2;
+      const lyftMid = (est.lyft.low + est.lyft.high) / 2;
 
-    const uberMid = (est.uber.low + est.uber.high) / 2;
-    const lyftMid = (est.lyft.low + est.lyft.high) / 2;
-
-    if (uberMid <= lyftMid) {
-      lastBestProvider = "Uber";
-      if (els.uberTag) {
+      if (uberMid <= lyftMid) {
+        lastBestProvider = "Uber";
         els.uberTag.textContent = "Best value";
         els.uberTag.classList.add("best");
-      }
-      if (els.lyftTag) {
         els.lyftTag.textContent = "Estimate";
         els.lyftTag.classList.remove("best");
-      }
-    } else {
-      lastBestProvider = "Lyft";
-      if (els.lyftTag) {
+      } else {
+        lastBestProvider = "Lyft";
         els.lyftTag.textContent = "Best value";
         els.lyftTag.classList.add("best");
-      }
-      if (els.uberTag) {
         els.uberTag.textContent = "Estimate";
         els.uberTag.classList.remove("best");
       }
     }
-  }
 
-  function haversineMiles(lat1, lng1, lat2, lng2) {
-    const toRad = (d) => (d * Math.PI) / 180;
-    const R = 3958.8;
-    const dLat = toRad(lat2 - lat1);
-    const dLng = toRad(lng2 - lng1);
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
-    return 2 * R * Math.asin(Math.sqrt(a));
-  }
+    function haversineMiles(lat1, lng1, lat2, lng2) {
+      const toRad = (d) => (d * Math.PI) / 180;
+      const R = 3958.8;
+      const dLat = toRad(lat2 - lat1);
+      const dLng = toRad(lng2 - lng1);
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+      return 2 * R * Math.asin(Math.sqrt(a));
+    }
 
-  function incrementRideCounter() {
-    const current = Number(localStorage.getItem("rc_compare_count") || "0") + 1;
-    localStorage.setItem("rc_compare_count", String(current));
-    if (els.ridesComparedCount) {
+    function incrementRideCounter() {
+      const current = Number(localStorage.getItem("rc_compare_count") || "0") + 1;
+      localStorage.setItem("rc_compare_count", String(current));
       els.ridesComparedCount.textContent = current.toLocaleString();
     }
-  }
 
-  function hydrateRideCounter() {
-    const current = Number(localStorage.getItem("rc_compare_count") || "0");
-    if (els.ridesComparedCount) {
+    function hydrateRideCounter() {
+      const current = Number(localStorage.getItem("rc_compare_count") || "0");
       els.ridesComparedCount.textContent = current.toLocaleString();
     }
-  }
 
-  async function geocodeAddress(address) {
-    if (!window.google || !google.maps || !google.maps.Geocoder) return null;
+    async function geocodeAddress(address) {
+      if (!window.google || !google.maps || !google.maps.Geocoder) return null;
 
-    const geocoder = new google.maps.Geocoder();
+      const geocoder = new google.maps.Geocoder();
 
-    return new Promise((resolve) => {
-      geocoder.geocode({ address }, (results, status) => {
-        if (status === "OK" && results && results[0]) {
-          const loc = results[0].geometry.location;
-          resolve({
-            lat: loc.lat(),
-            lng: loc.lng(),
-            formatted: results[0].formatted_address || address
-          });
-        } else {
-          resolve(null);
+      return new Promise((resolve) => {
+        geocoder.geocode({ address }, (results, status) => {
+          if (status === "OK" && results && results[0]) {
+            const loc = results[0].geometry.location;
+            resolve({
+              lat: loc.lat(),
+              lng: loc.lng(),
+              formatted: results[0].formatted_address || address
+            });
+          } else {
+            resolve(null);
+          }
+        });
+      });
+    }
+
+    function splitAddressLines(address) {
+      const parts = String(address || "").split(",").map(s => s.trim()).filter(Boolean);
+      const line1 = parts.shift() || address || "";
+      const line2 = parts.join(", ") || "";
+      return { line1, line2 };
+    }
+
+    function clearStoredPlace(kind) {
+      selectedPlaces[kind] = null;
+      coords[kind] = null;
+    }
+
+    function setSelectedPlace(kind, place, inputEl) {
+      const hasGeometry =
+        place &&
+        place.geometry &&
+        place.geometry.location &&
+        typeof place.geometry.location.lat === "function" &&
+        typeof place.geometry.location.lng === "function";
+
+      if (!hasGeometry) {
+        clearStoredPlace(kind);
+        return false;
+      }
+
+      const formattedAddress = place.formatted_address || place.name || inputEl.value.trim();
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+
+      selectedPlaces[kind] = {
+        name: place.name || "",
+        formattedAddress,
+        lat,
+        lng
+      };
+
+      coords[kind] = { lat, lng };
+      inputEl.value = formattedAddress;
+      return true;
+    }
+
+    function attachManualEditReset(inputEl, kind) {
+      inputEl.addEventListener("input", () => {
+        const selected = selectedPlaces[kind];
+        if (!selected) return;
+
+        if (inputEl.value.trim() !== selected.formattedAddress.trim()) {
+          clearStoredPlace(kind);
         }
       });
-    });
-  }
-
-  function splitAddressLines(address) {
-    const parts = String(address || "").split(",").map((s) => s.trim()).filter(Boolean);
-    const line1 = parts.shift() || address || "";
-    const line2 = parts.join(", ") || "";
-    return { line1, line2 };
-  }
-
-  function clearStoredPlace(kind) {
-    selectedPlaces[kind] = null;
-    coords[kind] = null;
-  }
-
-  function setSelectedPlace(kind, place, inputEl) {
-    const hasGeometry =
-      place &&
-      place.geometry &&
-      place.geometry.location &&
-      typeof place.geometry.location.lat === "function" &&
-      typeof place.geometry.location.lng === "function";
-
-    if (!hasGeometry) {
-      clearStoredPlace(kind);
-      return false;
     }
 
-    const formattedAddress = place.formatted_address || place.name || inputEl.value.trim();
-    const lat = place.geometry.location.lat();
-    const lng = place.geometry.location.lng();
+    function attachAutocomplete(inputEl, kind) {
+      if (!window.google || !google.maps || !google.maps.places) return null;
 
-    selectedPlaces[kind] = {
-      name: place.name || "",
-      formattedAddress,
-      lat,
-      lng
-    };
+      const autocomplete = new google.maps.places.Autocomplete(inputEl, {
+        types: ["geocode"],
+        fields: ["formatted_address", "geometry", "name"]
+      });
 
-    coords[kind] = { lat, lng };
-    inputEl.value = formattedAddress;
-    return true;
-  }
+      autocomplete.addListener("place_changed", () => {
+        const place = autocomplete.getPlace();
+        const ok = setSelectedPlace(kind, place, inputEl);
 
-  function attachManualEditReset(inputEl, kind) {
-    if (!inputEl) return;
+        if (ok) {
+          setHelper("Autocomplete active. Select a suggested address for the best Uber transfer.");
+        }
+      });
 
-    inputEl.addEventListener("input", () => {
-      const selected = selectedPlaces[kind];
-      if (!selected) return;
+      attachManualEditReset(inputEl, kind);
+      return autocomplete;
+    }
 
-      if (inputEl.value.trim() !== selected.formattedAddress.trim()) {
-        clearStoredPlace(kind);
-      }
-    });
-  }
+    async function ensureCoordsFromInputs() {
+      const v = validateInputs();
+      if (!v) return false;
 
-  function attachAutocomplete(inputEl, kind) {
-    if (!inputEl || !window.google || !google.maps || !google.maps.places) return null;
-
-    const autocomplete = new google.maps.places.Autocomplete(inputEl, {
-      types: ["geocode"],
-      fields: ["formatted_address", "geometry", "name"]
-    });
-
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      const ok = setSelectedPlace(kind, place, inputEl);
-
-      if (ok) {
-        setHelper("Autocomplete active. Select a suggested address for the best Uber transfer.");
-      }
-    });
-
-    attachManualEditReset(inputEl, kind);
-    return autocomplete;
-  }
-
-  async function ensureCoordsFromInputs() {
-    const v = validateInputs();
-    if (!v) return false;
-
-    if (!coords.pickup) {
-      const p = await geocodeAddress(v.pickup);
-      if (p) {
-        coords.pickup = { lat: p.lat, lng: p.lng };
-        if (!selectedPlaces.pickup) {
+      if (!coords.pickup) {
+        const p = await geocodeAddress(v.pickup);
+        if (p) {
+          coords.pickup = { lat: p.lat, lng: p.lng };
           selectedPlaces.pickup = {
             name: splitAddressLines(p.formatted).line1,
             formattedAddress: p.formatted,
@@ -1240,13 +1216,11 @@
           };
         }
       }
-    }
 
-    if (!coords.dropoff) {
-      const d = await geocodeAddress(v.dropoff);
-      if (d) {
-        coords.dropoff = { lat: d.lat, lng: d.lng };
-        if (!selectedPlaces.dropoff) {
+      if (!coords.dropoff) {
+        const d = await geocodeAddress(v.dropoff);
+        if (d) {
+          coords.dropoff = { lat: d.lat, lng: d.lng };
           selectedPlaces.dropoff = {
             name: splitAddressLines(d.formatted).line1,
             formattedAddress: d.formatted,
@@ -1255,249 +1229,220 @@
           };
         }
       }
+
+      return !!(coords.pickup && coords.dropoff);
     }
 
-    return !!(coords.pickup && coords.dropoff);
-  }
+    function buildUberPlaceObject(addressText, coordObj, selectedPlaceObj) {
+      const bestAddress = selectedPlaceObj?.formattedAddress || addressText || "";
+      const { line1, line2 } = splitAddressLines(bestAddress);
 
-  function buildUberPlaceObject(addressText, coordObj, selectedPlaceObj) {
-    const bestAddress = selectedPlaceObj?.formattedAddress || addressText || "";
-    const { line1, line2 } = splitAddressLines(bestAddress);
-
-    return {
-      addressLine1: selectedPlaceObj?.name || line1,
-      addressLine2: line2 || line1,
-      id: crypto.randomUUID(),
-      source: "SEARCH",
-      latitude: coordObj?.lat ?? null,
-      longitude: coordObj?.lng ?? null,
-      provider: "uber_places"
-    };
-  }
-
-  function buildUberLink(pickupText, dropoffText) {
-    const pickupObj = buildUberPlaceObject(
-      pickupText,
-      coords.pickup,
-      selectedPlaces.pickup
-    );
-
-    const dropoffObj = buildUberPlaceObject(
-      dropoffText,
-      coords.dropoff,
-      selectedPlaces.dropoff
-    );
-
-    const params = new URLSearchParams();
-    params.set("pickup", JSON.stringify(pickupObj));
-    params.set("drop[0]", JSON.stringify(dropoffObj));
-
-    return `https://m.uber.com/go/product-selection?${params.toString()}`;
-  }
-
-  function buildLyftLink(pickupText, dropoffText) {
-    const base = "https://lyft.com/ride";
-    const params = new URLSearchParams();
-    params.set("id", "lyft");
-
-    if (coords.pickup) {
-      params.set("pickup[latitude]", String(coords.pickup.lat));
-      params.set("pickup[longitude]", String(coords.pickup.lng));
-    } else if (pickupText) {
-      params.set("pickup[formatted_address]", pickupText);
+      return {
+        addressLine1: selectedPlaceObj?.name || line1,
+        addressLine2: line2 || line1,
+        id: crypto.randomUUID(),
+        source: "SEARCH",
+        latitude: coordObj?.lat ?? null,
+        longitude: coordObj?.lng ?? null,
+        provider: "uber_places"
+      };
     }
 
-    if (coords.dropoff) {
-      params.set("destination[latitude]", String(coords.dropoff.lat));
-      params.set("destination[longitude]", String(coords.dropoff.lng));
-    } else if (dropoffText) {
-      params.set("destination[formatted_address]", dropoffText);
+    function buildUberLink(pickupText, dropoffText) {
+      const pickupObj = buildUberPlaceObject(pickupText, coords.pickup, selectedPlaces.pickup);
+      const dropoffObj = buildUberPlaceObject(dropoffText, coords.dropoff, selectedPlaces.dropoff);
+
+      const params = new URLSearchParams();
+      params.set("pickup", JSON.stringify(pickupObj));
+      params.set("drop[0]", JSON.stringify(dropoffObj));
+
+      return `https://m.uber.com/go/product-selection?${params.toString()}`;
     }
 
-    return `${base}?${params.toString()}`;
-  }
+    function buildLyftLink(pickupText, dropoffText) {
+      const base = "https://lyft.com/ride";
+      const params = new URLSearchParams();
+      params.set("id", "lyft");
 
-  async function computeRoute() {
-    const v = validateInputs();
-    if (!v) return null;
-
-    if (window.google && google.maps && google.maps.DirectionsService) {
-      const ds = new google.maps.DirectionsService();
-
-      const route = await new Promise((resolve) => {
-        ds.route(
-          {
-            origin: coords.pickup
-              ? new google.maps.LatLng(coords.pickup.lat, coords.pickup.lng)
-              : v.pickup,
-            destination: coords.dropoff
-              ? new google.maps.LatLng(coords.dropoff.lat, coords.dropoff.lng)
-              : v.dropoff,
-            travelMode: google.maps.TravelMode.DRIVING
-          },
-          (res, status) => {
-            if (status === "OK" && res?.routes?.[0]?.legs?.[0]) {
-              const leg = res.routes[0].legs[0];
-              resolve({
-                distance_m: leg.distance.value,
-                duration_s: leg.duration.value
-              });
-            } else {
-              resolve(null);
-            }
-          }
-        );
-      });
-
-      if (route) return route;
-    }
-
-    const ok = await ensureCoordsFromInputs();
-    if (!ok) return null;
-
-    const miles = haversineMiles(
-      coords.pickup.lat,
-      coords.pickup.lng,
-      coords.dropoff.lat,
-      coords.dropoff.lng
-    );
-
-    const approxMinutes = Math.max(8, Math.round((miles / 22) * 60));
-
-    return {
-      distance_m: miles * 1609.344,
-      duration_s: approxMinutes * 60
-    };
-  }
-
-  async function refreshEstimates() {
-    setLoading(true);
-
-    if (els.uberPrice) els.uberPrice.textContent = "$ —";
-    if (els.lyftPrice) els.lyftPrice.textContent = "$ —";
-    if (els.uberEta) els.uberEta.textContent = "ETA —";
-    if (els.lyftEta) els.lyftEta.textContent = "ETA —";
-
-    if (els.uberTag) {
-      els.uberTag.textContent = "Estimate";
-      els.uberTag.classList.remove("best");
-    }
-
-    if (els.lyftTag) {
-      els.lyftTag.textContent = "Estimate";
-      els.lyftTag.classList.remove("best");
-    }
-
-    const route = await computeRoute();
-
-    if (!route) {
-      lastRoute = { distance_m: null, duration_s: null };
-      setStatus("Could not estimate this route yet. Please enter a more complete pickup and dropoff address.");
-      setLoading(false);
-      return;
-    }
-
-    lastRoute = route;
-    const est = estimateFares(route.distance_m, route.duration_s);
-    applyFareUI(est);
-    incrementRideCounter();
-
-    setStatus(`Estimated fares ready for: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`);
-    setLoading(false);
-
-    if (els.mobileStickyCta) {
-      els.mobileStickyCta.style.display = "flex";
-    }
-  }
-
-  async function openUber() {
-    const v = validateInputs();
-    if (!v) return;
-
-    const ok = await ensureCoordsFromInputs();
-    if (!ok) {
-      setStatus("Please enter a more complete pickup and dropoff address.");
-      return;
-    }
-
-    const url = buildUberLink(v.pickup, v.dropoff);
-    logEvent("ride_click", { provider: "Uber", url });
-    window.open(url, "_blank", "noopener");
-  }
-
-  function openLyft() {
-    const v = validateInputs();
-    if (!v) return;
-
-    const deepLink = buildLyftLink(v.pickup, v.dropoff);
-
-    if (!isMobileDevice()) {
-      logEvent("ride_click", {
-        provider: "Lyft",
-        url: LYFT_REFERRAL_URL,
-        mode: "desktop_referral"
-      });
-      window.open(LYFT_REFERRAL_URL, "_blank", "noopener");
-      return;
-    }
-
-    logEvent("ride_click", {
-      provider: "Lyft",
-      url: deepLink,
-      mode: "mobile_deeplink"
-    });
-
-    const start = Date.now();
-    window.location.href = deepLink;
-
-    setTimeout(() => {
-      if (Date.now() - start < 1800) {
-        window.location.href = LYFT_REFERRAL_URL;
+      if (coords.pickup) {
+        params.set("pickup[latitude]", String(coords.pickup.lat));
+        params.set("pickup[longitude]", String(coords.pickup.lng));
+      } else {
+        params.set("pickup[formatted_address]", pickupText);
       }
-    }, 1200);
-  }
 
-  async function shareComparison() {
-    const v = validateInputs();
-    if (!v) return;
+      if (coords.dropoff) {
+        params.set("destination[latitude]", String(coords.dropoff.lat));
+        params.set("destination[longitude]", String(coords.dropoff.lng));
+      } else {
+        params.set("destination[formatted_address]", dropoffText);
+      }
 
-    const url = new URL(window.location.origin + window.location.pathname);
-    url.searchParams.set("pickup", v.pickup);
-    url.searchParams.set("dropoff", v.dropoff);
-    if (els.date?.value) url.searchParams.set("rideDate", els.date.value);
-    if (els.time?.value) url.searchParams.set("rideTime", els.time.value);
-
-    try {
-      await navigator.clipboard.writeText(url.toString());
-      setStatus("Comparison link copied to clipboard ✅");
-      logEvent("share_compare", { url: url.toString() });
-    } catch (err) {
-      setStatus("Could not copy link. You can copy the URL from your browser.");
+      return `${base}?${params.toString()}`;
     }
-  }
 
-  function hydrateFromQueryParams() {
-    const params = new URLSearchParams(window.location.search);
-    const pickup = params.get("pickup");
-    const dropoff = params.get("dropoff");
-    const rideDate = params.get("rideDate");
-    const rideTime = params.get("rideTime");
+    async function computeRoute() {
+      const v = validateInputs();
+      if (!v) return null;
 
-    if (pickup && els.pickup) els.pickup.value = pickup;
-    if (dropoff && els.dropoff) els.dropoff.value = dropoff;
-    if (rideDate && els.date) els.date.value = rideDate;
-    if (rideTime && els.time) els.time.value = rideTime;
-  }
+      if (window.google && google.maps && google.maps.DirectionsService) {
+        const ds = new google.maps.DirectionsService();
 
-  window.initAutocomplete = function initAutocomplete() {
-    console.log("[RideCompare] Google Maps loaded");
+        const route = await new Promise((resolve) => {
+          ds.route(
+            {
+              origin: coords.pickup
+                ? new google.maps.LatLng(coords.pickup.lat, coords.pickup.lng)
+                : v.pickup,
+              destination: coords.dropoff
+                ? new google.maps.LatLng(coords.dropoff.lat, coords.dropoff.lng)
+                : v.dropoff,
+              travelMode: google.maps.TravelMode.DRIVING
+            },
+            (res, status) => {
+              if (status === "OK" && res?.routes?.[0]?.legs?.[0]) {
+                const leg = res.routes[0].legs[0];
+                resolve({
+                  distance_m: leg.distance.value,
+                  duration_s: leg.duration.value
+                });
+              } else {
+                resolve(null);
+              }
+            }
+          );
+        });
 
-    setHelper("Start typing pickup and dropoff, then select a suggested address.");
+        if (route) return route;
+      }
 
-    attachAutocomplete(els.pickup, "pickup");
-    attachAutocomplete(els.dropoff, "dropoff");
+      const ok = await ensureCoordsFromInputs();
+      if (!ok) return null;
 
-    if (els.pickup) {
+      const miles = haversineMiles(
+        coords.pickup.lat,
+        coords.pickup.lng,
+        coords.dropoff.lat,
+        coords.dropoff.lng
+      );
+
+      const approxMinutes = Math.max(8, Math.round((miles / 22) * 60));
+
+      return {
+        distance_m: miles * 1609.344,
+        duration_s: approxMinutes * 60
+      };
+    }
+
+    async function refreshEstimates() {
+      setLoading(true);
+
+      els.uberPrice.textContent = "$ —";
+      els.lyftPrice.textContent = "$ —";
+      els.uberEta.textContent = "ETA —";
+      els.lyftEta.textContent = "ETA —";
+      els.uberTag.textContent = "Estimate";
+      els.lyftTag.textContent = "Estimate";
+      els.uberTag.classList.remove("best");
+      els.lyftTag.classList.remove("best");
+
+      const route = await computeRoute();
+
+      if (!route) {
+        lastRoute = { distance_m: null, duration_s: null };
+        setStatus("Could not estimate this route yet. Please enter a more complete pickup and dropoff address.");
+        setLoading(false);
+        return;
+      }
+
+      lastRoute = route;
+      applyFareUI(estimateFares(route.distance_m, route.duration_s));
+      incrementRideCounter();
+      setStatus(`Estimated fares ready for: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`);
+      setLoading(false);
+
+      if (els.mobileStickyCta) {
+        els.mobileStickyCta.style.display = "flex";
+      }
+    }
+
+    async function openUber() {
+      const v = validateInputs();
+      if (!v) return;
+
+      const ok = await ensureCoordsFromInputs();
+      if (!ok) {
+        setStatus("Please enter a more complete pickup and dropoff address.");
+        return;
+      }
+
+      const url = buildUberLink(v.pickup, v.dropoff);
+      logEvent("ride_click", { provider: "Uber", url });
+      window.open(url, "_blank", "noopener");
+    }
+
+    function openLyft() {
+      const v = validateInputs();
+      if (!v) return;
+
+      const deepLink = buildLyftLink(v.pickup, v.dropoff);
+
+      if (!isMobileDevice()) {
+        logEvent("ride_click", { provider: "Lyft", url: LYFT_REFERRAL_URL, mode: "desktop_referral" });
+        window.open(LYFT_REFERRAL_URL, "_blank", "noopener");
+        return;
+      }
+
+      logEvent("ride_click", { provider: "Lyft", url: deepLink, mode: "mobile_deeplink" });
+
+      const start = Date.now();
+      window.location.href = deepLink;
+
+      setTimeout(() => {
+        if (Date.now() - start < 1800) {
+          window.location.href = LYFT_REFERRAL_URL;
+        }
+      }, 1200);
+    }
+
+    async function shareComparison() {
+      const v = validateInputs();
+      if (!v) return;
+
+      const url = new URL(window.location.origin + window.location.pathname);
+      url.searchParams.set("pickup", v.pickup);
+      url.searchParams.set("dropoff", v.dropoff);
+      if (els.date.value) url.searchParams.set("rideDate", els.date.value);
+      if (els.time.value) url.searchParams.set("rideTime", els.time.value);
+
+      try {
+        await navigator.clipboard.writeText(url.toString());
+        setStatus("Comparison link copied to clipboard ✅");
+        logEvent("share_compare", { url: url.toString() });
+      } catch (err) {
+        setStatus("Could not copy link. You can copy the URL from your browser.");
+      }
+    }
+
+    function hydrateFromQueryParams() {
+      const params = new URLSearchParams(window.location.search);
+      const pickup = params.get("pickup");
+      const dropoff = params.get("dropoff");
+      const rideDate = params.get("rideDate");
+      const rideTime = params.get("rideTime");
+
+      if (pickup) els.pickup.value = pickup;
+      if (dropoff) els.dropoff.value = dropoff;
+      if (rideDate) els.date.value = rideDate;
+      if (rideTime) els.time.value = rideTime;
+    }
+
+    window.initAutocomplete = function initAutocomplete() {
+      setHelper("Start typing pickup and dropoff, then select a suggested address.");
+
+      attachAutocomplete(els.pickup, "pickup");
+      attachAutocomplete(els.dropoff, "dropoff");
+
       els.pickup.addEventListener("blur", async () => {
         if (!coords.pickup && els.pickup.value.trim()) {
           const p = await geocodeAddress(els.pickup.value.trim());
@@ -1512,9 +1457,7 @@
           }
         }
       });
-    }
 
-    if (els.dropoff) {
       els.dropoff.addEventListener("blur", async () => {
         if (!coords.dropoff && els.dropoff.value.trim()) {
           const d = await geocodeAddress(els.dropoff.value.trim());
@@ -1529,49 +1472,31 @@
           }
         }
       });
-    }
-  };
+    };
 
-  window.__gmapsFail = function () {
-    setHelper("Address lookup failed to load. You can still type addresses manually.");
-  };
+    window.__gmapsFail = function () {
+      setHelper("Address lookup failed to load. You can still type addresses manually.");
+    };
 
-  if (els.btnUber) els.btnUber.addEventListener("click", openUber);
-  if (els.btnLyft) els.btnLyft.addEventListener("click", openLyft);
-
-  if (els.btnCompare) {
+    els.btnUber.addEventListener("click", openUber);
+    els.btnLyft.addEventListener("click", openLyft);
     els.btnCompare.addEventListener("click", () => {
       logEvent("cta_compare_click");
       scrollToAvailable();
     });
-  }
-
-  if (els.btnScrollBooking) {
     els.btnScrollBooking.addEventListener("click", () => {
       logEvent("cta_find_click");
       scrollToBooking();
     });
-  }
-
-  if (els.btnShareCompare) {
     els.btnShareCompare.addEventListener("click", shareComparison);
-  }
 
-  if (els.mobileBestRideBtn) {
     els.mobileBestRideBtn.addEventListener("click", () => {
-      if (lastBestProvider === "Uber") {
-        openUber();
-      } else {
-        openLyft();
-      }
+      if (lastBestProvider === "Uber") openUber();
+      else openLyft();
     });
-  }
 
-  if (els.mobileCompareBtn) {
     els.mobileCompareBtn.addEventListener("click", scrollToAvailable);
-  }
 
-  if (els.rideForm) {
     els.rideForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const v = validateInputs();
@@ -1581,46 +1506,44 @@
       await refreshEstimates();
       scrollToAvailable();
     });
-  }
 
-  if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
-    els.waitlistForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const email = els.waitlistEmail.value.trim();
+    if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
+      els.waitlistForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = els.waitlistEmail.value.trim();
 
-      if (!email) {
-        els.waitlistStatus.textContent = "Please enter a valid email address.";
-        return;
-      }
+        if (!email) {
+          els.waitlistStatus.textContent = "Please enter a valid email address.";
+          return;
+        }
 
-      els.waitlistStatus.textContent = "Joining waitlist...";
+        els.waitlistStatus.textContent = "Joining waitlist...";
+        const result = await saveWaitlist(email);
 
-      const result = await saveWaitlist(email);
+        if (result.ok) {
+          els.waitlistStatus.textContent = "You're on the waitlist ✅";
+          els.waitlistEmail.value = "";
+          logEvent("waitlist_signup");
+        } else {
+          els.waitlistStatus.textContent = "Waitlist signup failed. Please try again later.";
+        }
+      });
+    }
 
-      if (result.ok) {
-        els.waitlistStatus.textContent = "You're on the waitlist ✅";
-        els.waitlistEmail.value = "";
-        logEvent("waitlist_signup");
-      } else {
-        els.waitlistStatus.textContent = "Waitlist signup failed. Please try again later.";
-      }
+    window.addEventListener("load", () => {
+      updateLyftButtonUI();
+      hydrateRideCounter();
+      hydrateFromQueryParams();
+      logEvent("page_view", { supabaseEnabled });
     });
-  }
+  </script>
 
-  window.addEventListener("load", () => {
-    updateLyftButtonUI();
-    hydrateRideCounter();
-    hydrateFromQueryParams();
-    logEvent("page_view", { supabaseEnabled });
-  });
-</script>
-
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBz8nr961uD8aCTea3XfLt8hku6BXfKXL4&libraries=places&callback=initAutocomplete"
-  async
-  defer
-  onerror="window.__gmapsFail()"
-></script>
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBz8nr961uD8aCTea3XfLt8hku6BXfKXL4&libraries=places&callback=initAutocomplete"
+    async
+    defer
+    onerror="window.__gmapsFail()"
+  ></script>
 </body>
 </html>
 
