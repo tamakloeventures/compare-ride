@@ -587,8 +587,8 @@ async function refreshEstimates() {
     };
 
     setStatus(
-      "Could not estimate this route yet. Please enter a more complete pickup and dropoff address."
-    );
+  `${lastBestProvider} looks like the best value for this trip: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`
+);
     setLoading(false);
     return;
   }
@@ -858,6 +858,7 @@ window.addEventListener("load", () => {
   initAppEvents();
   logEvent("page_view", { supabaseEnabled });
 });
+
 
 
 
