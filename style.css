@@ -153,6 +153,23 @@ input {
   font-weight: 700;
 }
 
+.official-notice {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #7c2d12;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 600;
+  max-width: 600px;
+}
+
+.official-notice strong {
+  font-weight: 800;
+}
+
 /* Buttons */
 .btn {
   border: 0;
@@ -785,6 +802,7 @@ footer {
 }
 
   
+
 
 
 
