@@ -1545,6 +1545,74 @@ body::before{
     return autocomplete;
   }
 
+function clearStoredPlace(kind) {
+  selectedPlaces[kind] = null;
+  coords[kind] = null;
+}
+
+function setSelectedPlace(kind, place, inputEl) {
+  const hasGeometry =
+    place &&
+    place.geometry &&
+    place.geometry.location &&
+    typeof place.geometry.location.lat === "function" &&
+    typeof place.geometry.location.lng === "function";
+
+  if (!hasGeometry) {
+    clearStoredPlace(kind);
+    return false;
+  }
+
+  const formattedAddress = place.formatted_address || place.name || inputEl.value.trim();
+  const lat = place.geometry.location.lat();
+  const lng = place.geometry.location.lng();
+
+  selectedPlaces[kind] = {
+    name: place.name || "",
+    formattedAddress,
+    lat,
+    lng
+  };
+
+  coords[kind] = { lat, lng };
+  inputEl.value = formattedAddress;
+  return true;
+}
+
+function attachManualEditReset(inputEl, kind) {
+  if (!inputEl) return;
+
+  inputEl.addEventListener("input", () => {
+    const selected = selectedPlaces[kind];
+    if (!selected) return;
+
+    if (inputEl.value.trim() !== selected.formattedAddress.trim()) {
+      clearStoredPlace(kind);
+    }
+  });
+}
+
+function attachAutocomplete(inputEl, kind) {
+  if (!inputEl || !window.google || !google.maps || !google.maps.places) return null;
+
+  const autocomplete = new google.maps.places.Autocomplete(inputEl, {
+    types: ["geocode"],
+    fields: ["formatted_address", "geometry", "name"]
+  });
+
+  autocomplete.addListener("place_changed", () => {
+    const place = autocomplete.getPlace();
+    const ok = setSelectedPlace(kind, place, inputEl);
+
+    if (ok) {
+      setHelper("Autocomplete active. Select a suggested address for the best Uber transfer.");
+    }
+  });
+
+  attachManualEditReset(inputEl, kind);
+  return autocomplete;
+}
+  
   window.initAutocomplete = function initAutocomplete() {
     console.log("[RideCompare] Google Maps loaded");
 
@@ -1703,6 +1771,7 @@ body::before{
   
 </body>
 </html>
+
 
 
 
