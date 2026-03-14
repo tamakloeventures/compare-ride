@@ -67,6 +67,12 @@ let lastRoute = {
 
 let lastBestProvider = "Uber";
 
+function trackEvent(eventName, params = {}) {
+  if (typeof window.gtag === "function") {
+    window.gtag("event", eventName, params);
+  }
+}
+
 function setStatus(message) {
   if (els.statusNote) {
     els.statusNote.textContent = message;
@@ -837,5 +843,6 @@ window.addEventListener("load", () => {
   initAppEvents();
   logEvent("page_view", { supabaseEnabled });
 });
+
 
 
