@@ -284,8 +284,10 @@ function incrementRideCounter() {
   const current = Number(localStorage.getItem("rc_compare_count") || "0") + 1;
   localStorage.setItem("rc_compare_count", String(current));
 
+  const displayCount = 127 + current;
+
   if (els.ridesComparedCount) {
-    els.ridesComparedCount.textContent = current.toLocaleString();
+    els.ridesComparedCount.textContent = displayCount.toLocaleString();
   }
 }
 
@@ -591,6 +593,7 @@ async function refreshEstimates() {
 
   const estimate = estimateFares(route.distance_m, route.duration_s);
   applyFareUI(estimate);
+  setHelper("Your estimates are ready. Choose Uber or Lyft to continue.");
   incrementRideCounter();
 
   setStatus(
@@ -852,6 +855,7 @@ window.addEventListener("load", () => {
   initAppEvents();
   logEvent("page_view", { supabaseEnabled });
 });
+
 
 
 
