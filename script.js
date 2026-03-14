@@ -290,12 +290,6 @@ function incrementRideCounter() {
 }
 
 function hydrateRideCounter() {
-  const current = Number(localStorage.getItem("rc_compare_count") || "0");
-
-  if (els.ridesComparedCount) {
-    els.ridesComparedCount.textContent = current.toLocaleString();
-  }
-}
 
 async function geocodeAddress(address) {
   if (!window.google || !google.maps || !google.maps.Geocoder) {
@@ -858,6 +852,7 @@ window.addEventListener("load", () => {
   initAppEvents();
   logEvent("page_view", { supabaseEnabled });
 });
+
 
 
 
