@@ -37,6 +37,8 @@ const els = {
   lyftEta: document.getElementById("lyftEta"),
   uberTag: document.getElementById("uberTag"),
   lyftTag: document.getElementById("lyftTag"),
+  uberCard: document.getElementById("uberCard"),
+  lyftCard: document.getElementById("lyftCard"),
   waitlistForm: document.getElementById("waitlistForm"),
   waitlistEmail: document.getElementById("waitlistEmail"),
   waitlistStatus: document.getElementById("waitlistStatus"),
@@ -122,6 +124,65 @@ function cleanupDuplicateLogos() {
       images[i].remove();
     }
   });
+}
+
+function normalizeRideTopStructure(card) {
+  if (!card) return;
+
+  const top = card.querySelector(".ride-top");
+  if (!top) return;
+
+  const existingMain = top.querySelector(".ride-top-main");
+  if (existingMain) return;
+
+  const badge = top.querySelector(".best-badge");
+  const children = Array.from(top.children).filter((child) => child !== badge);
+
+  const main = document.createElement("div");
+  main.className = "ride-top-main";
+
+  children.forEach((child) => main.appendChild(child));
+  top.prepend(main);
+}
+
+function removeExistingBestBadges() {
+  document.querySelectorAll(".best-badge").forEach((badge) => badge.remove());
+  document.querySelectorAll(".ride-top").forEach((top) => top.classList.remove("with-badge"));
+}
+
+function updateBestCardUI() {
+  els.uberCard?.classList.remove("best-pick");
+  els.lyftCard?.classList.remove("best-pick");
+
+  removeExistingBestBadges();
+
+  if (lastBestProvider === "Uber" && els.uberCard) {
+    normalizeRideTopStructure(els.uberCard);
+    els.uberCard.classList.add("best-pick");
+
+    const top = els.uberCard.querySelector(".ride-top");
+    if (top) {
+      top.classList.add("with-badge");
+      const badge = document.createElement("div");
+      badge.className = "best-badge";
+      badge.textContent = "Best Value";
+      top.appendChild(badge);
+    }
+  }
+
+  if (lastBestProvider === "Lyft" && els.lyftCard) {
+    normalizeRideTopStructure(els.lyftCard);
+    els.lyftCard.classList.add("best-pick");
+
+    const top = els.lyftCard.querySelector(".ride-top");
+    if (top) {
+      top.classList.add("with-badge");
+      const badge = document.createElement("div");
+      badge.className = "best-badge";
+      badge.textContent = "Best Value";
+      top.appendChild(badge);
+    }
+  }
 }
 
 function setLoading(isLoading) {
@@ -271,6 +332,8 @@ function applyFareUI(estimate) {
     els.uberTag.textContent = "Estimate";
     els.uberTag.classList.remove("best");
   }
+
+  updateBestCardUI();
 }
 
 function haversineMiles(lat1, lng1, lat2, lng2) {
@@ -871,6 +934,8 @@ window.__gmapsFail = function __gmapsFail() {
 
 window.addEventListener("load", () => {
   cleanupDuplicateLogos();
+  normalizeRideTopStructure(els.uberCard);
+  normalizeRideTopStructure(els.lyftCard);
   updateLyftButtonUI();
   hydrateRideCounter();
   hydrateFromQueryParams();
@@ -878,6 +943,7 @@ window.addEventListener("load", () => {
   initAppEvents();
   logEvent("page_view", { supabaseEnabled });
 });
+
 
 
 
