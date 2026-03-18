@@ -1,8 +1,13 @@
 const CONFIG = window.RIDECOMPARE_CONFIG || {};
 
-const SUPABASE_URL = CONFIG.https://prglhlctcswjccajsvxr.supabase.co || ";
-const SUPABASE_ANON_KEY = CONFIG.sb\_publishable\_BM9ApnCCqHYai5ZaZPf0Pw\_l1N4Vatk || ";
-const LYFT_REFERRAL_URL = CONFIG.https://www.lyft.com/i/ELVIS98387 || "https://www.lyft.com/";
+const SUPABASE_URL =
+  CONFIG.supabaseUrl || "https://prglhlctcswjccajsvxr.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  CONFIG.supabaseAnonKey || "YOUR_SUPABASE_ANON_KEY";
+
+const LYFT_REFERRAL_URL =
+  CONFIG.lyftReferralUrl || "https://www.lyft.com/i/ELVIS98387";
 
 const supabaseEnabled =
   typeof window.supabase !== "undefined" &&
