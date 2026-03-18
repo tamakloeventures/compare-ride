@@ -12,7 +12,7 @@ const LYFT_REFERRAL_URL =
 const supabaseEnabled =
   typeof window.supabase !== "undefined" &&
   typeof SUPABASE_URL === "string" &&
-  SUPABASE_URL.startsWith("http") &&
+  SUPABASE_URL.startsWith("https") &&
   typeof SUPABASE_ANON_KEY === "string" &&
   SUPABASE_ANON_KEY.length > 20;
 
