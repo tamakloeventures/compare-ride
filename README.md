@@ -3,7 +3,7 @@
 Compare Ride is a simple web application that lets users compare ride options between **Uber** and **Lyft**.  
 It provides quick deep links to book directly with each provider, making it easy to choose the best option.
 
-🌍 **Live Demo:** (https://tamakloeventures.com)  
+🌍 **Live Demo:** (https://ride.tamakloeventures.com)  
 
 ---
 
