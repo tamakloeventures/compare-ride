@@ -1,7 +1,7 @@
 const CONFIG = window.RIDECOMPARE_CONFIG || {};
 
-const SUPABASE_URL = CONFIG.SUPABASE_URL || "";
-const SUPABASE_ANON_KEY = CONFIG.SUPABASE_ANON_KEY || "";
+const SUPABASE_URL = CONFIG.https://prglhlctcswjccajsvxr.supabase.co || "";
+const SUPABASE_ANON_KEY = CONFIG.sb\_publishable\_BM9ApnCCqHYai5ZaZPf0Pw\_l1N4Vatk || "";
 const LYFT_REFERRAL_URL = CONFIG.LYFT_REFERRAL_URL || "https://www.lyft.com/";
 
 const supabaseEnabled =
