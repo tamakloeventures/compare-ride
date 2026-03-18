@@ -4,7 +4,7 @@ const SUPABASE_URL =
   CONFIG.supabaseUrl || "https://prglhlctcswjccajsvxr.supabase.co";
 
 const SUPABASE_ANON_KEY =
-  CONFIG.supabaseAnonKey || "YOUR_SUPABASE_ANON_KEY";
+  CONFIG.supabaseAnonKey || "sb_publishable_BM9ApnCCqHYai5ZaZPf0Pw_l1N4Vatk";
 
 const LYFT_REFERRAL_URL =
   CONFIG.lyftReferralUrl || "https://www.lyft.com/i/ELVIS98387";
