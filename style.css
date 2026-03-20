@@ -206,15 +206,13 @@ input {
 .btn-uber {
   background: #111;
   color: #fff;
-  flex: 1;
-  min-width: 200px;
+  width: 100%;
 }
 
 .btn-lyft {
   background: linear-gradient(90deg, var(--pink), var(--pink2));
   color: #fff;
-  flex: 1;
-  min-width: 200px;
+  width: 100%;
 }
 
 .btn-loading {
@@ -361,7 +359,6 @@ input:focus {
   box-shadow:
     0 18px 40px rgba(16, 185, 129, 0.14),
     0 10px 24px rgba(15, 23, 42, 0.09);
-  transform: translateY(-3px);
 }
 
 .ride-card.best-pick .pricebox {
@@ -373,17 +370,6 @@ input:focus {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.ride-top.with-badge {
-  justify-content: space-between;
-}
-
-.ride-top-main {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
 }
 
 .logo-badge {
@@ -429,22 +415,6 @@ input:focus {
   color: var(--muted-2);
 }
 
-.best-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: #dcfce7;
-  color: #166534;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  box-shadow: inset 0 0 0 1px rgba(22, 101, 52, 0.12);
-}
-
 .pricebox {
   border: 1px dashed rgba(15, 23, 42, 0.18);
   border-radius: 18px;
@@ -454,6 +424,11 @@ input:focus {
   gap: 12px;
   align-items: center;
   background: #fbfcff;
+}
+
+.pricebox > div:first-child {
+  min-width: 0;
+  flex: 1;
 }
 
 .pricebox b {
@@ -484,6 +459,7 @@ input:focus {
   background: #e2e8f0;
   color: #0f172a;
   white-space: nowrap;
+  flex: 0 0 auto;
 }
 
 .tag.best {
@@ -494,16 +470,15 @@ input:focus {
 .ride-actions {
   margin-top: auto;
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
 }
 
 .referral-wrap {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  align-self: center;
 }
 
 .referral-link {
@@ -565,6 +540,7 @@ input:focus {
   align-items: center;
   gap: 6px;
   cursor: help;
+  flex-wrap: nowrap;
   white-space: nowrap;
 }
 
@@ -806,28 +782,13 @@ footer {
     flex: 1;
   }
 
-  .ride-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
   .btn-uber,
   .btn-lyft {
-    min-width: 0;
     width: 100%;
   }
 
   .ride-top {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .ride-top.with-badge {
-    align-items: flex-start;
-  }
-
-  .best-badge {
-    margin-top: 6px;
+    align-items: center;
   }
 
   #statusNote {
@@ -835,19 +796,8 @@ footer {
     font-size: 14px;
   }
 
-  .ride-card.best-pick {
-    transform: none;
-  }
-
-  .tooltip-trigger {
-    white-space: normal;
-    align-items: flex-start;
-  }
-
   .tooltip-trigger .tooltip-box {
     width: min(240px, 78vw);
-    left: 0;
-    top: calc(100% + 8px);
   }
 }
 
