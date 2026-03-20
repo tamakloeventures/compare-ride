@@ -213,6 +213,8 @@ input {
   background: linear-gradient(90deg, var(--pink), var(--pink2));
   color: #fff;
   width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
 }
 
 .btn-loading {
@@ -418,7 +420,7 @@ input:focus {
 .pricebox {
   border: 1px dashed rgba(15, 23, 42, 0.18);
   border-radius: 18px;
-  padding: 16px 16px;
+  padding: 16px;
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -473,6 +475,36 @@ input:focus {
   flex-direction: column;
   gap: 10px;
   align-items: stretch;
+}
+
+/* Uber stays full width */
+#uberCard .ride-actions {
+  align-items: stretch;
+}
+
+#uberCard .btn-uber {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+/* Lyft button centered below the fare box */
+#lyftCard .ride-actions {
+  align-items: center;
+  justify-content: flex-start;
+}
+
+#lyftCard .btn-lyft {
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+#lyftCard .referral-wrap {
+  width: 100%;
+  max-width: 260px;
+  text-align: center;
+  align-self: center;
 }
 
 .referral-wrap {
@@ -782,13 +814,22 @@ footer {
     flex: 1;
   }
 
+  .ride-actions {
+    align-items: stretch;
+  }
+
+  #lyftCard .ride-actions {
+    align-items: center;
+  }
+
   .btn-uber,
   .btn-lyft {
     width: 100%;
   }
 
-  .ride-top {
-    align-items: center;
+  #lyftCard .btn-lyft,
+  #lyftCard .referral-wrap {
+    max-width: 100%;
   }
 
   #statusNote {
