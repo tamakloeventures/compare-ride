@@ -138,12 +138,17 @@ input {
   margin-top: 20px;
 }
 
-.trust-line {
-  margin-top: 16px;
+.official-notice {
+  margin-top: 18px;
+  max-width: 640px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.95);
+  line-height: 1.55;
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.82);
-  line-height: 1.5;
-  max-width: 620px;
+  backdrop-filter: blur(6px);
 }
 
 .social-proof {
@@ -340,14 +345,16 @@ input:focus {
 
 .ride-card {
   width: min(520px, 92vw);
+  min-height: 320px;
   border: 1px solid rgba(15, 23, 42, 0.1);
   border-radius: 22px;
-  padding: 22px 22px 18px;
+  padding: 28px;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
   background: #fff;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 18px;
+  overflow: hidden;
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
@@ -370,8 +377,18 @@ input:focus {
 
 .ride-top {
   display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 64px;
+}
+
+.ride-top-main {
+  display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+  flex: 1;
 }
 
 .logo-badge {
@@ -405,22 +422,27 @@ input:focus {
 .ride-meta {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
 }
 
 .ride-meta strong {
   font-size: 18px;
+  line-height: 1.15;
 }
 
 .ride-meta span {
   font-size: 13px;
   color: var(--muted-2);
+  line-height: 1.4;
 }
 
 .pricebox {
   border: 1px dashed rgba(15, 23, 42, 0.18);
   border-radius: 18px;
-  padding: 16px;
+  padding: 18px 20px;
+  min-height: 96px;
   display: flex;
   justify-content: space-between;
   gap: 12px;
@@ -434,7 +456,10 @@ input:focus {
 }
 
 .pricebox b {
+  display: inline-block;
+  margin-top: 4px;
   font-size: 20px;
+  line-height: 1.2;
 }
 
 .price-label {
@@ -448,7 +473,8 @@ input:focus {
 .price-eta {
   font-size: 12px;
   color: #64748b;
-  margin-top: 4px;
+  margin-top: 6px;
+  line-height: 1.4;
 }
 
 .tag {
@@ -473,11 +499,12 @@ input:focus {
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   align-items: stretch;
+  width: 100%;
 }
 
-/* Uber stays full width */
+/* Uber */
 #uberCard .ride-actions {
   align-items: stretch;
 }
@@ -486,23 +513,35 @@ input:focus {
   width: 100%;
   max-width: none;
   margin: 0;
+  min-height: 56px;
+  border-radius: 16px;
 }
 
-/* Lyft button centered below the fare box */
+/* Lyft */
 #lyftCard .ride-actions {
   align-items: center;
   justify-content: flex-start;
 }
 
 #lyftCard .btn-lyft {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   max-width: 260px;
+  min-height: 56px;
   margin: 0 auto;
+  border-radius: 16px;
+  position: static;
+  left: auto;
+  right: auto;
+  transform: none;
+  float: none;
 }
 
 #lyftCard .referral-wrap {
   width: 100%;
-  max-width: 260px;
+  max-width: 320px;
   text-align: center;
   align-self: center;
 }
@@ -523,6 +562,25 @@ input:focus {
 .referral-note {
   font-size: 11px;
   color: #64748b;
+  line-height: 1.45;
+}
+
+.best-badge {
+  align-self: center;
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: #dcfce7;
+  color: #14532d;
+  white-space: nowrap;
+}
+
+.ride-top.with-badge {
+  align-items: center;
 }
 
 .smallnote {
@@ -792,6 +850,10 @@ footer {
   .steps {
     grid-template-columns: 1fr;
   }
+
+  .ride-card {
+    width: 100%;
+  }
 }
 
 @media (max-width: 768px) {
@@ -812,6 +874,12 @@ footer {
 
   .mobile-sticky-cta .btn {
     flex: 1;
+  }
+
+  .ride-card {
+    padding: 22px;
+    gap: 16px;
+    min-height: auto;
   }
 
   .ride-actions {
@@ -857,6 +925,18 @@ footer {
 
   .pricebox {
     align-items: flex-start;
+  }
+
+  .pricebox .tag {
+    margin-top: 4px;
+  }
+
+  .ride-top.with-badge {
+    align-items: flex-start;
+  }
+
+  .best-badge {
+    align-self: flex-start;
   }
 }
 
