@@ -949,6 +949,37 @@ window.addEventListener("load", () => {
   logEvent("page_view", { supabaseEnabled });
 });
 
+document.querySelectorAll(".tooltip-trigger").forEach((el) => {
+  el.addEventListener("click", (e) => {
+    const box = el.querySelector(".tooltip-box");
+
+    if (!box) return;
+
+    const isVisible = box.style.opacity === "1";
+
+    document.querySelectorAll(".tooltip-box").forEach(b => {
+      b.style.opacity = "0";
+      b.style.pointerEvents = "none";
+      b.style.transform = "translateY(6px)";
+    });
+
+    if (!isVisible) {
+      box.style.opacity = "1";
+      box.style.pointerEvents = "auto";
+      box.style.transform = "translateY(0)";
+    }
+
+    e.stopPropagation();
+  });
+});
+
+document.addEventListener("click", () => {
+  document.querySelectorAll(".tooltip-box").forEach(b => {
+    b.style.opacity = "0";
+    b.style.pointerEvents = "none";
+    b.style.transform = "translateY(6px)";
+  });
+});
 
 
 
