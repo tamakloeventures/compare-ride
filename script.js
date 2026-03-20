@@ -1,13 +1,19 @@
 const CONFIG = window.RIDECOMPARE_CONFIG || {};
 
 const SUPABASE_URL =
-  CONFIG.supabaseUrl || "https://prglhlctcswjccajsvxr.supabase.co";
+  CONFIG.SUPABASE_URL ||
+  CONFIG.supabaseUrl ||
+  "https://prglhlctcswjccajsvxr.supabase.co";
 
 const SUPABASE_ANON_KEY =
-  CONFIG.supabaseAnonKey || "sb_publishable_BM9ApnCCqHYai5ZaZPf0Pw_l1N4Vatk";
+  CONFIG.SUPABASE_ANON_KEY ||
+  CONFIG.supabaseAnonKey ||
+  "sb_publishable_BM9ApnCCqHYai5ZaZPf0Pw_l1N4Vatk";
 
 const LYFT_REFERRAL_URL =
-  CONFIG.lyftReferralUrl || "https://www.lyft.com/i/ELVIS98387";
+  CONFIG.LYFT_REFERRAL_URL ||
+  CONFIG.lyftReferralUrl ||
+  "https://www.lyft.com/i/ELVIS98387";
 
 const supabaseEnabled =
   typeof window.supabase !== "undefined" &&
@@ -950,37 +956,39 @@ window.addEventListener("load", () => {
 });
 
 document.querySelectorAll(".tooltip-trigger").forEach((el) => {
-  el.addEventListener("click", (e) => {
+  el.addEventListener("click", (event) => {
     const box = el.querySelector(".tooltip-box");
 
     if (!box) return;
 
     const isVisible = box.style.opacity === "1";
 
-    document.querySelectorAll(".tooltip-box").forEach(b => {
-      b.style.opacity = "0";
-      b.style.pointerEvents = "none";
-      b.style.transform = "translateY(6px)";
+    document.querySelectorAll(".tooltip-box").forEach((tooltip) => {
+      tooltip.style.opacity = "0";
+      tooltip.style.visibility = "hidden";
+      tooltip.style.pointerEvents = "none";
+      tooltip.style.transform = "translateY(6px)";
     });
 
     if (!isVisible) {
       box.style.opacity = "1";
+      box.style.visibility = "visible";
       box.style.pointerEvents = "auto";
       box.style.transform = "translateY(0)";
     }
 
-    e.stopPropagation();
+    event.stopPropagation();
   });
 });
 
 document.addEventListener("click", () => {
-  document.querySelectorAll(".tooltip-box").forEach(b => {
-    b.style.opacity = "0";
-    b.style.pointerEvents = "none";
-    b.style.transform = "translateY(6px)";
+  document.querySelectorAll(".tooltip-box").forEach((tooltip) => {
+    tooltip.style.opacity = "0";
+    tooltip.style.visibility = "hidden";
+    tooltip.style.pointerEvents = "none";
+    tooltip.style.transform = "translateY(6px)";
   });
 });
-
 
 
 
