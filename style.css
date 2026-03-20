@@ -153,23 +153,6 @@ input {
   font-weight: 700;
 }
 
-.official-notice {
-  margin-top: 18px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  color: #7c2d12;
-  font-size: 14px;
-  line-height: 1.5;
-  font-weight: 600;
-  max-width: 600px;
-}
-
-.official-notice strong {
-  font-weight: 800;
-}
-
 /* Buttons */
 .btn {
   border: 0;
@@ -491,60 +474,6 @@ input:focus {
   margin-top: 4px;
 }
 
-.tooltip-trigger {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  cursor: help;
-}
-
-.tooltip-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  font-size: 11px;
-  font-weight: 800;
-  border-radius: 50%;
-  background: #e2e8f0;
-  color: #0f172a;
-}
-
-.tooltip-box {
-  position: absolute;
-  bottom: 125%;
-  left: 0;
-  width: 240px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: #0f172a;
-  color: #fff;
-  font-size: 12px;
-  line-height: 1.4;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
-
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(6px);
-  transition: all 0.2s ease;
-  z-index: 20;
-}
-
-.tooltip-trigger:hover .tooltip-box {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Mobile support */
-@media (max-width: 768px) {
-  .tooltip-box {
-    width: 200px;
-    font-size: 11px;
-  }
-}
-
 .tag {
   font-size: 12px;
   font-weight: 900;
@@ -597,7 +526,7 @@ input:focus {
   line-height: 1.5;
 }
 
-/* Result banner using existing statusNote element */
+/* Result banner */
 #statusNote {
   max-width: 920px;
   margin: 28px auto 0;
@@ -627,6 +556,76 @@ input:focus {
 
 .notice-bar strong {
   color: #7c2d12;
+}
+
+/* Tooltip */
+.tooltip-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: help;
+  white-space: nowrap;
+}
+
+.tooltip-trigger .tooltip-icon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #dbeafe;
+  color: #1d4ed8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  flex: 0 0 18px;
+  text-transform: none;
+}
+
+.tooltip-trigger .tooltip-box {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 10px);
+  width: 280px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #0f172a;
+  color: #f8fafc;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.55;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: normal;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.28);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(6px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.tooltip-trigger .tooltip-box::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 18px;
+  width: 12px;
+  height: 12px;
+  background: #0f172a;
+  transform: rotate(45deg);
+}
+
+.tooltip-trigger:hover .tooltip-box,
+.tooltip-trigger:focus-within .tooltip-box,
+.tooltip-trigger.tooltip-open .tooltip-box {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 /* Steps */
@@ -839,6 +838,17 @@ footer {
   .ride-card.best-pick {
     transform: none;
   }
+
+  .tooltip-trigger {
+    white-space: normal;
+    align-items: flex-start;
+  }
+
+  .tooltip-trigger .tooltip-box {
+    width: min(240px, 78vw);
+    left: 0;
+    top: calc(100% + 8px);
+  }
 }
 
 @media (max-width: 640px) {
@@ -852,6 +862,10 @@ footer {
 
   .section-title {
     font-size: 30px;
+  }
+
+  .pricebox {
+    align-items: flex-start;
   }
 }
 
