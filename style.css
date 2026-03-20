@@ -491,6 +491,60 @@ input:focus {
   margin-top: 4px;
 }
 
+.tooltip-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: help;
+}
+
+.tooltip-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 11px;
+  font-weight: 800;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.tooltip-box {
+  position: absolute;
+  bottom: 125%;
+  left: 0;
+  width: 240px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: all 0.2s ease;
+  z-index: 20;
+}
+
+.tooltip-trigger:hover .tooltip-box {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mobile support */
+@media (max-width: 768px) {
+  .tooltip-box {
+    width: 200px;
+    font-size: 11px;
+  }
+}
+
 .tag {
   font-size: 12px;
   font-weight: 900;
