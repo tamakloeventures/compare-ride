@@ -940,6 +940,43 @@ footer {
   }
 }
 
+/* FORCE Lyft card to match Uber vertical layout */
+#lyftCard {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Stack ALL content vertically */
+#lyftCard .ride-top,
+#lyftCard .pricebox,
+#lyftCard .ride-actions {
+  width: 100%;
+}
+
+/* Ensure fare box is full width */
+#lyftCard .pricebox {
+  margin-top: 8px;
+}
+
+/* Ensure button sits BELOW fare box */
+#lyftCard .ride-actions {
+  margin-top: 14px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* Button stays centered and consistent */
+#lyftCard .btn-lyft {
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+}
+
+/* Referral stays below button */
+#lyftCard .referral-wrap {
+  margin-top: 10px;
+}
   
 
 
