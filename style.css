@@ -905,13 +905,21 @@ footer {
     font-size: 14px;
   }
 
-   .tooltip-trigger .tooltip-box {
+     .tooltip-trigger .tooltip-box {
     width: min(240px, 78vw);
   }
 
+  .booking-card {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+
   .btn-find {
+    position: sticky;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    z-index: 5;
     scroll-margin-top: 96px;
     scroll-margin-bottom: 24px;
+    box-shadow: 0 12px 28px rgba(16, 185, 129, 0.24);
   }
   
 @media (max-width: 640px) {
