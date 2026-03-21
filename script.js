@@ -914,11 +914,19 @@ function initMobileDateTimeAssist() {
         behavior: "smooth",
         block: "center"
       });
-    }, 350);
+    }, 180);
   };
 
   fields.forEach((field) => {
-    field.addEventListener("change", revealFindRatesButton);
+    const handleComplete = () => {
+      if (!isSmallScreen()) return;
+
+      field.blur();
+      revealFindRatesButton();
+    };
+
+    field.addEventListener("change", handleComplete);
+    field.addEventListener("input", handleComplete);
     field.addEventListener("blur", revealFindRatesButton);
   });
 
@@ -927,9 +935,9 @@ function initMobileDateTimeAssist() {
 
     window.visualViewport.addEventListener("resize", () => {
       const currentHeight = window.visualViewport.height;
-      const keyboardOrPickerClosed = currentHeight > lastHeight + 40;
+      const pickerLikelyClosed = currentHeight > lastHeight + 40;
 
-      if (keyboardOrPickerClosed) {
+      if (pickerLikelyClosed) {
         revealFindRatesButton();
       }
 
