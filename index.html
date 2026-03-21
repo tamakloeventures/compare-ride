@@ -122,11 +122,11 @@
 
   <section class="section" id="available">
     <div class="container">
-      <h2 class="section-title">Available Rides</h2>
-      <p class="section-subtitle">
-        Estimated fares are approximate. Use them to compare quickly, then confirm final pricing
-        inside each provider’s official experience.
-      </p>
+      <h2 class="section-title" id="availableTitle">Available Rides</h2>
+<p class="section-subtitle" id="availableSubtitle">
+  Estimated fares are approximate. Use them to compare quickly, then confirm final pricing
+  inside each provider’s official experience.
+</p>
 
       <div class="rides-row">
         <div class="ride-card" id="uberCard">
@@ -236,13 +236,12 @@
         </button>
       </div>
 
-      <div class="notice-bar">
-        <strong>Important:</strong> RideCompare is an independent comparison tool and is not
-        affiliated with Uber or Lyft. Fare estimates are approximate, and final pricing,
-        availability, and booking are completed inside the official provider experience.
-        Lyft links may include a referral code.
-      </div>
-    </div>
+      <div class="notice-bar" id="resultsNotice">
+  <strong>Important:</strong> RideCompare is an independent comparison tool and is not
+  affiliated with Uber or Lyft. Fare estimates are approximate, and final pricing,
+  availability, and booking are completed inside the official provider experience.
+  Lyft links may include a referral code.
+</div>
   </section>
 
   <section class="section alt">
@@ -286,9 +285,15 @@
             </p>
 
             <form id="waitlistForm" class="waitlist-form">
-              <input type="email" id="waitlistEmail" placeholder="Enter your email" required />
-              <button type="submit" class="btn btn-primary">Join Waitlist</button>
-            </form>
+  <input type="email" id="waitlistEmail" placeholder="Enter your email" required />
+  <input
+    type="text"
+    id="waitlistCity"
+    placeholder="Request your city (optional)"
+    style="display:none"
+  />
+  <button type="submit" class="btn btn-primary">Join Waitlist</button>
+</form>
 
             <div class="smallnote waitlist-status" id="waitlistStatus">
               No spam. Just product updates and launch news.
@@ -394,12 +399,13 @@
   </div>
 
   <script>
-    window.RIDECOMPARE_CONFIG = {
-      SUPABASE_URL: "https://prglhlctcswjccajsvxr.supabase.co",
-      SUPABASE_ANON_KEY: "sb_publishable_BM9ApnCCqHYai5ZaZPf0Pw_l1N4Vatk",
-      LYFT_REFERRAL_URL: "https://www.lyft.com/i/ELVIS98387"
-    };
-  </script>
+  window.RIDECOMPARE_CONFIG = {
+    SUPABASE_URL: "https://prglhlctcswjccajsvxr.supabase.co",
+    SUPABASE_ANON_KEY: "sb_publishable_BM9ApnCCqHYai5ZaZPf0Pw_l1N4Vatk",
+    LYFT_REFERRAL_URL: "https://www.lyft.com/i/ELVIS98387",
+    DEFAULT_MARKET: "us"
+  };
+</script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
