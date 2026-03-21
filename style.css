@@ -910,6 +910,11 @@ footer {
   }
 }
 
+  .btn-find {
+    scroll-margin-top: 96px;
+    scroll-margin-bottom: 24px;
+  }
+
 @media (max-width: 640px) {
   .datetime {
     grid-template-columns: 1fr;
