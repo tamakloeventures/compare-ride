@@ -905,16 +905,15 @@ footer {
     font-size: 14px;
   }
 
-  .tooltip-trigger .tooltip-box {
+   .tooltip-trigger .tooltip-box {
     width: min(240px, 78vw);
   }
-}
 
   .btn-find {
     scroll-margin-top: 96px;
     scroll-margin-bottom: 24px;
   }
-
+  
 @media (max-width: 640px) {
   .datetime {
     grid-template-columns: 1fr;
