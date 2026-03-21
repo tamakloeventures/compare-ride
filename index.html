@@ -35,29 +35,41 @@
 </head>
 <body>
   <header class="hero" id="top">
-    <div class="hero-left">
-      <div class="eyebrow">RideCompare by Tamakloe Ventures LLC</div>
-      <h1>Compare Uber and Lyft fares instantly</h1>
-      <p>
-        Find the cheapest ride and launch it in seconds. Built for everyday commuters,
-        airport travelers, and anyone who wants a faster way to compare ride options.
-      </p>
+  <div class="hero-left">
+    <div class="hero-topbar">
+      <div class="eyebrow" id="marketEyebrow">RideCompare US</div>
 
-      <div class="hero-cta">
-        <button class="btn btn-primary" id="btnCompare" type="button">Compare Rides Now</button>
-        <button class="btn btn-outline" id="btnScrollBooking" type="button">Find Best Rates</button>
-      </div>
-
-      <div class="official-notice">
-        ⚠️ <strong>Important:</strong> RideCompare is an independent comparison tool and is not affiliated with Uber or Lyft.
-        <strong>Official booking and final pricing always happen inside the Uber or Lyft app.</strong>
-        RideCompare only provides estimated comparisons to help you choose faster.
-      </div>
-
-      <div class="social-proof">
-        <span id="ridesComparedCount">0</span> ride comparisons generated
+      <div class="market-switch-wrap">
+        <label for="marketSelect" class="market-label">Market</label>
+        <select id="marketSelect" class="market-select" aria-label="Choose market">
+          <option value="us">United States</option>
+          <option value="gh">Ghana</option>
+        </select>
       </div>
     </div>
+
+    <h1 id="heroTitle">Compare ride options instantly</h1>
+    <p id="heroSubtitle">
+      Find the best ride option faster, compare estimated fares, and continue in the official provider app.
+    </p>
+
+    <div class="hero-cta">
+      <button class="btn btn-primary" id="btnCompare" type="button">Compare Rides Now</button>
+      <button class="btn btn-outline" id="btnScrollBooking" type="button">Find Best Rates</button>
+    </div>
+
+    <div class="market-chips" id="marketChips"></div>
+
+    <div class="official-notice" id="officialNotice">
+      ⚠️ <strong>Important:</strong> RideCompare is an independent comparison tool and is not affiliated with Uber or Lyft.
+      <strong>Official booking and final pricing always happen inside the provider app.</strong>
+      RideCompare only provides estimated comparisons to help you choose faster.
+    </div>
+
+    <div class="social-proof">
+      <span id="ridesComparedCount">0</span> ride comparisons generated
+    </div>
+  </div>
 
     <div class="booking-card" id="bookingCard">
       <h2>Compare &amp; Book Your Ride</h2>
