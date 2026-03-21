@@ -58,6 +58,16 @@ const els = {
   mobileStickyCta: document.getElementById("mobileStickyCta"),
   mobileBestRideBtn: document.getElementById("mobileBestRideBtn"),
   mobileCompareBtn: document.getElementById("mobileCompareBtn")
+    waitlistCity: document.getElementById("waitlistCity"),
+  marketSelect: document.getElementById("marketSelect"),
+  marketEyebrow: document.getElementById("marketEyebrow"),
+  heroTitle: document.getElementById("heroTitle"),
+  heroSubtitle: document.getElementById("heroSubtitle"),
+  marketChips: document.getElementById("marketChips"),
+  officialNotice: document.getElementById("officialNotice"),
+  availableTitle: document.getElementById("availableTitle"),
+  availableSubtitle: document.getElementById("availableSubtitle"),
+  resultsNotice: document.getElementById("resultsNotice")
 };
 
 const sessionId = localStorage.getItem("rc_session") || crypto.randomUUID();
@@ -81,6 +91,122 @@ let lastRoute = {
 let lastBestProvider = "Uber";
 
 const DISPLAY_COUNTER_BASE = 127;
+
+const DEFAULT_MARKET = (CONFIG.DEFAULT_MARKET || "us").toLowerCase();
+
+const MARKET_CONFIG = {
+  us: {
+    code: "us",
+    eyebrow: "RideCompare by Tamakloe Ventures LLC",
+    heroTitle: "Compare Uber and Lyft fares instantly",
+    heroSubtitle:
+      "Find the cheapest ride and launch it in seconds. Built for everyday commuters, airport travelers, and anyone who wants a faster way to compare ride options.",
+    chips: ["New York", "Los Angeles", "Chicago", "Houston", "Atlanta"],
+    currency: "USD",
+    locale: "en-US",
+    availableTitle: "Available Rides",
+    availableSubtitle:
+      "Estimated fares are approximate. Use them to compare quickly, then confirm final pricing inside each provider’s official experience.",
+    officialNotice:
+      "⚠️ <strong>Important:</strong> RideCompare is an independent comparison tool and is not affiliated with Uber or Lyft. <strong>Official booking and final pricing always happen inside the Uber or Lyft app.</strong> RideCompare only provides estimated comparisons to help you choose faster.",
+    resultsNotice:
+      "<strong>Important:</strong> RideCompare is an independent comparison tool and is not affiliated with Uber or Lyft. Fare estimates are approximate, and final pricing, availability, and booking are completed inside the official provider experience. Lyft links may include a referral code.",
+    waitlistCityEnabled: false,
+    waitlistSource: "ridecompare_us"
+  },
+  gh: {
+    code: "gh",
+    eyebrow: "RideCompare Ghana",
+    heroTitle: "Compare ride options faster before you book in Ghana",
+    heroSubtitle:
+      "Compare available ride providers, review estimated fare ranges, and continue in the official provider app.",
+    chips: ["Accra", "Kumasi"],
+    currency: "GHS",
+    locale: "en-GH",
+    availableTitle: "Available Ride Options",
+    availableSubtitle:
+      "Estimated fares are approximate. Use them to compare quickly, then confirm final pricing and availability inside each provider’s official experience.",
+    officialNotice:
+      "⚠️ <strong>Important:</strong> RideCompare is an independent comparison platform and is not affiliated with ride providers. <strong>Official booking and final pricing always happen inside the provider app.</strong> RideCompare only provides estimated comparisons to help you choose faster.",
+    resultsNotice:
+      "<strong>Important:</strong> RideCompare is an independent comparison tool. Fare estimates are approximate, and final pricing, availability, and booking are completed inside the official provider experience.",
+    waitlistCityEnabled: true,
+    waitlistSource: "ridecompare_gh"
+  }
+};
+
+let currentMarket = MARKET_CONFIG[DEFAULT_MARKET] ? DEFAULT_MARKET : "us";
+
+function getMarketFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const market = (params.get("market") || "").toLowerCase();
+  return MARKET_CONFIG[market] ? market : null;
+}
+
+function getCurrentMarketConfig() {
+  return MARKET_CONFIG[currentMarket] || MARKET_CONFIG.us;
+}
+
+function updateMarketInUrl() {
+  const url = new URL(window.location.href);
+  url.searchParams.set("market", currentMarket);
+  window.history.replaceState({}, "", url);
+}
+
+function applyMarketUI() {
+  const market = getCurrentMarketConfig();
+
+  if (els.marketSelect) {
+    els.marketSelect.value = currentMarket;
+  }
+
+  if (els.marketEyebrow) {
+    els.marketEyebrow.textContent = market.eyebrow;
+  }
+
+  if (els.heroTitle) {
+    els.heroTitle.textContent = market.heroTitle;
+  }
+
+  if (els.heroSubtitle) {
+    els.heroSubtitle.textContent = market.heroSubtitle;
+  }
+
+  if (els.marketChips) {
+    els.marketChips.innerHTML = "";
+    market.chips.forEach((chip) => {
+      const span = document.createElement("span");
+      span.className = "market-chip";
+      span.textContent = chip;
+      els.marketChips.appendChild(span);
+    });
+  }
+
+  if (els.officialNotice) {
+    els.officialNotice.innerHTML = market.officialNotice;
+  }
+
+  if (els.availableTitle) {
+    els.availableTitle.textContent = market.availableTitle;
+  }
+
+  if (els.availableSubtitle) {
+    els.availableSubtitle.textContent = market.availableSubtitle;
+  }
+
+  if (els.resultsNotice) {
+    els.resultsNotice.innerHTML = market.resultsNotice;
+  }
+
+  if (els.waitlistCity) {
+    els.waitlistCity.style.display = market.waitlistCityEnabled ? "" : "none";
+    if (!market.waitlistCityEnabled) {
+      els.waitlistCity.value = "";
+    }
+  }
+
+  updateMarketInUrl();
+}
 
 function setStatus(message) {
   if (els.statusNote) {
@@ -274,7 +400,16 @@ function milesFromMeters(meters) {
 }
 
 function formatMoneyRange(min, max) {
-  return `$${min.toFixed(2)}–$${max.toFixed(2)}`;
+  const market = getCurrentMarketConfig();
+
+  const formatter = new Intl.NumberFormat(market.locale, {
+    style: "currency",
+    currency: market.currency,
+    maximumFractionDigits: market.currency === "GHS" ? 0 : 2,
+    minimumFractionDigits: market.currency === "GHS" ? 0 : 2
+  });
+
+  return `${formatter.format(min)}–${formatter.format(max)}`;
 }
 
 function estimateFares(distanceMeters, durationSeconds) {
@@ -856,27 +991,43 @@ function initAppEvents() {
     logEvent("search_submit");
     await refreshEstimates();
     scrollToAvailable();
+    els.marketSelect?.addEventListener("change", () => {
+    currentMarket = els.marketSelect.value;
+    applyMarketUI();
+    logEvent("market_change", { market: currentMarket });
   });
 
-  if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
+    if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
     els.waitlistForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       const email = els.waitlistEmail.value.trim();
+      const city = els.waitlistCity?.value?.trim() || "";
 
       if (!email) {
         els.waitlistStatus.textContent = "Please enter a valid email address.";
         return;
       }
 
-      els.waitlistStatus.textContent = "Joining waitlist...";
+      els.waitlistStatus.textContent = getCurrentMarketConfig().waitlistCityEnabled
+        ? "Joining waitlist..."
+        : "Joining waitlist...";
 
-      const result = await saveWaitlist(email);
+      const result = await saveWaitlist(email, city);
 
       if (result.ok) {
-        els.waitlistStatus.textContent = "You're on the waitlist ✅";
+        els.waitlistStatus.textContent =
+          getCurrentMarketConfig().waitlistCityEnabled && city
+            ? `You're on the waitlist ✅ City noted: ${city}`
+            : "You're on the waitlist ✅";
+
         els.waitlistEmail.value = "";
-        logEvent("waitlist_signup");
+        if (els.waitlistCity) els.waitlistCity.value = "";
+
+        logEvent("waitlist_signup", {
+          market: currentMarket,
+          requested_city: city || null
+        });
       } else {
         console.error("Waitlist error:", result.error);
 
@@ -898,8 +1049,7 @@ function initAppEvents() {
       }
     });
   }
-}
-
+    
 function initMobileDateTimeAssist() {
   const isSmallScreen = () => window.matchMedia("(max-width: 768px)").matches;
   const fields = [els.date, els.time].filter(Boolean);
@@ -1003,16 +1153,20 @@ window.__gmapsFail = function __gmapsFail() {
 };
 
 window.addEventListener("load", () => {
-  cleanupDuplicateLogos();
-  normalizeRideTopStructure(els.uberCard);
-  normalizeRideTopStructure(els.lyftCard);
-  updateLyftButtonUI();
-  hydrateRideCounter();
+  const marketFromUrl = getMarketFromUrl();
+  if (marketFromUrl) {
+    currentMarket = marketFromUrl;
+  }
+
   hydrateFromQueryParams();
+  applyMarketUI();
+  updateLyftButtonUI();
+  cleanupDuplicateLogos();
+  hydrateRideCounter();
   setDefaultDateTime();
   initAppEvents();
   initMobileDateTimeAssist();
-  logEvent("page_view", { supabaseEnabled });
+  logEvent("page_view", { supabaseEnabled, market: currentMarket });
 });
 
 document.querySelectorAll(".tooltip-trigger").forEach((el) => {
