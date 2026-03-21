@@ -904,30 +904,43 @@ function initMobileDateTimeAssist() {
   const isSmallScreen = () => window.matchMedia("(max-width: 768px)").matches;
   const fields = [els.date, els.time].filter(Boolean);
 
-  if (!fields.length) return;
+  if (!fields.length || !els.rideForm) return;
 
-  const revealFindRatesButton = () => {
-    if (!isSmallScreen() || !els.btnFindRates) return;
+  let autoSubmitTimer = null;
 
-    window.setTimeout(() => {
-      els.btnFindRates.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
-    }, 180);
+  const canAutoSubmit = () => {
+    const pickup = els.pickup?.value?.trim() || "";
+    const dropoff = els.dropoff?.value?.trim() || "";
+    const rideDate = els.date?.value?.trim() || "";
+    const rideTime = els.time?.value?.trim() || "";
+
+    return Boolean(pickup && dropoff && rideDate && rideTime);
+  };
+
+  const autoSubmitIfReady = () => {
+    if (!isSmallScreen() || !canAutoSubmit()) return;
+
+    window.clearTimeout(autoSubmitTimer);
+
+    autoSubmitTimer = window.setTimeout(() => {
+      const values = validateInputs();
+      if (!values) return;
+
+      els.rideForm.requestSubmit();
+    }, 220);
   };
 
   fields.forEach((field) => {
-    const handleComplete = () => {
+    const handleFieldComplete = () => {
       if (!isSmallScreen()) return;
 
       field.blur();
-      revealFindRatesButton();
+      autoSubmitIfReady();
     };
 
-    field.addEventListener("change", handleComplete);
-    field.addEventListener("input", handleComplete);
-    field.addEventListener("blur", revealFindRatesButton);
+    field.addEventListener("change", handleFieldComplete);
+    field.addEventListener("input", handleFieldComplete);
+    field.addEventListener("blur", autoSubmitIfReady);
   });
 
   if (window.visualViewport) {
@@ -938,7 +951,7 @@ function initMobileDateTimeAssist() {
       const pickerLikelyClosed = currentHeight > lastHeight + 40;
 
       if (pickerLikelyClosed) {
-        revealFindRatesButton();
+        autoSubmitIfReady();
       }
 
       lastHeight = currentHeight;
