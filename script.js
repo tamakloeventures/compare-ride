@@ -900,6 +900,44 @@ function initAppEvents() {
   }
 }
 
+function initMobileDateTimeAssist() {
+  const isSmallScreen = () => window.matchMedia("(max-width: 768px)").matches;
+  const fields = [els.date, els.time].filter(Boolean);
+
+  if (!fields.length) return;
+
+  const revealFindRatesButton = () => {
+    if (!isSmallScreen() || !els.btnFindRates) return;
+
+    window.setTimeout(() => {
+      els.btnFindRates.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }, 350);
+  };
+
+  fields.forEach((field) => {
+    field.addEventListener("change", revealFindRatesButton);
+    field.addEventListener("blur", revealFindRatesButton);
+  });
+
+  if (window.visualViewport) {
+    let lastHeight = window.visualViewport.height;
+
+    window.visualViewport.addEventListener("resize", () => {
+      const currentHeight = window.visualViewport.height;
+      const keyboardOrPickerClosed = currentHeight > lastHeight + 40;
+
+      if (keyboardOrPickerClosed) {
+        revealFindRatesButton();
+      }
+
+      lastHeight = currentHeight;
+    });
+  }
+}
+
 window.initAutocomplete = function initAutocomplete() {
   setHelper("Start typing pickup and dropoff, then select a suggested address.");
 
@@ -952,6 +990,7 @@ window.addEventListener("load", () => {
   hydrateFromQueryParams();
   setDefaultDateTime();
   initAppEvents();
+  initMobileDateTimeAssist();
   logEvent("page_view", { supabaseEnabled });
 });
 
