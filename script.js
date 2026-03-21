@@ -57,8 +57,8 @@ const els = {
   ridesComparedCount: document.getElementById("ridesComparedCount"),
   mobileStickyCta: document.getElementById("mobileStickyCta"),
   mobileBestRideBtn: document.getElementById("mobileBestRideBtn"),
-  mobileCompareBtn: document.getElementById("mobileCompareBtn")
-    waitlistCity: document.getElementById("waitlistCity"),
+  mobileCompareBtn: document.getElementById("mobileCompareBtn"),
+  waitlistCity: document.getElementById("waitlistCity"),
   marketSelect: document.getElementById("marketSelect"),
   marketEyebrow: document.getElementById("marketEyebrow"),
   heroTitle: document.getElementById("heroTitle"),
@@ -362,15 +362,22 @@ async function logEvent(eventName, extra = {}) {
   }
 }
 
-async function saveWaitlist(email) {
+async function saveWaitlist(email, city = "") {
   if (!supabaseEnabled || !sb) {
     return { ok: false, error: "Supabase not configured" };
   }
 
+  const market = getCurrentMarketConfig();
+
   try {
+    const source =
+      city && market.waitlistCityEnabled
+        ? `${market.waitlistSource}_${city.toLowerCase().trim().replace(/\s+/g, "_")}`
+        : market.waitlistSource;
+
     const { error } = await sb.from("waitlist").insert({
       email,
-      source: "ridecompare_homepage"
+      source
     });
 
     if (error) {
@@ -897,9 +904,10 @@ async function shareComparison() {
   const values = validateInputs();
   if (!values) return;
 
-  const url = new URL(window.location.origin + window.location.pathname);
+    const url = new URL(window.location.origin + window.location.pathname);
   url.searchParams.set("pickup", values.pickup);
   url.searchParams.set("dropoff", values.dropoff);
+  url.searchParams.set("market", currentMarket);
 
   if (els.date?.value) {
     url.searchParams.set("rideDate", els.date.value);
@@ -961,12 +969,12 @@ function initAppEvents() {
   els.btnLyft?.addEventListener("click", openLyft);
 
   els.btnCompare?.addEventListener("click", () => {
-    logEvent("cta_compare_click");
+    logEvent("cta_compare_click", { market: currentMarket });
     scrollToBooking();
   });
 
   els.btnScrollBooking?.addEventListener("click", () => {
-    logEvent("cta_find_click");
+    logEvent("cta_find_click", { market: currentMarket });
     scrollToBooking();
   });
 
@@ -982,22 +990,24 @@ function initAppEvents() {
 
   els.mobileCompareBtn?.addEventListener("click", scrollToAvailable);
 
+  els.marketSelect?.addEventListener("change", () => {
+    currentMarket = els.marketSelect.value;
+    applyMarketUI();
+    logEvent("market_change", { market: currentMarket });
+  });
+
   els.rideForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const values = validateInputs();
     if (!values) return;
 
-    logEvent("search_submit");
+    logEvent("search_submit", { market: currentMarket });
     await refreshEstimates();
     scrollToAvailable();
-    els.marketSelect?.addEventListener("change", () => {
-    currentMarket = els.marketSelect.value;
-    applyMarketUI();
-    logEvent("market_change", { market: currentMarket });
   });
 
-    if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
+  if (els.waitlistForm && els.waitlistEmail && els.waitlistStatus) {
     els.waitlistForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
@@ -1009,9 +1019,7 @@ function initAppEvents() {
         return;
       }
 
-      els.waitlistStatus.textContent = getCurrentMarketConfig().waitlistCityEnabled
-        ? "Joining waitlist..."
-        : "Joining waitlist...";
+      els.waitlistStatus.textContent = "Joining waitlist...";
 
       const result = await saveWaitlist(email, city);
 
@@ -1049,6 +1057,7 @@ function initAppEvents() {
       }
     });
   }
+}
     
 function initMobileDateTimeAssist() {
   const isSmallScreen = () => window.matchMedia("(max-width: 768px)").matches;
