@@ -219,7 +219,6 @@ function applyMarketUI() {
     }
   }
   document.body.setAttribute("data-market", currentMarket);
-  applyProviderVisibility();
   updateMarketInUrl();
 }
 
