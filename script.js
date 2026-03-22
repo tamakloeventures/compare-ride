@@ -25,10 +25,6 @@ const supabaseEnabled =
 const sb = supabaseEnabled
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
-
-const MARKET_PROVIDERS = {
-  us: ["uber", "lyft"],
-  gh: ["uber", "bolt", "yango"]
 };
 
 const els = {
@@ -106,6 +102,11 @@ let lastBestProvider = "Uber";
 const DISPLAY_COUNTER_BASE = 127;
 
 const DEFAULT_MARKET = (CONFIG.DEFAULT_MARKET || "us").toLowerCase();
+
+const MARKET_PROVIDERS = {
+  us: ["uber", "lyft"],
+  gh: ["uber", "bolt", "yango"]
+};
 
 const MARKET_CONFIG = {
   us: {
@@ -217,7 +218,8 @@ function applyMarketUI() {
       els.waitlistCity.value = "";
     }
   }
-
+  document.body.setAttribute("data-market", currentMarket);
+  applyProviderVisibility();
   updateMarketInUrl();
 }
 
@@ -516,6 +518,29 @@ function haversineMiles(lat1, lng1, lat2, lng2) {
       Math.sin(dLng / 2) ** 2;
 
   return 2 * radiusMiles * Math.asin(Math.sqrt(a));
+}
+
+function applyProviderVisibility() {
+  const allowed = MARKET_PROVIDERS[currentMarket] || [];
+
+  const providerMap = {
+    uber: els.uberCard,
+    lyft: els.lyftCard,
+    bolt: els.boltCard,
+    yango: els.yangoCard
+  };
+
+  Object.entries(providerMap).forEach(([key, el]) => {
+    if (!el) return;
+    el.style.display = allowed.includes(key) ? "" : "none";
+  });
+
+  if (currentMarket === "gh") {
+    if (els.boltPrice) els.boltPrice.textContent = "GH₵ —";
+    if (els.yangoPrice) els.yangoPrice.textContent = "GH₵ —";
+    if (els.boltEta) els.boltEta.textContent = "ETA —";
+    if (els.yangoEta) els.yangoEta.textContent = "ETA —";
+  }
 }
 
 function incrementRideCounter() {
@@ -913,6 +938,18 @@ async function openLyft() {
   }, 1200);
 }
 
+function openBolt() {
+  const url = "https://bolt.eu/en/";
+  logEvent("ride_click", { market: currentMarket, provider: "Bolt", url });
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+function openYango() {
+  const url = "https://yango.com/en/";
+  logEvent("ride_click", { market: currentMarket, provider: "Yango", url });
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
 async function shareComparison() {
   const values = validateInputs();
   if (!values) return;
@@ -980,6 +1017,8 @@ function setDefaultDateTime() {
 function initAppEvents() {
   els.btnUber?.addEventListener("click", openUber);
   els.btnLyft?.addEventListener("click", openLyft);
+  els.btnBolt?.addEventListener("click", openBolt);
+  els.btnYango?.addEventListener("click", openYango);
 
   els.btnCompare?.addEventListener("click", () => {
     logEvent("cta_compare_click", { market: currentMarket });
@@ -993,7 +1032,12 @@ function initAppEvents() {
 
   els.btnShareCompare?.addEventListener("click", shareComparison);
 
-  els.mobileBestRideBtn?.addEventListener("click", () => {
+    els.mobileBestRideBtn?.addEventListener("click", () => {
+    if (currentMarket === "gh") {
+      openUber();
+      return;
+    }
+
     if (lastBestProvider === "Uber") {
       openUber();
     } else {
