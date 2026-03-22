@@ -42,6 +42,7 @@ const els = {
   helperText: document.getElementById("helperText"),
   available: document.getElementById("available"),
   bookingCard: document.getElementById("bookingCard"),
+
   uberPrice: document.getElementById("uberPrice"),
   lyftPrice: document.getElementById("lyftPrice"),
   uberEta: document.getElementById("uberEta"),
@@ -50,15 +51,20 @@ const els = {
   lyftTag: document.getElementById("lyftTag"),
   uberCard: document.getElementById("uberCard"),
   lyftCard: document.getElementById("lyftCard"),
+  btnUber: document.getElementById("btnUber"),
+  btnLyft: document.getElementById("btnLyft"),
+  lyftSubtitle: document.getElementById("lyftSubtitle"),
+
   waitlistForm: document.getElementById("waitlistForm"),
   waitlistEmail: document.getElementById("waitlistEmail"),
+  waitlistCity: document.getElementById("waitlistCity"),
   waitlistStatus: document.getElementById("waitlistStatus"),
-  lyftSubtitle: document.getElementById("lyftSubtitle"),
+
   ridesComparedCount: document.getElementById("ridesComparedCount"),
   mobileStickyCta: document.getElementById("mobileStickyCta"),
   mobileBestRideBtn: document.getElementById("mobileBestRideBtn"),
   mobileCompareBtn: document.getElementById("mobileCompareBtn"),
-  waitlistCity: document.getElementById("waitlistCity"),
+
   marketSelect: document.getElementById("marketSelect"),
   marketEyebrow: document.getElementById("marketEyebrow"),
   heroTitle: document.getElementById("heroTitle"),
@@ -89,17 +95,17 @@ let lastRoute = {
 };
 
 let currentMarket = getInitialMarket();
-let lastBestProviderId = null;
+let lastBestProvider = "Uber";
 
 const DISPLAY_COUNTER_BASE = 127;
 
 const MARKET_CONFIG = {
   us: {
     code: "us",
-    eyebrow: "RideCompare by Tamakloe Ventures LLC",
-    heroTitle: "Compare Uber and Lyft fares instantly",
+    eyebrow: "RideCompare US",
+    heroTitle: "Compare ride options instantly",
     heroSubtitle:
-      "Find the cheapest ride and launch it in seconds. Built for everyday commuters, airport travelers, and anyone who wants a faster way to compare ride options.",
+      "Find the best ride option faster, compare estimated fares, and continue in the official provider app.",
     chips: ["New York", "Los Angeles", "Chicago", "Houston", "Atlanta"],
     currency: "USD",
     locale: "en-US",
@@ -111,46 +117,8 @@ const MARKET_CONFIG = {
     resultsNotice:
       "<strong>Important:</strong> RideCompare is an independent comparison tool and is not affiliated with Uber or Lyft. Fare estimates are approximate, and final pricing, availability, and booking are completed inside the official provider experience. Lyft links may include a referral code.",
     waitlistCityEnabled: false,
-    waitlistSource: "ridecompare_us",
-    providers: [
-      {
-        id: "uber",
-        name: "Uber",
-        subtitleMobile: "Book instantly with Uber",
-        subtitleDesktop: "Book instantly with Uber",
-        buttonTextMobile: "Book with Uber",
-        buttonTextDesktop: "Book with Uber",
-        brandClass: "uber",
-        logoType: "image",
-        logoSrc: "uber-logo.svg",
-        logoText: "Uber",
-        badgeText: "Estimate",
-        referralUrl: null
-      },
-      {
-        id: "lyft",
-        name: "Lyft",
-        subtitleMobile: "Open in Lyft app",
-        subtitleDesktop: "Continue with Lyft app",
-        buttonTextMobile: "Book with Lyft",
-        buttonTextDesktop: "Get Lyft App",
-        brandClass: "lyft",
-        logoType: "image",
-        logoSrc: "lyft-logo.svg",
-        logoText: "Lyft",
-        badgeText: "Estimate",
-        referralUrl: LYFT_REFERRAL_URL,
-        referralLabel: "Use referral link",
-        referralNote:
-          "Affiliate disclosure: RideCompare may benefit from some referral links."
-      }
-    ],
-    pricingModel: {
-      uber: { base: 2.5, perMile: 1.75, perMin: 0.25, surge: 1.0 },
-      lyft: { base: 2.3, perMile: 1.8, perMin: 0.24, surge: 1.0 }
-    }
+    waitlistSource: "ridecompare_us"
   },
-
   gh: {
     code: "gh",
     eyebrow: "RideCompare Ghana",
@@ -168,56 +136,7 @@ const MARKET_CONFIG = {
     resultsNotice:
       "<strong>Important:</strong> RideCompare is an independent comparison tool. Fare estimates are approximate, and final pricing, availability, and booking are completed inside the official provider experience.",
     waitlistCityEnabled: true,
-    waitlistSource: "ridecompare_gh",
-    providers: [
-      {
-        id: "uber",
-        name: "Uber",
-        subtitleMobile: "Known city coverage",
-        subtitleDesktop: "Known city coverage",
-        buttonTextMobile: "Book with Uber",
-        buttonTextDesktop: "Book with Uber",
-        brandClass: "uber",
-        logoType: "image",
-        logoSrc: "uber-logo.svg",
-        logoText: "Uber",
-        badgeText: "Estimate",
-        referralUrl: null
-      },
-      {
-        id: "bolt",
-        name: "Bolt",
-        subtitleMobile: "Strong local contender",
-        subtitleDesktop: "Strong local contender",
-        buttonTextMobile: "Open Bolt",
-        buttonTextDesktop: "Open Bolt",
-        brandClass: "bolt",
-        logoType: "text",
-        logoSrc: "",
-        logoText: "Bolt",
-        badgeText: "Estimate",
-        referralUrl: null
-      },
-      {
-        id: "yango",
-        name: "Yango",
-        subtitleMobile: "Alternative provider",
-        subtitleDesktop: "Alternative provider",
-        buttonTextMobile: "Open Yango",
-        buttonTextDesktop: "Open Yango",
-        brandClass: "yango",
-        logoType: "text",
-        logoSrc: "",
-        logoText: "Yango",
-        badgeText: "Estimate",
-        referralUrl: null
-      }
-    ],
-    pricingModel: {
-      uber: { base: 18, perMile: 3.8, perMin: 0.55, surge: 1.0 },
-      bolt: { base: 16, perMile: 3.5, perMin: 0.5, surge: 1.0 },
-      yango: { base: 17, perMile: 3.65, perMin: 0.52, surge: 1.0 }
-    }
+    waitlistSource: "ridecompare_gh"
   }
 };
 
@@ -226,6 +145,12 @@ function getInitialMarket() {
   const market = (params.get("market") || "").toLowerCase();
   if (MARKET_CONFIG[market]) return market;
   return MARKET_CONFIG[DEFAULT_MARKET] ? DEFAULT_MARKET : "us";
+}
+
+function getMarketFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const market = (params.get("market") || "").toLowerCase();
+  return MARKET_CONFIG[market] ? market : null;
 }
 
 function getCurrentMarketConfig() {
@@ -266,6 +191,31 @@ function scrollToAvailable() {
 
 function isMobileDevice() {
   return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+}
+
+function cleanupDuplicateLogos() {
+  const badges = document.querySelectorAll(".logo-badge");
+
+  badges.forEach((badge) => {
+    const images = badge.querySelectorAll("img");
+    if (images.length <= 1) return;
+
+    for (let i = 1; i < images.length; i += 1) {
+      images[i].remove();
+    }
+  });
+}
+
+function updateLyftButtonUI() {
+  if (!els.btnLyft || !els.lyftSubtitle) return;
+
+  if (isMobileDevice()) {
+    els.btnLyft.textContent = "Book with Lyft";
+    els.lyftSubtitle.textContent = "Open in Lyft app";
+  } else {
+    els.btnLyft.textContent = "Get Lyft App";
+    els.lyftSubtitle.textContent = "Continue with Lyft app";
+  }
 }
 
 function incrementRideCounter() {
@@ -403,181 +353,12 @@ function applyMarketUI() {
 
   if (els.waitlistCity) {
     els.waitlistCity.style.display = market.waitlistCityEnabled ? "" : "none";
-    els.waitlistCity.placeholder = market.waitlistCityEnabled
-      ? "Request your city (optional)"
-      : "City";
     if (!market.waitlistCityEnabled) {
       els.waitlistCity.value = "";
     }
   }
 
-  renderEmptyProviderCards();
   updateMarketInUrl();
-}
-
-function renderEmptyProviderCards() {
-  const market = getCurrentMarketConfig();
-  const currencyPrefix = market.currency === "GHS" ? "GH₵" : "$";
-
-  const cards = market.providers.map((provider) => ({
-    provider,
-    fareText: `${currencyPrefix} —`,
-    etaText: "ETA —",
-    tagText: provider.badgeText || "Estimate",
-    isBest: false,
-    actionDisabled: true
-  }));
-
-  renderRideCards(cards);
-}
-
-function renderRideCards(cards) {
-  if (!els.ridesGrid) return;
-
-  els.ridesGrid.innerHTML = "";
-
-  cards.forEach((card) => {
-    const article = document.createElement("div");
-    article.className = "ride-card";
-    if (card.isBest) article.classList.add("best-pick");
-
-    const subtitle = isMobileDevice()
-      ? (card.provider.subtitleMobile || card.provider.subtitleDesktop || "")
-      : (card.provider.subtitleDesktop || card.provider.subtitleMobile || "");
-
-    const buttonText = isMobileDevice()
-      ? (card.provider.buttonTextMobile || `Open ${card.provider.name}`)
-      : (card.provider.buttonTextDesktop || `Open ${card.provider.name}`);
-
-    let logoHtml = "";
-    if (card.provider.logoType === "image" && card.provider.logoSrc) {
-      logoHtml = `
-        <img
-          src="${card.provider.logoSrc}"
-          alt="${card.provider.name} logo"
-          onerror="this.style.display='none'; this.parentNode.textContent='${card.provider.logoText || card.provider.name}';"
-        />
-      `;
-    } else {
-      logoHtml = card.provider.logoText || card.provider.name;
-    }
-
-    article.innerHTML = `
-      <div class="ride-top ${card.isBest ? "with-badge" : ""}">
-        <div class="ride-top-main">
-          <div class="logo-badge ${card.provider.brandClass || ""} ${card.provider.logoType === "text" ? "text-logo" : ""}" aria-hidden="true" title="${card.provider.name}">
-            ${logoHtml}
-          </div>
-
-          <div class="ride-meta">
-            <strong>${card.provider.name}</strong>
-            <span>${subtitle}</span>
-          </div>
-        </div>
-
-        ${card.isBest ? `<div class="best-badge">Best Value</div>` : ""}
-      </div>
-
-      <div class="pricebox">
-        <div>
-          <div class="price-label tooltip-trigger">
-            Estimated Fare
-            <span class="tooltip-icon">?</span>
-
-            <div class="tooltip-box">
-              These are estimated fares based on distance and time.
-              Most accurate for trips happening now or soon.
-
-              Future trips may vary due to traffic, demand, and surge pricing.
-            </div>
-          </div>
-          <b>${card.fareText}</b>
-          <div class="price-eta">${card.etaText}</div>
-        </div>
-        <span class="tag ${card.isBest ? "best" : ""}">${card.tagText}</span>
-      </div>
-
-      <div class="ride-actions">
-        <button class="btn provider-btn ${card.provider.brandClass || ""}" type="button" ${card.actionDisabled ? "disabled" : ""}>
-          ${buttonText}
-        </button>
-
-        ${
-          card.provider.referralUrl
-            ? `
-          <div class="referral-wrap">
-            <a
-              href="${card.provider.referralUrl}"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="referral-link"
-            >
-              ${card.provider.referralLabel || "Use referral link"}
-            </a>
-            <span class="referral-note">
-              ${card.provider.referralNote || ""}
-            </span>
-          </div>
-        `
-            : ""
-        }
-      </div>
-    `;
-
-    const button = article.querySelector(".provider-btn");
-    button?.addEventListener("click", async () => {
-      if (card.actionDisabled) return;
-      await openProvider(card.provider.id);
-    });
-
-    els.ridesGrid.appendChild(article);
-  });
-
-  bindTooltipClicks();
-  cleanupDuplicateLogos();
-}
-
-function bindTooltipClicks() {
-  document.querySelectorAll(".tooltip-trigger").forEach((el) => {
-    if (el.dataset.bound === "1") return;
-    el.dataset.bound = "1";
-
-    el.addEventListener("click", (event) => {
-      const box = el.querySelector(".tooltip-box");
-      if (!box) return;
-
-      const isVisible = box.style.opacity === "1";
-
-      document.querySelectorAll(".tooltip-box").forEach((tooltip) => {
-        tooltip.style.opacity = "0";
-        tooltip.style.visibility = "hidden";
-        tooltip.style.pointerEvents = "none";
-        tooltip.style.transform = "translateY(6px)";
-      });
-
-      if (!isVisible) {
-        box.style.opacity = "1";
-        box.style.visibility = "visible";
-        box.style.pointerEvents = "auto";
-        box.style.transform = "translateY(0)";
-      }
-
-      event.stopPropagation();
-    });
-  });
-}
-
-function cleanupDuplicateLogos() {
-  const badges = document.querySelectorAll(".logo-badge");
-
-  badges.forEach((badge) => {
-    const images = badge.querySelectorAll("img");
-    if (images.length <= 1) return;
-
-    for (let i = 1; i < images.length; i += 1) {
-      images[i].remove();
-    }
-  });
 }
 
 function validateInputs() {
@@ -610,65 +391,71 @@ function formatMoneyRange(min, max) {
 }
 
 function estimateFares(distanceMeters, durationSeconds) {
-  const market = getCurrentMarketConfig();
   const miles = milesFromMeters(distanceMeters);
   const minutes = durationSeconds / 60;
 
-  const estimates = {};
-
-  market.providers.forEach((provider) => {
-    const model = market.pricingModel[provider.id];
-    if (!model) return;
-
-    const raw =
-      (model.base + model.perMile * miles + model.perMin * minutes) * model.surge;
-
-    estimates[provider.id] = {
-      low: raw * 0.92,
-      high: raw * 1.12
-    };
-  });
+  const uberBase = 2.5 + miles * 1.75 + minutes * 0.25;
+  const lyftBase = 2.3 + miles * 1.8 + minutes * 0.24;
 
   return {
-    estimates,
+    uber: {
+      low: uberBase * 0.92,
+      high: uberBase * 1.12
+    },
+    lyft: {
+      low: lyftBase * 0.92,
+      high: lyftBase * 1.12
+    },
     miles,
     minutes
   };
 }
 
+function resetRideCards() {
+  if (els.uberPrice) els.uberPrice.textContent = "$ —";
+  if (els.lyftPrice) els.lyftPrice.textContent = "$ —";
+  if (els.uberEta) els.uberEta.textContent = "ETA —";
+  if (els.lyftEta) els.lyftEta.textContent = "ETA —";
+  if (els.uberTag) els.uberTag.textContent = "Estimate";
+  if (els.lyftTag) els.lyftTag.textContent = "Estimate";
+  els.uberTag?.classList.remove("best");
+  els.lyftTag?.classList.remove("best");
+  els.uberCard?.classList.remove("best-pick");
+  els.lyftCard?.classList.remove("best-pick");
+}
+
 function applyFareUI(estimate) {
-  const market = getCurrentMarketConfig();
+  resetRideCards();
 
-  const rendered = market.providers.map((provider) => {
-    const providerEstimate = estimate.estimates[provider.id];
-    const low = providerEstimate?.low ?? 0;
-    const high = providerEstimate?.high ?? 0;
-    const midpoint = (low + high) / 2;
-
-    return {
-      provider,
-      low,
-      high,
-      midpoint,
-      fareText: formatMoneyRange(low, high),
-      etaText: `Trip ~${Math.round(estimate.minutes)} min · ${estimate.miles.toFixed(1)} mi`,
-      tagText: provider.badgeText || "Estimate",
-      isBest: false,
-      actionDisabled: false
-    };
-  });
-
-  rendered.sort((a, b) => a.midpoint - b.midpoint);
-
-  if (rendered.length) {
-    rendered[0].isBest = true;
-    rendered[0].tagText = "Best value";
-    lastBestProviderId = rendered[0].provider.id;
-  } else {
-    lastBestProviderId = null;
+  if (els.uberPrice) {
+    els.uberPrice.textContent = formatMoneyRange(estimate.uber.low, estimate.uber.high);
   }
 
-  renderRideCards(rendered);
+  if (els.lyftPrice) {
+    els.lyftPrice.textContent = formatMoneyRange(estimate.lyft.low, estimate.lyft.high);
+  }
+
+  const etaText = `Trip ~${Math.round(estimate.minutes)} min · ${estimate.miles.toFixed(1)} mi`;
+
+  if (els.uberEta) els.uberEta.textContent = etaText;
+  if (els.lyftEta) els.lyftEta.textContent = etaText;
+
+  const uberMid = (estimate.uber.low + estimate.uber.high) / 2;
+  const lyftMid = (estimate.lyft.low + estimate.lyft.high) / 2;
+
+  if (uberMid <= lyftMid) {
+    lastBestProvider = "Uber";
+    els.uberCard?.classList.add("best-pick");
+    els.uberTag?.classList.add("best");
+    if (els.uberTag) els.uberTag.textContent = "Best value";
+    if (els.lyftTag) els.lyftTag.textContent = "Estimate";
+  } else {
+    lastBestProvider = "Lyft";
+    els.lyftCard?.classList.add("best-pick");
+    els.lyftTag?.classList.add("best");
+    if (els.lyftTag) els.lyftTag.textContent = "Best value";
+    if (els.uberTag) els.uberTag.textContent = "Estimate";
+  }
 }
 
 function haversineMiles(lat1, lng1, lat2, lng2) {
@@ -791,7 +578,7 @@ function attachAutocomplete(inputEl, kind) {
     const ok = setSelectedPlace(kind, place, inputEl);
 
     if (ok) {
-      setHelper("Autocomplete active. Select a suggested address for the best transfer.");
+      setHelper("Autocomplete active. Select a suggested address for the best result.");
     }
   });
 
@@ -954,7 +741,7 @@ async function computeRoute() {
 
 async function refreshEstimates() {
   setLoading(true);
-  renderEmptyProviderCards();
+  resetRideCards();
 
   const route = await computeRoute();
 
@@ -979,12 +766,8 @@ async function refreshEstimates() {
   setHelper("Your estimates are ready. Choose a provider to continue.");
   incrementRideCounter();
 
-  const bestProviderName =
-    getCurrentMarketConfig().providers.find((p) => p.id === lastBestProviderId)?.name ||
-    "This provider";
-
   setStatus(
-    `${bestProviderName} looks like the best value for this trip: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`
+    `${lastBestProvider} looks like the best value for this trip: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`
   );
 
   setLoading(false);
@@ -994,7 +777,7 @@ async function refreshEstimates() {
   }
 }
 
-async function openProvider(providerId) {
+async function openUber() {
   const values = validateInputs();
   if (!values) return;
 
@@ -1004,27 +787,38 @@ async function openProvider(providerId) {
     return;
   }
 
-  let url = "";
-
-  if (providerId === "uber") {
-    url = buildUberLink(values.pickup, values.dropoff);
-  } else if (providerId === "lyft") {
-    url = isMobileDevice() ? buildLyftLink(values.pickup, values.dropoff) : LYFT_REFERRAL_URL;
-  } else if (providerId === "bolt") {
-    url = "https://bolt.eu/en-gh/";
-  } else if (providerId === "yango") {
-    url = "https://yango.com/en_gh/rider/";
-  } else {
-    return;
-  }
+  const url = buildUberLink(values.pickup, values.dropoff);
 
   await logEvent("ride_click", {
     market: currentMarket,
-    provider: providerId,
+    provider: "Uber",
     url
   });
 
-  if (providerId === "lyft" && isMobileDevice()) {
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
+async function openLyft() {
+  const values = validateInputs();
+  if (!values) return;
+
+  const haveCoords = await ensureCoordsFromInputs();
+  if (!haveCoords) {
+    setStatus("Please enter a more complete pickup and dropoff address.");
+    return;
+  }
+
+  const url = isMobileDevice()
+    ? buildLyftLink(values.pickup, values.dropoff)
+    : LYFT_REFERRAL_URL;
+
+  await logEvent("ride_click", {
+    market: currentMarket,
+    provider: "Lyft",
+    url
+  });
+
+  if (isMobileDevice()) {
     const startTime = Date.now();
     window.location.href = url;
 
@@ -1106,7 +900,40 @@ function setDefaultDateTime() {
   }
 }
 
+function bindTooltipClicks() {
+  document.querySelectorAll(".tooltip-trigger").forEach((el) => {
+    if (el.dataset.bound === "1") return;
+    el.dataset.bound = "1";
+
+    el.addEventListener("click", (event) => {
+      const box = el.querySelector(".tooltip-box");
+      if (!box) return;
+
+      const isVisible = box.style.opacity === "1";
+
+      document.querySelectorAll(".tooltip-box").forEach((tooltip) => {
+        tooltip.style.opacity = "0";
+        tooltip.style.visibility = "hidden";
+        tooltip.style.pointerEvents = "none";
+        tooltip.style.transform = "translateY(6px)";
+      });
+
+      if (!isVisible) {
+        box.style.opacity = "1";
+        box.style.visibility = "visible";
+        box.style.pointerEvents = "auto";
+        box.style.transform = "translateY(0)";
+      }
+
+      event.stopPropagation();
+    });
+  });
+}
+
 function initAppEvents() {
+  els.btnUber?.addEventListener("click", openUber);
+  els.btnLyft?.addEventListener("click", openLyft);
+
   els.btnCompare?.addEventListener("click", () => {
     logEvent("cta_compare_click", { market: currentMarket });
     scrollToBooking();
@@ -1120,8 +947,10 @@ function initAppEvents() {
   els.btnShareCompare?.addEventListener("click", shareComparison);
 
   els.mobileBestRideBtn?.addEventListener("click", () => {
-    if (lastBestProviderId) {
-      openProvider(lastBestProviderId);
+    if (lastBestProvider === "Uber") {
+      openUber();
+    } else {
+      openLyft();
     }
   });
 
@@ -1256,7 +1085,7 @@ function initMobileDateTimeAssist() {
 }
 
 window.initAutocomplete = function initAutocomplete() {
-  setHelper("Start typing pickup and dropoff, then select a suggested address.");
+  setHelper("Start typing pickup and dropoff, then select a suggested address for the best result.");
 
   attachAutocomplete(els.pickup, "pickup");
   attachAutocomplete(els.dropoff, "dropoff");
@@ -1308,8 +1137,14 @@ document.addEventListener("click", () => {
 });
 
 window.addEventListener("load", () => {
+  const marketFromUrl = getMarketFromUrl();
+  if (marketFromUrl) currentMarket = marketFromUrl;
+
   hydrateFromQueryParams();
   applyMarketUI();
+  updateLyftButtonUI();
+  cleanupDuplicateLogos();
+  bindTooltipClicks();
   hydrateRideCounter();
   setDefaultDateTime();
   initAppEvents();
