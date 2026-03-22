@@ -435,6 +435,64 @@ input:focus {
   border-color: rgba(16, 185, 129, 0.28);
 }
 
+.dynamic-rides-row {
+  align-items: stretch;
+}
+
+.ride-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.ride-top-main {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  min-width: 0;
+}
+
+.logo-badge.text-logo {
+  width: auto;
+  min-width: 56px;
+  padding: 0 14px;
+  font-size: 14px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.logo-badge.bolt {
+  background: #22c55e;
+}
+
+.logo-badge.yango {
+  background: #ef4444;
+}
+
+.provider-btn {
+  width: 100%;
+  min-height: 56px;
+  border-radius: 16px;
+  color: #fff;
+}
+
+.provider-btn.uber {
+  background: #111;
+}
+
+.provider-btn.lyft {
+  background: linear-gradient(90deg, var(--pink), var(--pink2));
+}
+
+.provider-btn.bolt {
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+}
+
+.provider-btn.yango {
+  background: linear-gradient(90deg, #dc2626, #ef4444);
+}
+
 .ride-top {
   display: flex;
   align-items: flex-start;
@@ -950,15 +1008,13 @@ footer {
     align-items: center;
   }
 
-  .btn-uber,
-  .btn-lyft {
-    width: 100%;
-  }
+  .provider-btn {
+  width: 100%;
+}
 
-  #lyftCard .btn-lyft,
-  #lyftCard .referral-wrap {
-    max-width: 100%;
-  }
+.ride-actions .referral-wrap {
+  max-width: 100%;
+}
 
   #statusNote {
     padding: 14px;
