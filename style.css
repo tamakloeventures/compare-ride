@@ -1203,6 +1203,29 @@ body[data-market="gh"] #lyftCard {
   display: none;
 }
 
+/* === FIX HERO PROPORTIONS (restore original feel) === */
+
+.hero {
+  grid-template-columns: minmax(0, 1fr) 420px; /* slightly smaller */
+  gap: 36px; /* tighter spacing */
+}
+
+/* Reduce dominance of booking card */
+.booking-card {
+  max-width: 420px;
+  padding: 22px 22px 20px;
+}
+
+/* Improve text balance */
+.hero-left {
+  max-width: 520px;
+}
+
+/* Headline tuning (this is key) */
+.hero-left h1 {
+  font-size: clamp(36px, 4.5vw, 60px);
+  line-height: 1.05;
+}
 
 
 
