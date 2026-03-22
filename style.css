@@ -950,13 +950,15 @@ footer {
     align-items: center;
   }
 
-  .provider-btn {
-  width: 100%;
-}
+  .btn-uber,
+  .btn-lyft {
+    width: 100%;
+  }
 
-.ride-actions .referral-wrap {
-  max-width: 100%;
-}
+  #lyftCard .btn-lyft,
+  #lyftCard .referral-wrap {
+    max-width: 100%;
+  }
 
   #statusNote {
     padding: 14px;
