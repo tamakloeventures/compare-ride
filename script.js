@@ -42,14 +42,23 @@ const els = {
   helperText: document.getElementById("helperText"),
   available: document.getElementById("available"),
   bookingCard: document.getElementById("bookingCard"),
+  uberPrice: document.getElementById("uberPrice"),
+  lyftPrice: document.getElementById("lyftPrice"),
+  uberEta: document.getElementById("uberEta"),
+  lyftEta: document.getElementById("lyftEta"),
+  uberTag: document.getElementById("uberTag"),
+  lyftTag: document.getElementById("lyftTag"),
+  uberCard: document.getElementById("uberCard"),
+  lyftCard: document.getElementById("lyftCard"),
   waitlistForm: document.getElementById("waitlistForm"),
   waitlistEmail: document.getElementById("waitlistEmail"),
-  waitlistCity: document.getElementById("waitlistCity"),
   waitlistStatus: document.getElementById("waitlistStatus"),
+  lyftSubtitle: document.getElementById("lyftSubtitle"),
   ridesComparedCount: document.getElementById("ridesComparedCount"),
   mobileStickyCta: document.getElementById("mobileStickyCta"),
   mobileBestRideBtn: document.getElementById("mobileBestRideBtn"),
   mobileCompareBtn: document.getElementById("mobileCompareBtn"),
+  waitlistCity: document.getElementById("waitlistCity"),
   marketSelect: document.getElementById("marketSelect"),
   marketEyebrow: document.getElementById("marketEyebrow"),
   heroTitle: document.getElementById("heroTitle"),
@@ -58,8 +67,7 @@ const els = {
   officialNotice: document.getElementById("officialNotice"),
   availableTitle: document.getElementById("availableTitle"),
   availableSubtitle: document.getElementById("availableSubtitle"),
-  resultsNotice: document.getElementById("resultsNotice"),
-  ridesGrid: document.getElementById("ridesGrid")
+  resultsNotice: document.getElementById("resultsNotice")
 };
 
 const sessionId = localStorage.getItem("rc_session") || crypto.randomUUID();
