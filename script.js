@@ -26,6 +26,11 @@ const sb = supabaseEnabled
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
 
+const MARKET_PROVIDERS = {
+  us: ["uber", "lyft"],
+  gh: ["uber", "bolt", "yango"]
+};
+
 const els = {
   pickup: document.getElementById("pickup"),
   dropoff: document.getElementById("dropoff"),
@@ -67,7 +72,15 @@ const els = {
   officialNotice: document.getElementById("officialNotice"),
   availableTitle: document.getElementById("availableTitle"),
   availableSubtitle: document.getElementById("availableSubtitle"),
-  resultsNotice: document.getElementById("resultsNotice")
+  resultsNotice: document.getElementById("resultsNotice"),
+  boltCard: document.getElementById("boltCard"),
+yangoCard: document.getElementById("yangoCard"),
+btnBolt: document.getElementById("btnBolt"),
+btnYango: document.getElementById("btnYango"),
+boltPrice: document.getElementById("boltPrice"),
+yangoPrice: document.getElementById("yangoPrice"),
+boltEta: document.getElementById("boltEta"),
+yangoEta: document.getElementById("yangoEta"),
 };
 
 const sessionId = localStorage.getItem("rc_session") || crypto.randomUUID();
