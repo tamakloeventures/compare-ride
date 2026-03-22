@@ -1146,6 +1146,62 @@ footer {
   width: 100%;
 }
 
+.logo-badge.bolt {
+  background: #34d399;
+  color: #06281c;
+  width: auto;
+  min-width: 56px;
+  padding: 0 14px;
+  font-size: 14px;
+}
+
+.logo-badge.yango {
+  background: #ef4444;
+  color: #fff;
+  width: auto;
+  min-width: 56px;
+  padding: 0 14px;
+  font-size: 14px;
+}
+
+.btn-bolt {
+  background: #34d399;
+  color: #06281c;
+  width: 100%;
+}
+
+.btn-yango {
+  background: #ef4444;
+  color: #fff;
+  width: 100%;
+}
+
+/* Default state before JS applies market */
+.gh-only-card {
+  display: none;
+}
+
+/* US market */
+body[data-market="us"] #uberCard,
+body[data-market="us"] #lyftCard {
+  display: flex;
+}
+
+body[data-market="us"] #boltCard,
+body[data-market="us"] #yangoCard {
+  display: none;
+}
+
+/* Ghana market */
+body[data-market="gh"] #uberCard,
+body[data-market="gh"] #boltCard,
+body[data-market="gh"] #yangoCard {
+  display: flex;
+}
+
+body[data-market="gh"] #lyftCard {
+  display: none;
+}
 
 
 
