@@ -15,8 +15,6 @@ const LYFT_REFERRAL_URL =
   CONFIG.lyftReferralUrl ||
   "https://www.lyft.com/i/ELVIS98387";
 
-const DEFAULT_MARKET = (CONFIG.DEFAULT_MARKET || "us").toLowerCase();
-
 const supabaseEnabled =
   typeof window.supabase !== "undefined" &&
   typeof SUPABASE_URL === "string" &&
@@ -37,12 +35,13 @@ const els = {
   btnCompare: document.getElementById("btnCompare"),
   btnScrollBooking: document.getElementById("btnScrollBooking"),
   btnFindRates: document.getElementById("btnFindRates"),
+  btnUber: document.getElementById("btnUber"),
+  btnLyft: document.getElementById("btnLyft"),
   btnShareCompare: document.getElementById("btnShareCompare"),
   statusNote: document.getElementById("statusNote"),
   helperText: document.getElementById("helperText"),
   available: document.getElementById("available"),
   bookingCard: document.getElementById("bookingCard"),
-
   uberPrice: document.getElementById("uberPrice"),
   lyftPrice: document.getElementById("lyftPrice"),
   uberEta: document.getElementById("uberEta"),
@@ -51,20 +50,15 @@ const els = {
   lyftTag: document.getElementById("lyftTag"),
   uberCard: document.getElementById("uberCard"),
   lyftCard: document.getElementById("lyftCard"),
-  btnUber: document.getElementById("btnUber"),
-  btnLyft: document.getElementById("btnLyft"),
-  lyftSubtitle: document.getElementById("lyftSubtitle"),
-
   waitlistForm: document.getElementById("waitlistForm"),
   waitlistEmail: document.getElementById("waitlistEmail"),
-  waitlistCity: document.getElementById("waitlistCity"),
   waitlistStatus: document.getElementById("waitlistStatus"),
-
+  lyftSubtitle: document.getElementById("lyftSubtitle"),
   ridesComparedCount: document.getElementById("ridesComparedCount"),
   mobileStickyCta: document.getElementById("mobileStickyCta"),
   mobileBestRideBtn: document.getElementById("mobileBestRideBtn"),
   mobileCompareBtn: document.getElementById("mobileCompareBtn"),
-
+  waitlistCity: document.getElementById("waitlistCity"),
   marketSelect: document.getElementById("marketSelect"),
   marketEyebrow: document.getElementById("marketEyebrow"),
   heroTitle: document.getElementById("heroTitle"),
@@ -94,18 +88,19 @@ let lastRoute = {
   duration_s: null
 };
 
-let currentMarket = getInitialMarket();
 let lastBestProvider = "Uber";
 
 const DISPLAY_COUNTER_BASE = 127;
 
+const DEFAULT_MARKET = (CONFIG.DEFAULT_MARKET || "us").toLowerCase();
+
 const MARKET_CONFIG = {
   us: {
     code: "us",
-    eyebrow: "RideCompare US",
-    heroTitle: "Compare ride options instantly",
+    eyebrow: "RideCompare by Tamakloe Ventures LLC",
+    heroTitle: "Compare Uber and Lyft fares instantly",
     heroSubtitle:
-      "Find the best ride option faster, compare estimated fares, and continue in the official provider app.",
+      "Find the cheapest ride and launch it in seconds. Built for everyday commuters, airport travelers, and anyone who wants a faster way to compare ride options.",
     chips: ["New York", "Los Angeles", "Chicago", "Houston", "Atlanta"],
     currency: "USD",
     locale: "en-US",
@@ -113,7 +108,7 @@ const MARKET_CONFIG = {
     availableSubtitle:
       "Estimated fares are approximate. Use them to compare quickly, then confirm final pricing inside each provider’s official experience.",
     officialNotice:
-      "⚠️ <strong>Important:</strong> RideCompare is an independent comparison tool and is not affiliated with Uber or Lyft. <strong>Official booking and final pricing always happen inside the provider app.</strong> RideCompare only provides estimated comparisons to help you choose faster.",
+      "⚠️ <strong>Important:</strong> RideCompare is an independent comparison tool and is not affiliated with Uber or Lyft. <strong>Official booking and final pricing always happen inside the Uber or Lyft app.</strong> RideCompare only provides estimated comparisons to help you choose faster.",
     resultsNotice:
       "<strong>Important:</strong> RideCompare is an independent comparison tool and is not affiliated with Uber or Lyft. Fare estimates are approximate, and final pricing, availability, and booking are completed inside the official provider experience. Lyft links may include a referral code.",
     waitlistCityEnabled: false,
@@ -140,12 +135,7 @@ const MARKET_CONFIG = {
   }
 };
 
-function getInitialMarket() {
-  const params = new URLSearchParams(window.location.search);
-  const market = (params.get("market") || "").toLowerCase();
-  if (MARKET_CONFIG[market]) return market;
-  return MARKET_CONFIG[DEFAULT_MARKET] ? DEFAULT_MARKET : "us";
-}
+let currentMarket = MARKET_CONFIG[DEFAULT_MARKET] ? DEFAULT_MARKET : "us";
 
 function getMarketFromUrl() {
   const params = new URLSearchParams(window.location.search);
@@ -161,6 +151,61 @@ function updateMarketInUrl() {
   const url = new URL(window.location.href);
   url.searchParams.set("market", currentMarket);
   window.history.replaceState({}, "", url);
+}
+
+function applyMarketUI() {
+  const market = getCurrentMarketConfig();
+
+  if (els.marketSelect) {
+    els.marketSelect.value = currentMarket;
+  }
+
+  if (els.marketEyebrow) {
+    els.marketEyebrow.textContent = market.eyebrow;
+  }
+
+  if (els.heroTitle) {
+    els.heroTitle.textContent = market.heroTitle;
+  }
+
+  if (els.heroSubtitle) {
+    els.heroSubtitle.textContent = market.heroSubtitle;
+  }
+
+  if (els.marketChips) {
+    els.marketChips.innerHTML = "";
+    market.chips.forEach((chip) => {
+      const span = document.createElement("span");
+      span.className = "market-chip";
+      span.textContent = chip;
+      els.marketChips.appendChild(span);
+    });
+  }
+
+  if (els.officialNotice) {
+    els.officialNotice.innerHTML = market.officialNotice;
+  }
+
+  if (els.availableTitle) {
+    els.availableTitle.textContent = market.availableTitle;
+  }
+
+  if (els.availableSubtitle) {
+    els.availableSubtitle.textContent = market.availableSubtitle;
+  }
+
+  if (els.resultsNotice) {
+    els.resultsNotice.innerHTML = market.resultsNotice;
+  }
+
+  if (els.waitlistCity) {
+    els.waitlistCity.style.display = market.waitlistCityEnabled ? "" : "none";
+    if (!market.waitlistCityEnabled) {
+      els.waitlistCity.value = "";
+    }
+  }
+
+  updateMarketInUrl();
 }
 
 function setStatus(message) {
@@ -193,6 +238,18 @@ function isMobileDevice() {
   return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 }
 
+function updateLyftButtonUI() {
+  if (!els.btnLyft || !els.lyftSubtitle) return;
+
+  if (isMobileDevice()) {
+    els.btnLyft.textContent = "Book with Lyft";
+    els.lyftSubtitle.textContent = "Open in Lyft app";
+  } else {
+    els.btnLyft.textContent = "Get Lyft App";
+    els.lyftSubtitle.textContent = "Continue with Lyft app";
+  }
+}
+
 function cleanupDuplicateLogos() {
   const badges = document.querySelectorAll(".logo-badge");
 
@@ -206,35 +263,62 @@ function cleanupDuplicateLogos() {
   });
 }
 
-function updateLyftButtonUI() {
-  if (!els.btnLyft || !els.lyftSubtitle) return;
+function normalizeRideTopStructure(card) {
+  if (!card) return;
 
-  if (isMobileDevice()) {
-    els.btnLyft.textContent = "Book with Lyft";
-    els.lyftSubtitle.textContent = "Open in Lyft app";
-  } else {
-    els.btnLyft.textContent = "Get Lyft App";
-    els.lyftSubtitle.textContent = "Continue with Lyft app";
-  }
+  const top = card.querySelector(".ride-top");
+  if (!top) return;
+
+  const existingMain = top.querySelector(".ride-top-main");
+  if (existingMain) return;
+
+  const badge = top.querySelector(".best-badge");
+  const children = Array.from(top.children).filter((child) => child !== badge);
+
+  const main = document.createElement("div");
+  main.className = "ride-top-main";
+
+  children.forEach((child) => main.appendChild(child));
+  top.prepend(main);
 }
 
-function incrementRideCounter() {
-  const current = Number(localStorage.getItem("rc_compare_count") || "0") + 1;
-  localStorage.setItem("rc_compare_count", String(current));
-
-  const displayCount = DISPLAY_COUNTER_BASE + current;
-
-  if (els.ridesComparedCount) {
-    els.ridesComparedCount.textContent = displayCount.toLocaleString();
-  }
+function removeExistingBestBadges() {
+  document.querySelectorAll(".best-badge").forEach((badge) => badge.remove());
+  document.querySelectorAll(".ride-top").forEach((top) => top.classList.remove("with-badge"));
 }
 
-function hydrateRideCounter() {
-  const stored = Number(localStorage.getItem("rc_compare_count") || "0");
-  const displayCount = DISPLAY_COUNTER_BASE + stored;
+function updateBestCardUI() {
+  els.uberCard?.classList.remove("best-pick");
+  els.lyftCard?.classList.remove("best-pick");
 
-  if (els.ridesComparedCount) {
-    els.ridesComparedCount.textContent = displayCount.toLocaleString();
+  removeExistingBestBadges();
+
+  if (lastBestProvider === "Uber" && els.uberCard) {
+    normalizeRideTopStructure(els.uberCard);
+    els.uberCard.classList.add("best-pick");
+
+    const top = els.uberCard.querySelector(".ride-top");
+    if (top) {
+      top.classList.add("with-badge");
+      const badge = document.createElement("div");
+      badge.className = "best-badge";
+      badge.textContent = "Best Value";
+      top.appendChild(badge);
+    }
+  }
+
+  if (lastBestProvider === "Lyft" && els.lyftCard) {
+    normalizeRideTopStructure(els.lyftCard);
+    els.lyftCard.classList.add("best-pick");
+
+    const top = els.lyftCard.querySelector(".ride-top");
+    if (top) {
+      top.classList.add("with-badge");
+      const badge = document.createElement("div");
+      badge.className = "best-badge";
+      badge.textContent = "Best Value";
+      top.appendChild(badge);
+    }
   }
 }
 
@@ -306,61 +390,6 @@ async function saveWaitlist(email, city = "") {
   }
 }
 
-function applyMarketUI() {
-  const market = getCurrentMarketConfig();
-
-  if (els.marketSelect) {
-    els.marketSelect.value = currentMarket;
-  }
-
-  if (els.marketEyebrow) {
-    els.marketEyebrow.textContent = market.eyebrow;
-  }
-
-  if (els.heroTitle) {
-    els.heroTitle.textContent = market.heroTitle;
-  }
-
-  if (els.heroSubtitle) {
-    els.heroSubtitle.textContent = market.heroSubtitle;
-  }
-
-  if (els.marketChips) {
-    els.marketChips.innerHTML = "";
-    market.chips.forEach((chip) => {
-      const span = document.createElement("span");
-      span.className = "market-chip";
-      span.textContent = chip;
-      els.marketChips.appendChild(span);
-    });
-  }
-
-  if (els.officialNotice) {
-    els.officialNotice.innerHTML = market.officialNotice;
-  }
-
-  if (els.availableTitle) {
-    els.availableTitle.textContent = market.availableTitle;
-  }
-
-  if (els.availableSubtitle) {
-    els.availableSubtitle.textContent = market.availableSubtitle;
-  }
-
-  if (els.resultsNotice) {
-    els.resultsNotice.innerHTML = market.resultsNotice;
-  }
-
-  if (els.waitlistCity) {
-    els.waitlistCity.style.display = market.waitlistCityEnabled ? "" : "none";
-    if (!market.waitlistCityEnabled) {
-      els.waitlistCity.value = "";
-    }
-  }
-
-  updateMarketInUrl();
-}
-
 function validateInputs() {
   const pickup = els.pickup?.value?.trim() || "";
   const dropoff = els.dropoff?.value?.trim() || "";
@@ -394,68 +423,70 @@ function estimateFares(distanceMeters, durationSeconds) {
   const miles = milesFromMeters(distanceMeters);
   const minutes = durationSeconds / 60;
 
-  const uberBase = 2.5 + miles * 1.75 + minutes * 0.25;
-  const lyftBase = 2.3 + miles * 1.8 + minutes * 0.24;
+  const uberModel = {
+    base: 2.5,
+    perMile: 1.75,
+    perMin: 0.25,
+    surge: 1.0
+  };
+
+  const lyftModel = {
+    base: 2.3,
+    perMile: 1.8,
+    perMin: 0.24,
+    surge: 1.0
+  };
+
+  function calculate(model) {
+    const raw =
+      (model.base + model.perMile * miles + model.perMin * minutes) * model.surge;
+
+    return {
+      low: raw * 0.92,
+      high: raw * 1.12
+    };
+  }
 
   return {
-    uber: {
-      low: uberBase * 0.92,
-      high: uberBase * 1.12
-    },
-    lyft: {
-      low: lyftBase * 0.92,
-      high: lyftBase * 1.12
-    },
+    uber: calculate(uberModel),
+    lyft: calculate(lyftModel),
     miles,
     minutes
   };
 }
 
-function resetRideCards() {
-  if (els.uberPrice) els.uberPrice.textContent = "$ —";
-  if (els.lyftPrice) els.lyftPrice.textContent = "$ —";
-  if (els.uberEta) els.uberEta.textContent = "ETA —";
-  if (els.lyftEta) els.lyftEta.textContent = "ETA —";
-  if (els.uberTag) els.uberTag.textContent = "Estimate";
-  if (els.lyftTag) els.lyftTag.textContent = "Estimate";
-  els.uberTag?.classList.remove("best");
-  els.lyftTag?.classList.remove("best");
-  els.uberCard?.classList.remove("best-pick");
-  els.lyftCard?.classList.remove("best-pick");
-}
-
 function applyFareUI(estimate) {
-  resetRideCards();
+  if (!els.uberPrice || !els.lyftPrice || !els.uberEta || !els.lyftEta) return;
 
-  if (els.uberPrice) {
-    els.uberPrice.textContent = formatMoneyRange(estimate.uber.low, estimate.uber.high);
-  }
+  els.uberPrice.textContent = formatMoneyRange(estimate.uber.low, estimate.uber.high);
+  els.lyftPrice.textContent = formatMoneyRange(estimate.lyft.low, estimate.lyft.high);
 
-  if (els.lyftPrice) {
-    els.lyftPrice.textContent = formatMoneyRange(estimate.lyft.low, estimate.lyft.high);
-  }
-
-  const etaText = `Trip ~${Math.round(estimate.minutes)} min · ${estimate.miles.toFixed(1)} mi`;
-
-  if (els.uberEta) els.uberEta.textContent = etaText;
-  if (els.lyftEta) els.lyftEta.textContent = etaText;
+  const tripText = `Trip ~${Math.round(estimate.minutes)} min · ${estimate.miles.toFixed(1)} mi`;
+  els.uberEta.textContent = tripText;
+  els.lyftEta.textContent = tripText;
 
   const uberMid = (estimate.uber.low + estimate.uber.high) / 2;
   const lyftMid = (estimate.lyft.low + estimate.lyft.high) / 2;
 
   if (uberMid <= lyftMid) {
     lastBestProvider = "Uber";
-    els.uberCard?.classList.add("best-pick");
-    els.uberTag?.classList.add("best");
-    if (els.uberTag) els.uberTag.textContent = "Best value";
-    if (els.lyftTag) els.lyftTag.textContent = "Estimate";
+
+    els.uberTag.textContent = "Best value";
+    els.uberTag.classList.add("best");
+
+    els.lyftTag.textContent = "Estimate";
+    els.lyftTag.classList.remove("best");
   } else {
     lastBestProvider = "Lyft";
-    els.lyftCard?.classList.add("best-pick");
-    els.lyftTag?.classList.add("best");
-    if (els.lyftTag) els.lyftTag.textContent = "Best value";
-    if (els.uberTag) els.uberTag.textContent = "Estimate";
+
+    els.lyftTag.textContent = "Best value";
+    els.lyftTag.classList.add("best");
+
+    els.uberTag.textContent = "Estimate";
+    els.uberTag.classList.remove("best");
   }
+
+  updateBestCardUI();
 }
 
 function haversineMiles(lat1, lng1, lat2, lng2) {
@@ -472,6 +503,26 @@ function haversineMiles(lat1, lng1, lat2, lng2) {
       Math.sin(dLng / 2) ** 2;
 
   return 2 * radiusMiles * Math.asin(Math.sqrt(a));
+}
+
+function incrementRideCounter() {
+  const current = Number(localStorage.getItem("rc_compare_count") || "0") + 1;
+  localStorage.setItem("rc_compare_count", String(current));
+
+  const displayCount = DISPLAY_COUNTER_BASE + current;
+
+  if (els.ridesComparedCount) {
+    els.ridesComparedCount.textContent = displayCount.toLocaleString();
+  }
+}
+
+function hydrateRideCounter() {
+  const stored = Number(localStorage.getItem("rc_compare_count") || "0");
+  const displayCount = DISPLAY_COUNTER_BASE + stored;
+
+  if (els.ridesComparedCount) {
+    els.ridesComparedCount.textContent = displayCount.toLocaleString();
+  }
 }
 
 async function geocodeAddress(address) {
@@ -578,7 +629,7 @@ function attachAutocomplete(inputEl, kind) {
     const ok = setSelectedPlace(kind, place, inputEl);
 
     if (ok) {
-      setHelper("Autocomplete active. Select a suggested address for the best result.");
+      setHelper("Autocomplete active. Select a suggested address for the best transfer.");
     }
   });
 
@@ -741,7 +792,21 @@ async function computeRoute() {
 
 async function refreshEstimates() {
   setLoading(true);
-  resetRideCards();
+
+  if (els.uberPrice) els.uberPrice.textContent = "$ —";
+  if (els.lyftPrice) els.lyftPrice.textContent = "$ —";
+  if (els.uberEta) els.uberEta.textContent = "ETA —";
+  if (els.lyftEta) els.lyftEta.textContent = "ETA —";
+
+  if (els.uberTag) {
+    els.uberTag.textContent = "Estimate";
+    els.uberTag.classList.remove("best");
+  }
+
+  if (els.lyftTag) {
+    els.lyftTag.textContent = "Estimate";
+    els.lyftTag.classList.remove("best");
+  }
 
   const route = await computeRoute();
 
@@ -763,7 +828,7 @@ async function refreshEstimates() {
   const estimate = estimateFares(route.distance_m, route.duration_s);
   applyFareUI(estimate);
 
-  setHelper("Your estimates are ready. Choose a provider to continue.");
+  setHelper("Your estimates are ready. Choose Uber or Lyft to continue.");
   incrementRideCounter();
 
   setStatus(
@@ -788,9 +853,7 @@ async function openUber() {
   }
 
   const url = buildUberLink(values.pickup, values.dropoff);
-
-  await logEvent("ride_click", {
-    market: currentMarket,
+  logEvent("ride_click", {
     provider: "Uber",
     url
   });
@@ -808,37 +871,40 @@ async function openLyft() {
     return;
   }
 
-  const url = isMobileDevice()
-    ? buildLyftLink(values.pickup, values.dropoff)
-    : LYFT_REFERRAL_URL;
+  const deepLink = buildLyftLink(values.pickup, values.dropoff);
 
-  await logEvent("ride_click", {
-    market: currentMarket,
-    provider: "Lyft",
-    url
-  });
+  if (!isMobileDevice()) {
+    logEvent("ride_click", {
+      provider: "Lyft",
+      url: LYFT_REFERRAL_URL,
+      mode: "desktop_referral"
+    });
 
-  if (isMobileDevice()) {
-    const startTime = Date.now();
-    window.location.href = url;
-
-    setTimeout(() => {
-      if (Date.now() - startTime < 1800 && LYFT_REFERRAL_URL) {
-        window.location.href = LYFT_REFERRAL_URL;
-      }
-    }, 1200);
-
+    window.open(LYFT_REFERRAL_URL, "_blank", "noopener,noreferrer");
     return;
   }
 
-  window.open(url, "_blank", "noopener,noreferrer");
+  logEvent("ride_click", {
+    provider: "Lyft",
+    url: deepLink,
+    mode: "mobile_deeplink"
+  });
+
+  const startTime = Date.now();
+  window.location.href = deepLink;
+
+  setTimeout(() => {
+    if (Date.now() - startTime < 1800) {
+      window.location.href = LYFT_REFERRAL_URL;
+    }
+  }, 1200);
 }
 
 async function shareComparison() {
   const values = validateInputs();
   if (!values) return;
 
-  const url = new URL(window.location.origin + window.location.pathname);
+    const url = new URL(window.location.origin + window.location.pathname);
   url.searchParams.set("pickup", values.pickup);
   url.searchParams.set("dropoff", values.dropoff);
   url.searchParams.set("market", currentMarket);
@@ -854,7 +920,7 @@ async function shareComparison() {
   try {
     await navigator.clipboard.writeText(url.toString());
     setStatus("Comparison link copied to clipboard ✅");
-    logEvent("share_compare", { url: url.toString(), market: currentMarket });
+    logEvent("share_compare", { url: url.toString() });
   } catch (error) {
     setStatus("Could not copy link. You can copy the URL from your browser.");
   }
@@ -867,13 +933,11 @@ function hydrateFromQueryParams() {
   const dropoff = params.get("dropoff");
   const rideDate = params.get("rideDate");
   const rideTime = params.get("rideTime");
-  const market = (params.get("market") || "").toLowerCase();
 
   if (pickup && els.pickup) els.pickup.value = pickup;
   if (dropoff && els.dropoff) els.dropoff.value = dropoff;
   if (rideDate && els.date) els.date.value = rideDate;
   if (rideTime && els.time) els.time.value = rideTime;
-  if (MARKET_CONFIG[market]) currentMarket = market;
 }
 
 function setDefaultDateTime() {
@@ -898,36 +962,6 @@ function setDefaultDateTime() {
   if (els.time && !els.time.value) {
     els.time.value = `${hh}:${min}`;
   }
-}
-
-function bindTooltipClicks() {
-  document.querySelectorAll(".tooltip-trigger").forEach((el) => {
-    if (el.dataset.bound === "1") return;
-    el.dataset.bound = "1";
-
-    el.addEventListener("click", (event) => {
-      const box = el.querySelector(".tooltip-box");
-      if (!box) return;
-
-      const isVisible = box.style.opacity === "1";
-
-      document.querySelectorAll(".tooltip-box").forEach((tooltip) => {
-        tooltip.style.opacity = "0";
-        tooltip.style.visibility = "hidden";
-        tooltip.style.pointerEvents = "none";
-        tooltip.style.transform = "translateY(6px)";
-      });
-
-      if (!isVisible) {
-        box.style.opacity = "1";
-        box.style.visibility = "visible";
-        box.style.pointerEvents = "auto";
-        box.style.transform = "translateY(0)";
-      }
-
-      event.stopPropagation();
-    });
-  });
 }
 
 function initAppEvents() {
@@ -1024,7 +1058,7 @@ function initAppEvents() {
     });
   }
 }
-
+    
 function initMobileDateTimeAssist() {
   const isSmallScreen = () => window.matchMedia("(max-width: 768px)").matches;
   const fields = [els.date, els.time].filter(Boolean);
@@ -1085,7 +1119,7 @@ function initMobileDateTimeAssist() {
 }
 
 window.initAutocomplete = function initAutocomplete() {
-  setHelper("Start typing pickup and dropoff, then select a suggested address for the best result.");
+  setHelper("Start typing pickup and dropoff, then select a suggested address.");
 
   attachAutocomplete(els.pickup, "pickup");
   attachAutocomplete(els.dropoff, "dropoff");
@@ -1127,6 +1161,49 @@ window.__gmapsFail = function __gmapsFail() {
   setHelper("Address lookup failed to load. You can still type addresses manually.");
 };
 
+window.addEventListener("load", () => {
+  const marketFromUrl = getMarketFromUrl();
+  if (marketFromUrl) {
+    currentMarket = marketFromUrl;
+  }
+
+  hydrateFromQueryParams();
+  applyMarketUI();
+  updateLyftButtonUI();
+  cleanupDuplicateLogos();
+  hydrateRideCounter();
+  setDefaultDateTime();
+  initAppEvents();
+  initMobileDateTimeAssist();
+  logEvent("page_view", { supabaseEnabled, market: currentMarket });
+});
+
+document.querySelectorAll(".tooltip-trigger").forEach((el) => {
+  el.addEventListener("click", (event) => {
+    const box = el.querySelector(".tooltip-box");
+
+    if (!box) return;
+
+    const isVisible = box.style.opacity === "1";
+
+    document.querySelectorAll(".tooltip-box").forEach((tooltip) => {
+      tooltip.style.opacity = "0";
+      tooltip.style.visibility = "hidden";
+      tooltip.style.pointerEvents = "none";
+      tooltip.style.transform = "translateY(6px)";
+    });
+
+    if (!isVisible) {
+      box.style.opacity = "1";
+      box.style.visibility = "visible";
+      box.style.pointerEvents = "auto";
+      box.style.transform = "translateY(0)";
+    }
+
+    event.stopPropagation();
+  });
+});
+
 document.addEventListener("click", () => {
   document.querySelectorAll(".tooltip-box").forEach((tooltip) => {
     tooltip.style.opacity = "0";
@@ -1134,22 +1211,6 @@ document.addEventListener("click", () => {
     tooltip.style.pointerEvents = "none";
     tooltip.style.transform = "translateY(6px)";
   });
-});
-
-window.addEventListener("load", () => {
-  const marketFromUrl = getMarketFromUrl();
-  if (marketFromUrl) currentMarket = marketFromUrl;
-
-  hydrateFromQueryParams();
-  applyMarketUI();
-  updateLyftButtonUI();
-  cleanupDuplicateLogos();
-  bindTooltipClicks();
-  hydrateRideCounter();
-  setDefaultDateTime();
-  initAppEvents();
-  initMobileDateTimeAssist();
-  logEvent("page_view", { supabaseEnabled, market: currentMarket });
 });
 
 
