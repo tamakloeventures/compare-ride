@@ -25,7 +25,6 @@ const supabaseEnabled =
 const sb = supabaseEnabled
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
-};
 
 const els = {
   pickup: document.getElementById("pickup"),
