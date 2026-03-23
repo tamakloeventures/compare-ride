@@ -1102,36 +1102,6 @@ footer {
   width: 100%;
 }
 
-.logo-badge.bolt {
-  background: #34d399;
-  color: #06281c;
-  width: auto;
-  min-width: 56px;
-  padding: 0 14px;
-  font-size: 14px;
-}
-
-.logo-badge.yango {
-  background: #ef4444;
-  color: #fff;
-  width: auto;
-  min-width: 56px;
-  padding: 0 14px;
-  font-size: 14px;
-}
-
-.btn-bolt {
-  background: #34d399;
-  color: #06281c;
-  width: 100%;
-}
-
-.btn-yango {
-  background: #ef4444;
-  color: #fff;
-  width: 100%;
-}
-
 /* Default state before JS applies market */
 .gh-only-card {
   display: none;
