@@ -542,6 +542,9 @@ function applyFareUI(estimate) {
     els.uberTag.classList.remove("best");
   }
 
+  updateBestCardUI();
+}
+
 function getGhanaSurgeMultiplier() {
   const dateInput = document.getElementById("rideDate");
   const timeInput = document.getElementById("rideTime");
