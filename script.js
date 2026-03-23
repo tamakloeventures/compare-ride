@@ -227,6 +227,27 @@ function setStatus(message) {
   }
 }
 
+function applyMarketUI() {
+  document.body.setAttribute("data-market", currentMarket);
+
+  const uberCard = document.getElementById("uberCard");
+  const lyftCard = document.getElementById("lyftCard");
+  const boltCard = document.getElementById("boltCard");
+  const yangoCard = document.getElementById("yangoCard");
+
+  if (currentMarket === "gh") {
+    if (uberCard) uberCard.style.display = "flex";
+    if (lyftCard) lyftCard.style.display = "none";
+    if (boltCard) boltCard.style.display = "flex";
+    if (yangoCard) yangoCard.style.display = "flex";
+  } else {
+    if (uberCard) uberCard.style.display = "flex";
+    if (lyftCard) lyftCard.style.display = "flex";
+    if (boltCard) boltCard.style.display = "none";
+    if (yangoCard) yangoCard.style.display = "none";
+  }
+}
+
 function setHelper(message) {
   if (els.helperText) {
     els.helperText.textContent = message;
