@@ -1,4 +1,4 @@
-</div>:root {
+:root {
   --text: #0f172a;
   --muted: #475569;
   --muted-2: #64748b;
@@ -1219,7 +1219,79 @@ body[data-market="gh"] #lyftCard {
   transition: background-color 9999s ease-in-out 0s;
 }
 
+/* === Restore original hero feel === */
+.hero {
+  grid-template-columns: minmax(0, 1fr) 420px;
+  gap: 36px;
+  padding: 56px 36px;
+}
 
+.hero-left {
+  max-width: 560px;
+}
+
+.hero-left h1 {
+  font-size: clamp(42px, 5vw, 64px);
+  line-height: 1.02;
+}
+
+.booking-card {
+  width: 100%;
+  max-width: 420px;
+  justify-self: end;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-radius: 18px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18) !important;
+  padding: 24px 24px 20px !important;
+  opacity: 1 !important;
+}
+
+.booking-card h2 {
+  color: #0f172a !important;
+}
+
+.booking-card .field label {
+  color: #475569 !important;
+}
+
+.booking-card input {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  box-shadow: none !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+.booking-card input::placeholder {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
+
+.booking-card .helper {
+  color: #64748b !important;
+}
+
+/* Strong market visibility override */
+body[data-market="us"] #uberCard,
+body[data-market="us"] #lyftCard {
+  display: flex !important;
+}
+
+body[data-market="us"] #boltCard,
+body[data-market="us"] #yangoCard {
+  display: none !important;
+}
+
+body[data-market="gh"] #uberCard,
+body[data-market="gh"] #boltCard,
+body[data-market="gh"] #yangoCard {
+  display: flex !important;
+}
+
+body[data-market="gh"] #lyftCard {
+  display: none !important;
+}
 
 
 
