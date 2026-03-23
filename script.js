@@ -167,7 +167,9 @@ function updateMarketInUrl() {
 }
 
 function applyMarketUI() {
-  const market = getCurrentMarketConfig();
+  document.body.setAttribute("data-market", currentMarket);
+  applyProviderVisibility();
+}
 
   if (els.marketSelect) {
     els.marketSelect.value = currentMarket;
@@ -458,6 +460,7 @@ function formatMoneyRange(min, max) {
 function estimateFares(distanceMeters, durationSeconds) {
   const miles = milesFromMeters(distanceMeters);
   const minutes = durationSeconds / 60;
+  const km = distanceMeters / 1000;
 
   const uberModel = {
     base: 2.5,
@@ -483,12 +486,31 @@ function estimateFares(distanceMeters, durationSeconds) {
     };
   }
 
-  return {
+  const result = {
     uber: calculate(uberModel),
     lyft: calculate(lyftModel),
     miles,
     minutes
   };
+
+  if (currentMarket === "gh") {
+    const ghSurge = getGhanaSurgeMultiplier();
+
+    const boltRaw = Math.max(12, (6.0 + 2.4 * km + 0.35 * minutes) * ghSurge);
+    const yangoRaw = Math.max(11, (5.5 + 2.2 * km + 0.32 * minutes) * ghSurge);
+
+    result.bolt = {
+      low: boltRaw * 0.93,
+      high: boltRaw * 1.10
+    };
+
+    result.yango = {
+      low: yangoRaw * 0.93,
+      high: yangoRaw * 1.10
+    };
+  }
+
+  return result;
 }
 
 function applyFareUI(estimate) {
@@ -522,6 +544,80 @@ function applyFareUI(estimate) {
     els.uberTag.classList.remove("best");
   }
 
+function getGhanaSurgeMultiplier() {
+  const dateInput = document.getElementById("rideDate");
+  const timeInput = document.getElementById("rideTime");
+
+  if (!dateInput?.value || !timeInput?.value) return 1.0;
+
+  const tripDate = new Date(`${dateInput.value}T${timeInput.value}`);
+  if (Number.isNaN(tripDate.getTime())) return 1.0;
+
+  const hour = tripDate.getHours();
+  const day = tripDate.getDay(); // 0=Sun, 6=Sat
+
+  let surge = 1.0;
+
+  const isRushHour =
+    (hour >= 6 && hour <= 9) ||
+    (hour >= 16 && hour <= 20);
+
+  const isLateNight = hour >= 22 || hour <= 4;
+  const isWeekend = day === 0 || day === 6;
+
+  if (isRushHour) surge += 0.18;
+  if (isLateNight) surge += 0.12;
+  if (isWeekend) surge += 0.08;
+
+  return surge;
+}
+
+function formatRangeGhs(fare) {
+  if (!fare) return "GH₵ —";
+  return `GH₵ ${fare.low.toFixed(2)} - ${fare.high.toFixed(2)}`;
+}
+
+function estimateProviderEta(minutes, provider) {
+  const baseMinutes = Math.max(4, Math.round(minutes * 0.35));
+
+  if (provider === "bolt") {
+    return `${baseMinutes}-${baseMinutes + 4} min`;
+  }
+
+  if (provider === "yango") {
+    return `${baseMinutes + 1}-${baseMinutes + 5} min`;
+  }
+
+  return `${baseMinutes}-${baseMinutes + 4} min`;
+}
+
+function applyGhanaEstimateUI(estimate) {
+  if (currentMarket !== "gh") return;
+
+  if (els.boltPrice && estimate.bolt) {
+    els.boltPrice.textContent = formatRangeGhs(estimate.bolt);
+  }
+
+  if (els.yangoPrice && estimate.yango) {
+    els.yangoPrice.textContent = formatRangeGhs(estimate.yango);
+  }
+
+  if (els.boltEta) {
+    els.boltEta.textContent = `ETA ${estimateProviderEta(estimate.minutes, "bolt")}`;
+  }
+
+  if (els.yangoEta) {
+    els.yangoEta.textContent = `ETA ${estimateProviderEta(estimate.minutes, "yango")}`;
+  }
+}
+
+function resetGhanaEstimateUI() {
+  if (els.boltPrice) els.boltPrice.textContent = "GH₵ —";
+  if (els.yangoPrice) els.yangoPrice.textContent = "GH₵ —";
+  if (els.boltEta) els.boltEta.textContent = "ETA —";
+  if (els.yangoEta) els.yangoEta.textContent = "ETA —";
+}
+  
   updateBestCardUI();
 }
 
@@ -553,14 +649,14 @@ function applyProviderVisibility() {
 
   Object.entries(providerMap).forEach(([key, el]) => {
     if (!el) return;
-    el.style.display = allowed.includes(key) ? "" : "none";
+    el.style.display = allowed.includes(key) ? "flex" : "none";
   });
 
   if (currentMarket === "gh") {
-    if (els.boltPrice) els.boltPrice.textContent = "GH₵ —";
-    if (els.yangoPrice) els.yangoPrice.textContent = "GH₵ —";
-    if (els.boltEta) els.boltEta.textContent = "ETA —";
-    if (els.yangoEta) els.yangoEta.textContent = "ETA —";
+    if (els.boltPrice && !els.boltPrice.textContent.trim()) els.boltPrice.textContent = "GH₵ —";
+    if (els.yangoPrice && !els.yangoPrice.textContent.trim()) els.yangoPrice.textContent = "GH₵ —";
+    if (els.boltEta && !els.boltEta.textContent.trim()) els.boltEta.textContent = "ETA —";
+    if (els.yangoEta && !els.yangoEta.textContent.trim()) els.yangoEta.textContent = "ETA —";
   }
 }
 
@@ -870,22 +966,25 @@ async function refreshEstimates() {
   const route = await computeRoute();
 
   if (!route) {
-    lastRoute = {
-      distance_m: null,
-      duration_s: null
-    };
+  lastRoute = {
+    distance_m: null,
+    duration_s: null
+  };
 
-    setStatus(
-      "Could not estimate this route yet. Please enter a more complete pickup and dropoff address."
-    );
-    setLoading(false);
-    return;
-  }
+  resetGhanaEstimateUI();
+
+  setStatus(
+    "Could not estimate this route yet. Please enter a more complete pickup and dropoff address."
+  );
+  setLoading(false);
+  return;
+}
 
   lastRoute = route;
 
   const estimate = estimateFares(route.distance_m, route.duration_s);
   applyFareUI(estimate);
+  applyGhanaEstimateUI(estimate);
 
   setHelper("Your estimates are ready. Choose Uber or Lyft to continue.");
   incrementRideCounter();
