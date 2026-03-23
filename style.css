@@ -1153,6 +1153,26 @@ body[data-market="gh"] #lyftCard {
   line-height: 1.05;
 }
 
+/* === FINAL MARKET VISIBILITY OVERRIDES === */
+body[data-market="us"] #uberCard,
+body[data-market="us"] #lyftCard {
+  display: flex !important;
+}
+
+body[data-market="us"] #boltCard,
+body[data-market="us"] #yangoCard {
+  display: none !important;
+}
+
+body[data-market="gh"] #uberCard,
+body[data-market="gh"] #boltCard,
+body[data-market="gh"] #yangoCard {
+  display: flex !important;
+}
+
+body[data-market="gh"] #lyftCard {
+  display: none !important;
+}
 
 
 
