@@ -966,7 +966,7 @@ async function refreshEstimates() {
 
   const route = await computeRoute();
 
-  if (!route) {
+if (!route) {
   lastRoute = {
     distance_m: null,
     duration_s: null
@@ -981,13 +981,18 @@ async function refreshEstimates() {
   return;
 }
 
-  lastRoute = route;
+lastRoute = route;
 
-  const estimate = estimateFares(route.distance_m, route.duration_s);
-  applyFareUI(estimate);
-  applyGhanaEstimateUI(estimate);
+const estimate = estimateFares(route.distance_m, route.duration_s);
+applyFareUI(estimate);
+applyGhanaEstimateUI(estimate);
 
-  setHelper("Your estimates are ready. Choose Uber or Lyft to continue.");
+setHelper(
+  currentMarket === "gh"
+    ? "Your estimates are ready. Choose Uber, Bolt, or Yango to continue."
+    : "Your estimates are ready. Choose Uber or Lyft to continue."
+);
+
   incrementRideCounter();
 
   setStatus(
