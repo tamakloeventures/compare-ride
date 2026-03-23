@@ -114,7 +114,7 @@ const MARKET_CONFIG = {
     heroTitle: "Compare Uber and Lyft fares instantly",
     heroSubtitle:
       "Find the cheapest ride and launch it in seconds. Built for everyday commuters, airport travelers, and anyone who wants a faster way to compare ride options.",
-    chips: ["New York", "Los Angeles", "Chicago", "Houston", "Atlanta"],
+    chips: ["New York", "Los Angeles", "Chicago", "Houston", "Atlanta", "Virginia", "Ohio", "Arizona"],
     currency: "USD",
     locale: "en-US",
     availableTitle: "Available Rides",
@@ -164,6 +164,22 @@ function updateMarketInUrl() {
   const url = new URL(window.location.href);
   url.searchParams.set("market", currentMarket);
   window.history.replaceState({}, "", url);
+}
+
+function applyProviderVisibility() {
+  const allowed = MARKET_PROVIDERS[currentMarket] || [];
+
+  const providerMap = {
+    uber: els.uberCard,
+    lyft: els.lyftCard,
+    bolt: els.boltCard,
+    yango: els.yangoCard
+  };
+
+  Object.entries(providerMap).forEach(([key, el]) => {
+    if (!el) return;
+    el.style.display = allowed.includes(key) ? "flex" : "none";
+  });
 }
 
 function applyMarketUI() {
@@ -226,34 +242,6 @@ function applyMarketUI() {
 function setStatus(message) {
   if (els.statusNote) {
     els.statusNote.textContent = message;
-  }
-}
-
-function applyMarketUI() {
-  document.body.setAttribute("data-market", currentMarket);
-
-  if (els.marketSelect) {
-    els.marketSelect.value = currentMarket;
-  }
-
-  applyProviderVisibility();
-}
-
-  const uberCard = document.getElementById("uberCard");
-  const lyftCard = document.getElementById("lyftCard");
-  const boltCard = document.getElementById("boltCard");
-  const yangoCard = document.getElementById("yangoCard");
-
-  if (currentMarket === "gh") {
-    if (uberCard) uberCard.style.display = "flex";
-    if (lyftCard) lyftCard.style.display = "none";
-    if (boltCard) boltCard.style.display = "flex";
-    if (yangoCard) yangoCard.style.display = "flex";
-  } else {
-    if (uberCard) uberCard.style.display = "flex";
-    if (lyftCard) lyftCard.style.display = "flex";
-    if (boltCard) boltCard.style.display = "none";
-    if (yangoCard) yangoCard.style.display = "none";
   }
 }
 
