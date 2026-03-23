@@ -232,6 +232,13 @@ function setStatus(message) {
 function applyMarketUI() {
   document.body.setAttribute("data-market", currentMarket);
 
+  if (els.marketSelect) {
+    els.marketSelect.value = currentMarket;
+  }
+
+  applyProviderVisibility();
+}
+
   const uberCard = document.getElementById("uberCard");
   const lyftCard = document.getElementById("lyftCard");
   const boltCard = document.getElementById("boltCard");
@@ -640,6 +647,7 @@ function haversineMiles(lat1, lng1, lat2, lng2) {
 
 function applyProviderVisibility() {
   const allowed = MARKET_PROVIDERS[currentMarket] || [];
+  console.log("allowed providers =", MARKET_PROVIDERS[currentMarket]);
 
   const providerMap = {
     uber: els.uberCard,
@@ -1173,11 +1181,13 @@ function initAppEvents() {
 
   els.mobileCompareBtn?.addEventListener("click", scrollToAvailable);
 
-  els.marketSelect?.addEventListener("change", () => {
-    currentMarket = els.marketSelect.value;
-    applyMarketUI();
-    logEvent("market_change", { market: currentMarket });
-  });
+  els.marketSelect?.addEventListener("change", (e) => {
+  currentMarket = e.target.value || "us";
+
+  applyMarketUI();
+
+  logEvent("market_change", { market: currentMarket });
+});
 
   els.rideForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
