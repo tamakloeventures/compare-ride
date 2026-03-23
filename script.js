@@ -167,9 +167,7 @@ function updateMarketInUrl() {
 }
 
 function applyMarketUI() {
-  document.body.setAttribute("data-market", currentMarket);
-  applyProviderVisibility();
-}
+  const market = getCurrentMarketConfig();
 
   if (els.marketSelect) {
     els.marketSelect.value = currentMarket;
