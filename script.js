@@ -217,8 +217,10 @@ function applyMarketUI() {
       els.waitlistCity.value = "";
     }
   }
+
   document.body.setAttribute("data-market", currentMarket);
   updateMarketInUrl();
+  applyProviderVisibility();
 }
 
 function setStatus(message) {
