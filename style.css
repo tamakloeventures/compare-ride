@@ -1,4 +1,4 @@
-<div class="ride-card" id="boltCard" data-provider="bolt" style="display:none;">
+<div class="ride-card" id="boltCard" data-provider="bolt" 
   <div class="ride-top">
     <div class="logo-badge bolt">Bolt</div>
     <div class="ride-meta">
@@ -21,7 +21,7 @@
   </div>
 </div>
 
-<div class="ride-card" id="yangoCard" data-provider="yango" style="display:none;">
+<div class="ride-card" id="yangoCard" data-provider="yango" 
   <div class="ride-top">
     <div class="logo-badge yango">Yango</div>
     <div class="ride-meta">
