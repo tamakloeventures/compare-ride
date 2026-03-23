@@ -1174,7 +1174,50 @@ body[data-market="gh"] #lyftCard {
   display: none !important;
 }
 
+/* === FORCE booking card back to original white look === */
+.booking-card {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-radius: 18px !important;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18) !important;
+  padding: 26px 26px 22px !important;
+  opacity: 1 !important;
+}
 
+.booking-card h2,
+.booking-card label,
+.booking-card .helper {
+  color: #0f172a !important;
+}
+
+.booking-card .field label {
+  color: #475569 !important;
+}
+
+.booking-card input {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  box-shadow: none !important;
+  -webkit-text-fill-color: #0f172a !important;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.booking-card input::placeholder {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
+
+/* Chrome autofill fix */
+.booking-card input:-webkit-autofill,
+.booking-card input:-webkit-autofill:hover,
+.booking-card input:-webkit-autofill:focus,
+.booking-card input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #0f172a !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
 
 
 
