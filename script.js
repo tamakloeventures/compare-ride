@@ -613,9 +613,6 @@ function resetGhanaEstimateUI() {
   if (els.boltEta) els.boltEta.textContent = "ETA —";
   if (els.yangoEta) els.yangoEta.textContent = "ETA —";
 }
-  
-  updateBestCardUI();
-}
 
 function haversineMiles(lat1, lng1, lat2, lng2) {
   const toRad = (deg) => (deg * Math.PI) / 180;
@@ -631,30 +628,6 @@ function haversineMiles(lat1, lng1, lat2, lng2) {
       Math.sin(dLng / 2) ** 2;
 
   return 2 * radiusMiles * Math.asin(Math.sqrt(a));
-}
-
-function applyProviderVisibility() {
-  const allowed = MARKET_PROVIDERS[currentMarket] || [];
-  console.log("allowed providers =", MARKET_PROVIDERS[currentMarket]);
-
-  const providerMap = {
-    uber: els.uberCard,
-    lyft: els.lyftCard,
-    bolt: els.boltCard,
-    yango: els.yangoCard
-  };
-
-  Object.entries(providerMap).forEach(([key, el]) => {
-    if (!el) return;
-    el.style.display = allowed.includes(key) ? "flex" : "none";
-  });
-
-  if (currentMarket === "gh") {
-    if (els.boltPrice && !els.boltPrice.textContent.trim()) els.boltPrice.textContent = "GH₵ —";
-    if (els.yangoPrice && !els.yangoPrice.textContent.trim()) els.yangoPrice.textContent = "GH₵ —";
-    if (els.boltEta && !els.boltEta.textContent.trim()) els.boltEta.textContent = "ETA —";
-    if (els.yangoEta && !els.yangoEta.textContent.trim()) els.yangoEta.textContent = "ETA —";
-  }
 }
 
 function incrementRideCounter() {
