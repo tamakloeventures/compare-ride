@@ -76,6 +76,10 @@ boltPrice: document.getElementById("boltPrice"),
 yangoPrice: document.getElementById("yangoPrice"),
 boltEta: document.getElementById("boltEta"),
 yangoEta: document.getElementById("yangoEta"),
+  estimateFeedback: document.getElementById("estimateFeedback"),
+  feedbackYes: document.getElementById("feedbackYes"),
+  feedbackNo: document.getElementById("feedbackNo"),
+  feedbackFollowup: document.getElementById("feedbackFollowup"),
 };
 
 const sessionId = localStorage.getItem("rc_session") || crypto.randomUUID();
@@ -364,6 +368,34 @@ function setLoading(isLoading) {
     els.btnFindRates.classList.remove("btn-loading");
     els.btnFindRates.disabled = false;
     els.btnFindRates.textContent = "Find Best Rates";
+  }
+}
+
+function resetEstimateFeedback() {
+  if (els.estimateFeedback) {
+    els.estimateFeedback.style.display = "none";
+  }
+
+  if (els.feedbackFollowup) {
+    els.feedbackFollowup.style.display = "none";
+    els.feedbackFollowup.innerHTML = `
+      <div class="feedback-sub">How far off?</div>
+      <div class="feedback-actions">
+        <button class="btn btn-outline feedback-detail" data-level="slight">Slightly</button>
+        <button class="btn btn-outline feedback-detail" data-level="medium">Somewhat</button>
+        <button class="btn btn-outline feedback-detail" data-level="high">Very</button>
+      </div>
+    `;
+  }
+
+  if (els.feedbackYes) {
+    els.feedbackYes.textContent = "Yes";
+    els.feedbackYes.style.display = "";
+  }
+
+  if (els.feedbackNo) {
+    els.feedbackNo.textContent = "No";
+    els.feedbackNo.style.display = "";
   }
 }
 
@@ -965,14 +997,19 @@ setHelper(
   incrementRideCounter();
 
   setStatus(
-    `${lastBestProvider} looks like the best value for this trip: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`
-  );
+  `${lastBestProvider} looks like the best value for this trip: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`
+);
 
-  setLoading(false);
+setLoading(false);
 
-  if (els.mobileStickyCta && isMobileDevice()) {
-    els.mobileStickyCta.style.display = "flex";
-  }
+// Show estimate feedback after results are ready
+if (els.estimateFeedback) {
+  els.estimateFeedback.style.display = "block";
+  logEvent("estimate_feedback_view", { market: currentMarket });
+}
+
+if (els.mobileStickyCta && isMobileDevice()) {
+  els.mobileStickyCta.style.display = "flex";
 }
 
 async function openUber() {
@@ -1150,11 +1187,13 @@ function initAppEvents() {
   logEvent("market_change", { market: currentMarket });
 });
 
-  els.rideForm?.addEventListener("submit", async (event) => {
+    els.rideForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const values = validateInputs();
     if (!values) return;
+
+    resetEstimateFeedback();
 
     logEvent("search_submit", { market: currentMarket });
     await refreshEstimates();
@@ -1208,11 +1247,45 @@ function initAppEvents() {
           els.waitlistStatus.textContent =
             "Waitlist signup failed. Please try again later.";
         }
-      }
+          els.feedbackYes?.addEventListener("click", () => {
+    logEvent("estimate_feedback_submit", {
+      market: currentMarket,
+      result: "accurate"
     });
-  }
-}
-    
+
+    els.feedbackYes.textContent = "Thanks!";
+    if (els.feedbackNo) els.feedbackNo.style.display = "none";
+    if (els.feedbackFollowup) els.feedbackFollowup.style.display = "none";
+  });
+
+  els.feedbackNo?.addEventListener("click", () => {
+    logEvent("estimate_feedback_submit", {
+      market: currentMarket,
+      result: "inaccurate"
+    });
+
+    if (els.feedbackFollowup) {
+      els.feedbackFollowup.style.display = "block";
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    const detailBtn = event.target.closest(".feedback-detail");
+    if (!detailBtn) return;
+
+    const level = detailBtn.getAttribute("data-level");
+
+    logEvent("estimate_accuracy_detail", {
+      market: currentMarket,
+      level
+    });
+
+    if (els.feedbackFollowup) {
+      els.feedbackFollowup.innerHTML =
+        "<div class='feedback-sub'>Thanks for the feedback!</div>";
+    }
+  });
+      
 function initMobileDateTimeAssist() {
   const isSmallScreen = () => window.matchMedia("(max-width: 768px)").matches;
   const fields = [els.date, els.time].filter(Boolean);
@@ -1329,6 +1402,7 @@ window.addEventListener("load", () => {
   setDefaultDateTime();
   initAppEvents();
   initMobileDateTimeAssist();
+  resetEstimateFeedback();
   logEvent("page_view", { supabaseEnabled, market: currentMarket });
 });
 
