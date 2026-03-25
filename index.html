@@ -280,6 +280,25 @@
         Enter pickup and dropoff above, then click “Find Best Rates”.
       </div>
 
+<!-- Estimate Feedback -->
+<div id="estimateFeedback" class="feedback-card" style="display:none;">
+  <div class="feedback-title">Was this estimate accurate?</div>
+
+  <div class="feedback-actions">
+    <button class="btn btn-outline" id="feedbackYes">Yes</button>
+    <button class="btn btn-outline" id="feedbackNo">No</button>
+  </div>
+
+  <div id="feedbackFollowup" class="feedback-followup" style="display:none;">
+    <div class="feedback-sub">How far off?</div>
+    <div class="feedback-actions">
+      <button class="btn btn-outline feedback-detail" data-level="slight">Slightly</button>
+      <button class="btn btn-outline feedback-detail" data-level="medium">Somewhat</button>
+      <button class="btn btn-outline feedback-detail" data-level="high">Very</button>
+    </div>
+  </div>
+</div>
+      
       <div class="smallnote" style="margin-top: 12px;">
         <button class="btn btn-outline" id="btnShareCompare" type="button">
           Share This Comparison
