@@ -1011,6 +1011,7 @@ if (els.estimateFeedback) {
 if (els.mobileStickyCta && isMobileDevice()) {
   els.mobileStickyCta.style.display = "flex";
 }
+}
 
 async function openUber() {
   const values = validateInputs();
@@ -1247,7 +1248,11 @@ function initAppEvents() {
           els.waitlistStatus.textContent =
             "Waitlist signup failed. Please try again later.";
         }
-          els.feedbackYes?.addEventListener("click", () => {
+      }
+    });
+  }
+  
+  els.feedbackYes?.addEventListener("click", () => {
     logEvent("estimate_feedback_submit", {
       market: currentMarket,
       result: "accurate"
@@ -1284,7 +1289,8 @@ function initAppEvents() {
       els.feedbackFollowup.innerHTML =
         "<div class='feedback-sub'>Thanks for the feedback!</div>";
     }
-  });
+  });  
+  }
       
 function initMobileDateTimeAssist() {
   const isSmallScreen = () => window.matchMedia("(max-width: 768px)").matches;
