@@ -48,6 +48,8 @@ const els = {
   lyftEta: document.getElementById("lyftEta"),
   uberTag: document.getElementById("uberTag"),
   lyftTag: document.getElementById("lyftTag"),
+  boltTag: document.getElementById("boltTag"),
+  yangoTag: document.getElementById("yangoTag"),
   uberCard: document.getElementById("uberCard"),
   lyftCard: document.getElementById("lyftCard"),
   waitlistForm: document.getElementById("waitlistForm"),
@@ -627,6 +629,7 @@ function applyFareUI(estimate) {
 
   updateBestCardUI();
 }
+
 function getGhanaSurgeMultiplier() {
   const dateInput = document.getElementById("rideDate");
   const timeInput = document.getElementById("rideTime");
