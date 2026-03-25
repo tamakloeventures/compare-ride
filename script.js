@@ -519,21 +519,27 @@ function estimateFares(distanceMeters, durationSeconds) {
   };
 
   if (currentMarket === "gh") {
-    const ghSurge = getGhanaSurgeMultiplier();
+  const ghSurge = getGhanaSurgeMultiplier();
 
-    const boltRaw = Math.max(12, (6.0 + 2.4 * km + 0.35 * minutes) * ghSurge);
-    const yangoRaw = Math.max(11, (5.5 + 2.2 * km + 0.32 * minutes) * ghSurge);
+  const uberRaw = Math.max(14, (7.0 + 2.1 * km + 0.30 * minutes) * ghSurge);
+  const boltRaw = Math.max(12, (6.0 + 2.4 * km + 0.35 * minutes) * ghSurge);
+  const yangoRaw = Math.max(11, (5.5 + 2.2 * km + 0.32 * minutes) * ghSurge);
 
-    result.bolt = {
-      low: boltRaw * 0.93,
-      high: boltRaw * 1.10
-    };
+  result.uber = {
+    low: uberRaw * 0.93,
+    high: uberRaw * 1.10
+  };
 
-    result.yango = {
-      low: yangoRaw * 0.93,
-      high: yangoRaw * 1.10
-    };
-  }
+  result.bolt = {
+    low: boltRaw * 0.93,
+    high: boltRaw * 1.10
+  };
+
+  result.yango = {
+    low: yangoRaw * 0.93,
+    high: yangoRaw * 1.10
+  };
+}
 
   return result;
 }
