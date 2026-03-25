@@ -554,30 +554,79 @@ function applyFareUI(estimate) {
   els.uberEta.textContent = tripText;
   els.lyftEta.textContent = tripText;
 
-  const uberMid = (estimate.uber.low + estimate.uber.high) / 2;
-  const lyftMid = (estimate.lyft.low + estimate.lyft.high) / 2;
-
-  if (uberMid <= lyftMid) {
-    lastBestProvider = "Uber";
-
-    els.uberTag.textContent = "Best value";
-    els.uberTag.classList.add("best");
-
-    els.lyftTag.textContent = "Estimate";
-    els.lyftTag.classList.remove("best");
-  } else {
-    lastBestProvider = "Lyft";
-
-    els.lyftTag.textContent = "Best value";
-    els.lyftTag.classList.add("best");
-
+  // Reset all tags first
+  if (els.uberTag) {
     els.uberTag.textContent = "Estimate";
     els.uberTag.classList.remove("best");
   }
 
+  if (els.lyftTag) {
+    els.lyftTag.textContent = "Estimate";
+    els.lyftTag.classList.remove("best");
+  }
+
+  if (els.boltTag) {
+    els.boltTag.textContent = "Estimate";
+    els.boltTag.classList.remove("best");
+  }
+
+  if (els.yangoTag) {
+    els.yangoTag.textContent = "Estimate";
+    els.yangoTag.classList.remove("best");
+  }
+
+  if (currentMarket === "gh") {
+    const providers = [
+      { name: "Uber", fare: estimate.uber, tagEl: els.uberTag },
+      { name: "Bolt", fare: estimate.bolt, tagEl: els.boltTag },
+      { name: "Yango", fare: estimate.yango, tagEl: els.yangoTag }
+    ].filter(
+      (provider) =>
+        provider.fare &&
+        typeof provider.fare.low === "number" &&
+        typeof provider.fare.high === "number"
+    );
+
+    let bestProvider = providers[0];
+
+    providers.forEach((provider) => {
+      const providerMid = (provider.fare.low + provider.fare.high) / 2;
+      const bestMid = (bestProvider.fare.low + bestProvider.fare.high) / 2;
+
+      if (providerMid < bestMid) {
+        bestProvider = provider;
+      }
+    });
+
+    lastBestProvider = bestProvider.name;
+
+    if (bestProvider.tagEl) {
+      bestProvider.tagEl.textContent = "Best value";
+      bestProvider.tagEl.classList.add("best");
+    }
+  } else {
+    const uberMid = (estimate.uber.low + estimate.uber.high) / 2;
+    const lyftMid = (estimate.lyft.low + estimate.lyft.high) / 2;
+
+    if (uberMid <= lyftMid) {
+      lastBestProvider = "Uber";
+
+      if (els.uberTag) {
+        els.uberTag.textContent = "Best value";
+        els.uberTag.classList.add("best");
+      }
+    } else {
+      lastBestProvider = "Lyft";
+
+      if (els.lyftTag) {
+        els.lyftTag.textContent = "Best value";
+        els.lyftTag.classList.add("best");
+      }
+    }
+  }
+
   updateBestCardUI();
 }
-
 function getGhanaSurgeMultiplier() {
   const dateInput = document.getElementById("rideDate");
   const timeInput = document.getElementById("rideTime");
