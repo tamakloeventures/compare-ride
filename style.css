@@ -1432,3 +1432,39 @@ body[data-market="gh"] #lyftCard {
   }
 }
 
+/* === FEEDBACK CARD (SAFE ADDITION) === */
+.feedback-card {
+  max-width: 640px;
+  margin: 20px auto 0;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  text-align: center;
+}
+
+.feedback-title {
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #0f172a;
+}
+
+.feedback-sub {
+  font-size: 14px;
+  margin: 12px 0 8px;
+  color: #475569;
+  font-weight: 700;
+}
+
+.feedback-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.feedback-actions .btn {
+  min-width: 110px;
+}
