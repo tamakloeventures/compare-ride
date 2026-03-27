@@ -345,25 +345,16 @@ function updateBestCardUI() {
   normalizeRideTopStructure(selectedCard);
   selectedCard.classList.add("best-pick");
 
-  const top = selectedCard.querySelector(".ride-top");
-  if (!top) return;
+  const rideTopEl = selectedCard.querySelector(".ride-top");
+  if (!rideTopEl) return;
 
-  top.classList.add("with-badge");
+  rideTopEl.classList.add("with-badge");
 
   const badge = document.createElement("div");
   badge.className = "best-badge";
   badge.textContent = "Best Value";
-  top.appendChild(badge);
+  rideTopEl.appendChild(badge);
 }
-  
-    const top = els.lyftCard.querySelector(".ride-top");
-    if (top) {
-      top.classList.add("with-badge");
-      const badge = document.createElement("div");
-      badge.className = "best-badge";
-      badge.textContent = "Best Value";
-      top.appendChild(badge);
-    }
   
 function setLoading(isLoading) {
   if (!els.btnFindRates) return;
