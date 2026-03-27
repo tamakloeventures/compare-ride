@@ -1050,8 +1050,14 @@ async function computeRoute() {
 async function refreshEstimates() {
   setLoading(true);
 
-  if (els.uberPrice) els.uberPrice.textContent = "$ —";
-  if (els.lyftPrice) els.lyftPrice.textContent = "$ —";
+  if (currentMarket === "gh") {
+    if (els.uberPrice) els.uberPrice.textContent = "GH₵ —";
+    if (els.lyftPrice) els.lyftPrice.textContent = "—";
+  } else {
+    if (els.uberPrice) els.uberPrice.textContent = "$ —";
+    if (els.lyftPrice) els.lyftPrice.textContent = "$ —";
+  }
+
   if (els.uberEta) els.uberEta.textContent = "ETA —";
   if (els.lyftEta) els.lyftEta.textContent = "ETA —";
 
@@ -1065,52 +1071,60 @@ async function refreshEstimates() {
     els.lyftTag.classList.remove("best");
   }
 
-  const route = await computeRoute();
+  if (els.boltTag) {
+    els.boltTag.textContent = "Estimate";
+    els.boltTag.classList.remove("best");
+  }
 
-if (!route) {
-  lastRoute = {
-    distance_m: null,
-    duration_s: null
-  };
+  if (els.yangoTag) {
+    els.yangoTag.textContent = "Estimate";
+    els.yangoTag.classList.remove("best");
+  }
 
   resetGhanaEstimateUI();
 
-  setStatus(
-    "Could not estimate this route yet. Please enter a more complete pickup and dropoff address."
+  const route = await computeRoute();
+
+  if (!route) {
+    lastRoute = {
+      distance_m: null,
+      duration_s: null
+    };
+
+    setLoading(false);
+    setStatus("Could not estimate this route yet. Please select more complete pickup and dropoff addresses.");
+    return;
+  }
+
+  lastRoute = route;
+
+  const estimate = estimateFares(route.distance_m, route.duration_s);
+
+  applyFareUI(estimate);
+  applyGhanaEstimateUI(estimate);
+
+  setHelper(
+    currentMarket === "gh"
+      ? "Your estimates are ready. Choose Uber, Bolt, or Yango to continue."
+      : "Your estimates are ready. Choose Uber or Lyft to continue."
   );
-  setLoading(false);
-  return;
-}
-
-lastRoute = route;
-
-const estimate = estimateFares(route.distance_m, route.duration_s);
-applyFareUI(estimate);
-applyGhanaEstimateUI(estimate);
-
-setHelper(
-  currentMarket === "gh"
-    ? "Your estimates are ready. Choose Uber, Bolt, or Yango to continue."
-    : "Your estimates are ready. Choose Uber or Lyft to continue."
-);
 
   incrementRideCounter();
 
   setStatus(
-  `${lastBestProvider} looks like the best value for this trip: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`
-);
+    `${lastBestProvider} looks like the best value for this trip: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`
+  );
 
-setLoading(false);
+  setLoading(false);
 
-// Show estimate feedback after results are ready
-if (els.estimateFeedback) {
-  els.estimateFeedback.style.display = "block";
-  logEvent("estimate_feedback_view", { market: currentMarket });
-}
+  if (els.estimateFeedback) {
+    els.estimateFeedback.style.display = "block";
+    logEvent("estimate_feedback_view", { market: currentMarket });
+  }
 
-if (els.mobileStickyCta && isMobileDevice()) {
-  els.mobileStickyCta.style.display = "flex";
-}
+  if (els.mobileStickyCta && isMobileDevice()) {
+    els.mobileStickyCta.style.display = "flex";
+  }
 }
 
 async function openUber() {
@@ -1297,6 +1311,26 @@ function initAppEvents() {
   if (els.lyftPrice) els.lyftPrice.textContent = currentMarket === "gh" ? "—" : "$ —";
   if (els.uberEta) els.uberEta.textContent = "ETA —";
   if (els.lyftEta) els.lyftEta.textContent = "ETA —";
+
+  if (els.uberTag) {
+    els.uberTag.textContent = "Estimate";
+    els.uberTag.classList.remove("best");
+  }
+
+  if (els.lyftTag) {
+    els.lyftTag.textContent = "Estimate";
+    els.lyftTag.classList.remove("best");
+  }
+
+  if (els.boltTag) {
+    els.boltTag.textContent = "Estimate";
+    els.boltTag.classList.remove("best");
+  }
+
+  if (els.yangoTag) {
+    els.yangoTag.textContent = "Estimate";
+    els.yangoTag.classList.remove("best");
+  }
 
   resetGhanaEstimateUI();
   resetEstimateFeedback();
