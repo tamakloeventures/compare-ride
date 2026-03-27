@@ -982,7 +982,6 @@ async function computeRoute() {
   const values = validateInputs();
   if (!values) return null;
 
-  // Clear stale selected-place state if the visible input no longer matches it
   if (
     selectedPlaces.pickup &&
     values.pickup !== (selectedPlaces.pickup.formattedAddress || "").trim()
@@ -1267,26 +1266,49 @@ function initAppEvents() {
   els.btnShareCompare?.addEventListener("click", shareComparison);
 
     els.mobileBestRideBtn?.addEventListener("click", () => {
-    if (currentMarket === "gh") {
-      openUber();
-      return;
-    }
-
-    if (lastBestProvider === "Uber") {
-      openUber();
-    } else {
-      openLyft();
-    }
-  });
+  if (lastBestProvider === "Uber") {
+    openUber();
+  } else if (lastBestProvider === "Lyft") {
+    openLyft();
+  } else if (lastBestProvider === "Bolt") {
+    openBolt();
+  } else if (lastBestProvider === "Yango") {
+    openYango();
+  }
+});
 
   els.mobileCompareBtn?.addEventListener("click", scrollToAvailable);
 
   els.marketSelect?.addEventListener("change", (e) => {
   currentMarket = e.target.value || "us";
 
-  resetRouteStateForMarketChange();
-  applyMarketUI();
+  clearStoredPlace("pickup");
+  clearStoredPlace("dropoff");
 
+  lastRoute = {
+    distance_m: null,
+    duration_s: null
+  };
+
+  if (els.pickup) els.pickup.value = "";
+  if (els.dropoff) els.dropoff.value = "";
+
+  if (els.uberPrice) els.uberPrice.textContent = currentMarket === "gh" ? "GH₵ —" : "$ —";
+  if (els.lyftPrice) els.lyftPrice.textContent = currentMarket === "gh" ? "—" : "$ —";
+  if (els.uberEta) els.uberEta.textContent = "ETA —";
+  if (els.lyftEta) els.lyftEta.textContent = "ETA —";
+
+  resetGhanaEstimateUI();
+  resetEstimateFeedback();
+
+  if (els.mobileStickyCta) {
+    els.mobileStickyCta.style.display = "none";
+  }
+
+  setStatus("Enter pickup and dropoff above, then click “Find Best Rates”.");
+  setHelper("Start typing pickup and dropoff, then select a suggested address for the best result.");
+
+  applyMarketUI();
   logEvent("market_change", { market: currentMarket });
 });
 
