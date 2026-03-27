@@ -549,7 +549,11 @@ function estimateFares(distanceMeters, durationSeconds) {
 function applyFareUI(estimate) {
   if (!els.uberPrice || !els.lyftPrice || !els.uberEta || !els.lyftEta) return;
 
+  if (currentMarket === "gh") {
+  els.uberPrice.textContent = formatRangeGhs(estimate.uber);
+} else {
   els.uberPrice.textContent = formatMoneyRange(estimate.uber.low, estimate.uber.high);
+}
   els.lyftPrice.textContent = formatMoneyRange(estimate.lyft.low, estimate.lyft.high);
 
   const tripText = `Trip ~${Math.round(estimate.minutes)} min · ${estimate.miles.toFixed(1)} mi`;
