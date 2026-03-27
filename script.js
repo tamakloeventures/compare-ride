@@ -1028,25 +1028,7 @@ async function computeRoute() {
 
   return route;
 }
-
-  const haveCoords = await ensureCoordsFromInputs();
-  if (!haveCoords) return null;
-
-  const miles = haversineMiles(
-    coords.pickup.lat,
-    coords.pickup.lng,
-    coords.dropoff.lat,
-    coords.dropoff.lng
-  );
-
-  const approxMinutes = Math.max(8, Math.round((miles / 22) * 60));
-
-  return {
-    distance_m: miles * 1609.344,
-    duration_s: approxMinutes * 60
-  };
-}
-
+  
 async function refreshEstimates() {
   setLoading(true);
 
