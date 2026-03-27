@@ -782,6 +782,33 @@ function clearStoredPlace(kind) {
   coords[kind] = null;
 }
 
+function resetRouteStateForMarketChange() {
+  clearStoredPlace("pickup");
+  clearStoredPlace("dropoff");
+
+  lastRoute = {
+    distance_m: null,
+    duration_s: null
+  };
+
+  if (els.pickup) els.pickup.value = "";
+  if (els.dropoff) els.dropoff.value = "";
+
+  if (els.uberPrice) els.uberPrice.textContent = currentMarket === "gh" ? "GH₵ —" : "$ —";
+  if (els.lyftPrice) els.lyftPrice.textContent = currentMarket === "gh" ? "—" : "$ —";
+  if (els.uberEta) els.uberEta.textContent = "ETA —";
+  if (els.lyftEta) els.lyftEta.textContent = "ETA —";
+
+  resetGhanaEstimateUI();
+  resetEstimateFeedback();
+  setStatus("Enter pickup and dropoff above, then click “Find Best Rates”.");
+  setHelper("Start typing pickup and dropoff, then select a suggested address for the best result.");
+
+  if (els.mobileStickyCta) {
+    els.mobileStickyCta.style.display = "none";
+  }
+}
+
 function setSelectedPlace(kind, place, inputEl) {
   const hasGeometry =
     place &&
@@ -955,38 +982,53 @@ async function computeRoute() {
   const values = validateInputs();
   if (!values) return null;
 
-  if (window.google && google.maps && google.maps.DirectionsService) {
-    const directionsService = new google.maps.DirectionsService();
-
-    const route = await new Promise((resolve) => {
-      directionsService.route(
-        {
-          origin: coords.pickup
-            ? new google.maps.LatLng(coords.pickup.lat, coords.pickup.lng)
-            : values.pickup,
-          destination: coords.dropoff
-            ? new google.maps.LatLng(coords.dropoff.lat, coords.dropoff.lng)
-            : values.dropoff,
-          travelMode: google.maps.TravelMode.DRIVING
-        },
-        (result, status) => {
-          if (status === "OK" && result?.routes?.[0]?.legs?.[0]) {
-            const leg = result.routes[0].legs[0];
-            resolve({
-              distance_m: leg.distance.value,
-              duration_s: leg.duration.value
-            });
-          } else {
-            resolve(null);
-          }
-        }
-      );
-    });
-
-    if (route) {
-      return route;
-    }
+  // Clear stale selected-place state if the visible input no longer matches it
+  if (
+    selectedPlaces.pickup &&
+    values.pickup !== (selectedPlaces.pickup.formattedAddress || "").trim()
+  ) {
+    clearStoredPlace("pickup");
   }
+
+  if (
+    selectedPlaces.dropoff &&
+    values.dropoff !== (selectedPlaces.dropoff.formattedAddress || "").trim()
+  ) {
+    clearStoredPlace("dropoff");
+  }
+
+  const haveCoords = await ensureCoordsFromInputs();
+  if (!haveCoords) return null;
+
+  if (!window.google || !google.maps || !google.maps.DirectionsService) {
+    return null;
+  }
+
+  const directionsService = new google.maps.DirectionsService();
+
+  const route = await new Promise((resolve) => {
+    directionsService.route(
+      {
+        origin: new google.maps.LatLng(coords.pickup.lat, coords.pickup.lng),
+        destination: new google.maps.LatLng(coords.dropoff.lat, coords.dropoff.lng),
+        travelMode: google.maps.TravelMode.DRIVING
+      },
+      (result, status) => {
+        if (status === "OK" && result?.routes?.[0]?.legs?.[0]) {
+          const leg = result.routes[0].legs[0];
+          resolve({
+            distance_m: leg.distance.value,
+            duration_s: leg.duration.value
+          });
+        } else {
+          resolve(null);
+        }
+      }
+    );
+  });
+
+  return route;
+}
 
   const haveCoords = await ensureCoordsFromInputs();
   if (!haveCoords) return null;
@@ -1242,6 +1284,7 @@ function initAppEvents() {
   els.marketSelect?.addEventListener("change", (e) => {
   currentMarket = e.target.value || "us";
 
+  resetRouteStateForMarketChange();
   applyMarketUI();
 
   logEvent("market_change", { market: currentMarket });
