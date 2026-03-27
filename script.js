@@ -364,8 +364,7 @@ function updateBestCardUI() {
       badge.textContent = "Best Value";
       top.appendChild(badge);
     }
-  }
-
+  
 function setLoading(isLoading) {
   if (!els.btnFindRates) return;
 
