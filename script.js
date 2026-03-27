@@ -355,11 +355,7 @@ function updateBestCardUI() {
   badge.textContent = "Best Value";
   top.appendChild(badge);
 }
-
-  if (lastBestProvider === "Lyft" && els.lyftCard) {
-    normalizeRideTopStructure(els.lyftCard);
-    els.lyftCard.classList.add("best-pick");
-
+  
     const top = els.lyftCard.querySelector(".ride-top");
     if (top) {
       top.classList.add("with-badge");
@@ -369,7 +365,6 @@ function updateBestCardUI() {
       top.appendChild(badge);
     }
   }
-}
 
 function setLoading(isLoading) {
   if (!els.btnFindRates) return;
