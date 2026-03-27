@@ -325,24 +325,40 @@ function removeExistingBestBadges() {
 }
 
 function updateBestCardUI() {
+  // Reset all cards
   els.uberCard?.classList.remove("best-pick");
   els.lyftCard?.classList.remove("best-pick");
+  els.boltCard?.classList.remove("best-pick");
+  els.yangoCard?.classList.remove("best-pick");
 
   removeExistingBestBadges();
 
-  if (lastBestProvider === "Uber" && els.uberCard) {
-    normalizeRideTopStructure(els.uberCard);
-    els.uberCard.classList.add("best-pick");
+  const providerMap = {
+    Uber: els.uberCard,
+    Lyft: els.lyftCard,
+    Bolt: els.boltCard,
+    Yango: els.yangoCard
+  };
 
-    const top = els.uberCard.querySelector(".ride-top");
-    if (top) {
-      top.classList.add("with-badge");
-      const badge = document.createElement("div");
-      badge.className = "best-badge";
-      badge.textContent = "Best Value";
-      top.appendChild(badge);
-    }
+  const selectedCard = providerMap[lastBestProvider];
+
+  if (!selectedCard) return;
+
+  normalizeRideTopStructure(selectedCard);
+  selectedCard.classList.add("best-pick");
+
+  const top = selectedCard.querySelector(".ride-top");
+
+  if (top) {
+    top.classList.add("with-badge");
+
+    const badge = document.createElement("div");
+    badge.className = "best-badge";
+    badge.textContent = "Best Value";
+
+    top.appendChild(badge);
   }
+}
 
   if (lastBestProvider === "Lyft" && els.lyftCard) {
     normalizeRideTopStructure(els.lyftCard);
