@@ -114,6 +114,32 @@ const MARKET_PROVIDERS = {
   gh: ["uber", "bolt", "yango"]
 };
 
+const AIRPORT_CODE_MAP = {
+  // United States
+  DCA: "Ronald Reagan Washington National Airport, Arlington, VA, USA",
+  IAD: "Washington Dulles International Airport, Dulles, VA, USA",
+  BWI: "Baltimore/Washington International Thurgood Marshall Airport, Baltimore, MD, USA",
+  JFK: "John F. Kennedy International Airport, Queens, NY, USA",
+  LGA: "LaGuardia Airport, Queens, NY, USA",
+  EWR: "Newark Liberty International Airport, Newark, NJ, USA",
+  MIA: "Miami International Airport, Miami, FL, USA",
+  FLL: "Fort Lauderdale-Hollywood International Airport, Fort Lauderdale, FL, USA",
+  ATL: "Hartsfield-Jackson Atlanta International Airport, Atlanta, GA, USA",
+  LAX: "Los Angeles International Airport, Los Angeles, CA, USA",
+  ORD: "O'Hare International Airport, Chicago, IL, USA",
+  DFW: "Dallas/Fort Worth International Airport, Dallas, TX, USA",
+  IAH: "George Bush Intercontinental Airport, Houston, TX, USA",
+  SEA: "Seattle-Tacoma International Airport, Seattle, WA, USA",
+  BOS: "Boston Logan International Airport, Boston, MA, USA",
+  PHX: "Phoenix Sky Harbor International Airport, Phoenix, AZ, USA",
+
+  // Ghana
+  ACC: "Kotoka International Airport, Accra, Ghana",
+  KMS: "Prempeh I International Airport, Kumasi, Ghana",
+  TML: "Tamale Airport, Tamale, Ghana",
+  TKD: "Takoradi Airport, Sekondi-Takoradi, Ghana"
+};
+
 const MARKET_CONFIG = {
   us: {
     code: "us",
@@ -836,6 +862,19 @@ async function useCurrentLocationForPickup() {
   );
 }
 
+function normalizeAirportInput(text) {
+  const raw = String(text || "").trim();
+  if (!raw) return raw;
+
+  const upper = raw.toUpperCase();
+
+  if (AIRPORT_CODE_MAP[upper]) {
+    return AIRPORT_CODE_MAP[upper];
+  }
+
+  return raw;
+}
+
 function splitAddressLines(address) {
   const parts = String(address || "")
     .split(",")
@@ -956,8 +995,19 @@ async function ensureCoordsFromInputs() {
   const values = validateInputs();
   if (!values) return false;
 
+  const normalizedPickup = normalizeAirportInput(values.pickup);
+  const normalizedDropoff = normalizeAirportInput(values.dropoff);
+
+  if (els.pickup && normalizedPickup !== values.pickup) {
+    els.pickup.value = normalizedPickup;
+  }
+
+  if (els.dropoff && normalizedDropoff !== values.dropoff) {
+    els.dropoff.value = normalizedDropoff;
+  }
+
   if (!coords.pickup) {
-    const pickupResult = await geocodeAddress(values.pickup);
+    const pickupResult = await geocodeAddress(normalizedPickup);
     if (pickupResult) {
       coords.pickup = {
         lat: pickupResult.lat,
@@ -974,7 +1024,7 @@ async function ensureCoordsFromInputs() {
   }
 
   if (!coords.dropoff) {
-    const dropoffResult = await geocodeAddress(values.dropoff);
+    const dropoffResult = await geocodeAddress(normalizedDropoff);
     if (dropoffResult) {
       coords.dropoff = {
         lat: dropoffResult.lat,
