@@ -1468,3 +1468,11 @@ body[data-market="gh"] #lyftCard {
 .feedback-actions .btn {
   min-width: 110px;
 }
+
+.btn-location {
+  width: 100%;
+  margin-top: 8px;
+  padding: 11px 14px;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
