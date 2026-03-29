@@ -115,17 +115,17 @@ const MARKET_PROVIDERS = {
 };
 
 const AIRPORT_CODE_MAP = {
-  // United States
+  // US
+  ATL: "Hartsfield-Jackson Atlanta International Airport, Atlanta, GA, USA",
   DCA: "Ronald Reagan Washington National Airport, Arlington, VA, USA",
   IAD: "Washington Dulles International Airport, Dulles, VA, USA",
   BWI: "Baltimore/Washington International Thurgood Marshall Airport, Baltimore, MD, USA",
   JFK: "John F. Kennedy International Airport, Queens, NY, USA",
   LGA: "LaGuardia Airport, Queens, NY, USA",
   EWR: "Newark Liberty International Airport, Newark, NJ, USA",
+  LAX: "Los Angeles International Airport, Los Angeles, CA, USA",
   MIA: "Miami International Airport, Miami, FL, USA",
   FLL: "Fort Lauderdale-Hollywood International Airport, Fort Lauderdale, FL, USA",
-  ATL: "Hartsfield-Jackson Atlanta International Airport, Atlanta, GA, USA",
-  LAX: "Los Angeles International Airport, Los Angeles, CA, USA",
   ORD: "O'Hare International Airport, Chicago, IL, USA",
   DFW: "Dallas/Fort Worth International Airport, Dallas, TX, USA",
   IAH: "George Bush Intercontinental Airport, Houston, TX, USA",
@@ -875,6 +875,23 @@ function normalizeAirportInput(text) {
   return raw;
 }
 
+function getAirportAddressFromCode(text) {
+  const raw = String(text || "").trim().toUpperCase();
+  return AIRPORT_CODE_MAP[raw] || null;
+}
+
+function applyAirportCodeIfMatched(inputEl, kind) {
+  if (!inputEl) return false;
+
+  const airportAddress = getAirportAddressFromCode(inputEl.value);
+  if (!airportAddress) return false;
+
+  clearStoredPlace(kind);
+  inputEl.value = airportAddress;
+  setHelper(`Airport code recognized. Using ${airportAddress}`);
+  return true;
+}
+
 function splitAddressLines(address) {
   const parts = String(address || "")
     .split(",")
@@ -995,19 +1012,19 @@ async function ensureCoordsFromInputs() {
   const values = validateInputs();
   if (!values) return false;
 
-  const normalizedPickup = normalizeAirportInput(values.pickup);
-  const normalizedDropoff = normalizeAirportInput(values.dropoff);
+  const pickupText = getAirportAddressFromCode(values.pickup) || values.pickup;
+  const dropoffText = getAirportAddressFromCode(values.dropoff) || values.dropoff;
 
-  if (els.pickup && normalizedPickup !== values.pickup) {
-    els.pickup.value = normalizedPickup;
+  if (els.pickup && pickupText !== values.pickup) {
+    els.pickup.value = pickupText;
   }
 
-  if (els.dropoff && normalizedDropoff !== values.dropoff) {
-    els.dropoff.value = normalizedDropoff;
+  if (els.dropoff && dropoffText !== values.dropoff) {
+    els.dropoff.value = dropoffText;
   }
 
   if (!coords.pickup) {
-    const pickupResult = await geocodeAddress(normalizedPickup);
+    const pickupResult = await geocodeAddress(pickupText);
     if (pickupResult) {
       coords.pickup = {
         lat: pickupResult.lat,
@@ -1024,7 +1041,7 @@ async function ensureCoordsFromInputs() {
   }
 
   if (!coords.dropoff) {
-    const dropoffResult = await geocodeAddress(normalizedDropoff);
+    const dropoffResult = await geocodeAddress(dropoffText);
     if (dropoffResult) {
       coords.dropoff = {
         lat: dropoffResult.lat,
@@ -1625,7 +1642,9 @@ window.initAutocomplete = function initAutocomplete() {
   attachAutocomplete(els.pickup, "pickup");
   attachAutocomplete(els.dropoff, "dropoff");
 
-  els.pickup?.addEventListener("blur", async () => {
+    els.pickup?.addEventListener("blur", async () => {
+    applyAirportCodeIfMatched(els.pickup, "pickup");
+
     if (!coords.pickup && els.pickup.value.trim()) {
       const result = await geocodeAddress(els.pickup.value.trim());
 
@@ -1642,6 +1661,8 @@ window.initAutocomplete = function initAutocomplete() {
   });
 
   els.dropoff?.addEventListener("blur", async () => {
+    applyAirportCodeIfMatched(els.dropoff, "dropoff");
+
     if (!coords.dropoff && els.dropoff.value.trim()) {
       const result = await geocodeAddress(els.dropoff.value.trim());
 
@@ -1656,7 +1677,6 @@ window.initAutocomplete = function initAutocomplete() {
       }
     }
   });
-};
 
 window.__gmapsFail = function __gmapsFail() {
   setHelper("Address lookup failed to load. You can still type addresses manually.");
