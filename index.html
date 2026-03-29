@@ -76,16 +76,19 @@
 
       <form id="rideForm">
         <div class="field">
-          <label for="pickup">Pickup</label>
-          <input
-            id="pickup"
-            name="pickup"
-            type="text"
-            placeholder="Pickup location"
-            autocomplete="off"
-            required
-          />
-        </div>
+  <label for="pickup">Pickup</label>
+  <input
+    id="pickup"
+    name="pickup"
+    type="text"
+    placeholder="Pickup location"
+    autocomplete="off"
+    required
+  />
+  <button type="button" class="btn btn-outline btn-location" id="btnUseLocation">
+    Use My Current Location
+  </button>
+</div>
 
         <div class="field">
           <label for="dropoff">Dropoff</label>
@@ -114,8 +117,8 @@
         <button class="btn btn-find" type="submit" id="btnFindRates">Find Best Rates</button>
 
         <div class="helper" id="helperText">
-          Start typing pickup and dropoff, then select a suggested address for the best result.
-        </div>
+  Start typing pickup and dropoff, or use your current location for pickup, then select a suggested address for the best result.
+</div>
       </form>
     </div>
   </header>
