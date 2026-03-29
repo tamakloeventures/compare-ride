@@ -28,6 +28,7 @@ const sb = supabaseEnabled
 
 const els = {
   pickup: document.getElementById("pickup"),
+  btnUseLocation: document.getElementById("btnUseLocation"),
   dropoff: document.getElementById("dropoff"),
   date: document.getElementById("rideDate"),
   time: document.getElementById("rideTime"),
@@ -553,7 +554,12 @@ function applyFareUI(estimate) {
 }
   els.lyftPrice.textContent = formatMoneyRange(estimate.lyft.low, estimate.lyft.high);
 
-  const tripText = `Trip ~${Math.round(estimate.minutes)} min · ${estimate.miles.toFixed(1)} mi`;
+    const distanceText =
+    currentMarket === "gh"
+      ? `${(estimate.miles * 1.609344).toFixed(1)} km`
+      : `${estimate.miles.toFixed(1)} mi`;
+
+  const tripText = `Trip ~${Math.round(estimate.minutes)} min · ${distanceText}`;
   els.uberEta.textContent = tripText;
   els.lyftEta.textContent = tripText;
 
@@ -763,6 +769,71 @@ async function geocodeAddress(address) {
       }
     });
   });
+}
+
+async function reverseGeocodeCoords(lat, lng) {
+  if (!window.google || !google.maps || !google.maps.Geocoder) {
+    return null;
+  }
+
+  const geocoder = new google.maps.Geocoder();
+
+  return new Promise((resolve) => {
+    geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+      if (status === "OK" && results && results[0]) {
+        resolve({
+          formatted: results[0].formatted_address || `${lat}, ${lng}`
+        });
+      } else {
+        resolve(null);
+      }
+    });
+  });
+}
+
+async function useCurrentLocationForPickup() {
+  if (!navigator.geolocation) {
+    setStatus("Current location is not supported on this device.");
+    return;
+  }
+
+  setHelper("Getting your current location...");
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+
+      coords.pickup = { lat, lng };
+
+      const reverse = await reverseGeocodeCoords(lat, lng);
+      const formatted = reverse?.formatted || `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+      const line1 = splitAddressLines(formatted).line1;
+
+      selectedPlaces.pickup = {
+        name: line1,
+        formattedAddress: formatted,
+        lat,
+        lng
+      };
+
+      if (els.pickup) {
+        els.pickup.value = formatted;
+      }
+
+      setStatus("Current location added as pickup. Now enter your destination.");
+      setHelper("Pickup uses your current location. Enter or select your destination, then click Find Best Rates.");
+    },
+    () => {
+      setStatus("Could not get your current location. Please allow location access and try again.");
+      setHelper("Start typing pickup and dropoff, or use your current location for pickup, then select a suggested address for the best result.");
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 60000
+    }
+  );
 }
 
 function splitAddressLines(address) {
@@ -1260,6 +1331,7 @@ function initAppEvents() {
   });
 
   els.btnShareCompare?.addEventListener("click", shareComparison);
+  els.btnUseLocation?.addEventListener("click", useCurrentLocationForPickup);
 
     els.mobileBestRideBtn?.addEventListener("click", () => {
   if (lastBestProvider === "Uber") {
@@ -1275,58 +1347,64 @@ function initAppEvents() {
 
   els.mobileCompareBtn?.addEventListener("click", scrollToAvailable);
 
-  els.marketSelect?.addEventListener("change", (e) => {
-  currentMarket = e.target.value || "us";
+    els.marketSelect?.addEventListener("change", (e) => {
+    currentMarket = e.target.value || "us";
 
-  clearStoredPlace("pickup");
-  clearStoredPlace("dropoff");
+    clearStoredPlace("pickup");
+    clearStoredPlace("dropoff");
 
-  lastRoute = {
-    distance_m: null,
-    duration_s: null
-  };
+    lastRoute = {
+      distance_m: null,
+      duration_s: null
+    };
 
-  if (els.pickup) els.pickup.value = "";
-  if (els.dropoff) els.dropoff.value = "";
+    if (els.pickup) els.pickup.value = "";
+    if (els.dropoff) els.dropoff.value = "";
 
-  if (els.uberPrice) els.uberPrice.textContent = currentMarket === "gh" ? "GH₵ —" : "$ —";
-  if (els.lyftPrice) els.lyftPrice.textContent = currentMarket === "gh" ? "—" : "$ —";
-  if (els.uberEta) els.uberEta.textContent = "ETA —";
-  if (els.lyftEta) els.lyftEta.textContent = "ETA —";
+    if (els.uberPrice) els.uberPrice.textContent = currentMarket === "gh" ? "GH₵ —" : "$ —";
+    if (els.lyftPrice) els.lyftPrice.textContent = currentMarket === "gh" ? "—" : "$ —";
+    if (els.uberEta) els.uberEta.textContent = "ETA —";
+    if (els.lyftEta) els.lyftEta.textContent = "ETA —";
 
-  if (els.uberTag) {
-    els.uberTag.textContent = "Estimate";
-    els.uberTag.classList.remove("best");
-  }
+    if (els.uberTag) {
+      els.uberTag.textContent = "Estimate";
+      els.uberTag.classList.remove("best");
+    }
 
-  if (els.lyftTag) {
-    els.lyftTag.textContent = "Estimate";
-    els.lyftTag.classList.remove("best");
-  }
+    if (els.lyftTag) {
+      els.lyftTag.textContent = "Estimate";
+      els.lyftTag.classList.remove("best");
+    }
 
-  if (els.boltTag) {
-    els.boltTag.textContent = "Estimate";
-    els.boltTag.classList.remove("best");
-  }
+    if (els.boltTag) {
+      els.boltTag.textContent = "Estimate";
+      els.boltTag.classList.remove("best");
+    }
 
-  if (els.yangoTag) {
-    els.yangoTag.textContent = "Estimate";
-    els.yangoTag.classList.remove("best");
-  }
+    if (els.yangoTag) {
+      els.yangoTag.textContent = "Estimate";
+      els.yangoTag.classList.remove("best");
+    }
 
-  resetGhanaEstimateUI();
-  resetEstimateFeedback();
+    els.uberCard?.classList.remove("best-pick");
+    els.lyftCard?.classList.remove("best-pick");
+    els.boltCard?.classList.remove("best-pick");
+    els.yangoCard?.classList.remove("best-pick");
 
-  if (els.mobileStickyCta) {
-    els.mobileStickyCta.style.display = "none";
-  }
+    removeExistingBestBadges();
+    resetGhanaEstimateUI();
+    resetEstimateFeedback();
 
-  setStatus("Enter pickup and dropoff above, then click “Find Best Rates”.");
-  setHelper("Start typing pickup and dropoff, then select a suggested address for the best result.");
+    if (els.mobileStickyCta) {
+      els.mobileStickyCta.style.display = "none";
+    }
 
-  applyMarketUI();
-  logEvent("market_change", { market: currentMarket });
-});
+    setStatus("Enter pickup and dropoff above, then click “Find Best Rates”.");
+    setHelper("Start typing pickup and dropoff, or use your current location for pickup, then select a suggested address for the best result.");
+
+    applyMarketUI();
+    logEvent("market_change", { market: currentMarket });
+  });
 
     els.rideForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
