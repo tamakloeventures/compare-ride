@@ -875,11 +875,6 @@ function normalizeAirportInput(text) {
   return raw;
 }
 
-function getAirportAddressFromCode(text) {
-  const raw = String(text || "").trim().toUpperCase();
-  return AIRPORT_CODE_MAP[raw] || null;
-}
-
 function applyAirportCodeIfMatched(inputEl, kind) {
   if (!inputEl) return false;
 
@@ -888,6 +883,14 @@ function applyAirportCodeIfMatched(inputEl, kind) {
 
   clearStoredPlace(kind);
   inputEl.value = airportAddress;
+
+  selectedPlaces[kind] = {
+    name: splitAddressLines(airportAddress).line1,
+    formattedAddress: airportAddress,
+    lat: null,
+    lng: null
+  };
+
   setHelper(`Airport code recognized. Using ${airportAddress}`);
   return true;
 }
@@ -979,6 +982,12 @@ function attachManualEditReset(inputEl, kind) {
     }
 
     setStatus("Update your trip details, then click Find Best Rates.");
+  });
+
+  inputEl.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === "Tab") {
+      applyAirportCodeIfMatched(inputEl, kind);
+    }
   });
 }
 
