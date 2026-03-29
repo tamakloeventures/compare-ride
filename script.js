@@ -721,15 +721,18 @@ function applyGhanaEstimateUI(estimate) {
     els.yangoPrice.textContent = formatRangeGhs(estimate.yango);
   }
 
+  const distanceKm = (estimate.miles * 1.609344).toFixed(1);
+
   if (els.boltEta) {
-    els.boltEta.textContent = `ETA ${estimateProviderEta(estimate.minutes, "bolt")}`;
+    els.boltEta.textContent =
+      `Trip ~${Math.round(estimate.minutes)} min · ${distanceKm} km · ETA ${estimateProviderEta(estimate.minutes, "bolt")}`;
   }
 
   if (els.yangoEta) {
-    els.yangoEta.textContent = `ETA ${estimateProviderEta(estimate.minutes, "yango")}`;
+    els.yangoEta.textContent =
+      `Trip ~${Math.round(estimate.minutes)} min · ${distanceKm} km · ETA ${estimateProviderEta(estimate.minutes, "yango")}`;
   }
 }
-
 function resetGhanaEstimateUI() {
   if (els.boltPrice) els.boltPrice.textContent = "GH₵ —";
   if (els.yangoPrice) els.yangoPrice.textContent = "GH₵ —";
@@ -873,6 +876,31 @@ function normalizeAirportInput(text) {
   }
 
   return raw;
+}
+
+function applyAirportCodeIfMatched(inputEl, kind) {
+  if (!inputEl) return false;
+
+  const airportAddress = getAirportAddressFromCode(inputEl.value);
+  if (!airportAddress) return false;
+
+  clearStoredPlace(kind);
+  inputEl.value = airportAddress;
+
+  selectedPlaces[kind] = {
+    name: splitAddressLines(airportAddress).line1,
+    formattedAddress: airportAddress,
+    lat: null,
+    lng: null
+  };
+
+  setHelper(`Airport code recognized. Using ${airportAddress}`);
+  return true;
+}
+
+function getAirportAddressFromCode(text) {
+  const raw = String(text || "").trim().toUpperCase();
+  return AIRPORT_CODE_MAP[raw] || null;
 }
 
 function applyAirportCodeIfMatched(inputEl, kind) {
