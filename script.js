@@ -1558,6 +1558,7 @@ function initAppEvents() {
         "<div class='feedback-sub'>Thanks for the feedback!</div>";
     }
   });
+ }
 }
 
 function initMobileDateTimeAssist() {
