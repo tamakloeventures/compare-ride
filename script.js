@@ -1662,8 +1662,6 @@ window.initAutocomplete = function initAutocomplete() {
 };
 
 window.__gmapsFail = function __gmapsFail() {
-
-window.__gmapsFail = function __gmapsFail() {
   setHelper("Address lookup failed to load. You can still type addresses manually.");
 };
 
