@@ -1558,9 +1558,7 @@ function initAppEvents() {
         "<div class='feedback-sub'>Thanks for the feedback!</div>";
     }
   });
- }
 }
-
 function initMobileDateTimeAssist() {
   const isSmallScreen = () => window.matchMedia("(max-width: 768px)").matches;
   const fields = [els.date, els.time].filter(Boolean);
