@@ -1435,82 +1435,28 @@ function initAppEvents() {
   });
 
   els.btnShareCompare?.addEventListener("click", shareComparison);
-  els.btnUseLocation?.addEventListener("click", useCurrentLocationForPickup);
 
-    els.mobileBestRideBtn?.addEventListener("click", () => {
-  if (lastBestProvider === "Uber") {
-    openUber();
-  } else if (lastBestProvider === "Lyft") {
-    openLyft();
-  } else if (lastBestProvider === "Bolt") {
-    openBolt();
-  } else if (lastBestProvider === "Yango") {
-    openYango();
-  }
-});
+  els.mobileBestRideBtn?.addEventListener("click", () => {
+    if (lastBestProvider === "Uber") {
+      openUber();
+    } else if (lastBestProvider === "Lyft") {
+      openLyft();
+    } else if (lastBestProvider === "Bolt") {
+      openBolt();
+    } else if (lastBestProvider === "Yango") {
+      openYango();
+    }
+  });
 
   els.mobileCompareBtn?.addEventListener("click", scrollToAvailable);
 
-    els.marketSelect?.addEventListener("change", (e) => {
+  els.marketSelect?.addEventListener("change", (e) => {
     currentMarket = e.target.value || "us";
-
-    clearStoredPlace("pickup");
-    clearStoredPlace("dropoff");
-
-    lastRoute = {
-      distance_m: null,
-      duration_s: null
-    };
-
-    if (els.pickup) els.pickup.value = "";
-    if (els.dropoff) els.dropoff.value = "";
-
-    if (els.uberPrice) els.uberPrice.textContent = currentMarket === "gh" ? "GH₵ —" : "$ —";
-    if (els.lyftPrice) els.lyftPrice.textContent = currentMarket === "gh" ? "—" : "$ —";
-    if (els.uberEta) els.uberEta.textContent = "ETA —";
-    if (els.lyftEta) els.lyftEta.textContent = "ETA —";
-
-    if (els.uberTag) {
-      els.uberTag.textContent = "Estimate";
-      els.uberTag.classList.remove("best");
-    }
-
-    if (els.lyftTag) {
-      els.lyftTag.textContent = "Estimate";
-      els.lyftTag.classList.remove("best");
-    }
-
-    if (els.boltTag) {
-      els.boltTag.textContent = "Estimate";
-      els.boltTag.classList.remove("best");
-    }
-
-    if (els.yangoTag) {
-      els.yangoTag.textContent = "Estimate";
-      els.yangoTag.classList.remove("best");
-    }
-
-    els.uberCard?.classList.remove("best-pick");
-    els.lyftCard?.classList.remove("best-pick");
-    els.boltCard?.classList.remove("best-pick");
-    els.yangoCard?.classList.remove("best-pick");
-
-    removeExistingBestBadges();
-    resetGhanaEstimateUI();
-    resetEstimateFeedback();
-
-    if (els.mobileStickyCta) {
-      els.mobileStickyCta.style.display = "none";
-    }
-
-    setStatus("Enter pickup and dropoff above, then click “Find Best Rates”.");
-    setHelper("Start typing pickup and dropoff, or use your current location for pickup, then select a suggested address for the best result.");
-
     applyMarketUI();
     logEvent("market_change", { market: currentMarket });
   });
 
-    els.rideForm?.addEventListener("submit", async (event) => {
+  els.rideForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const values = validateInputs();
@@ -1573,7 +1519,7 @@ function initAppEvents() {
       }
     });
   }
-  
+
   els.feedbackYes?.addEventListener("click", () => {
     logEvent("estimate_feedback_submit", {
       market: currentMarket,
@@ -1611,9 +1557,9 @@ function initAppEvents() {
       els.feedbackFollowup.innerHTML =
         "<div class='feedback-sub'>Thanks for the feedback!</div>";
     }
-  });  
-  }
-      
+  });
+}
+
 function initMobileDateTimeAssist() {
   const isSmallScreen = () => window.matchMedia("(max-width: 768px)").matches;
   const fields = [els.date, els.time].filter(Boolean);
