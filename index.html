@@ -35,10 +35,19 @@
   />
   <meta name="twitter:image" content="https://ride.tamakloeventures.com/og-image.jpg" />
 
-  <meta name="theme-color" content="#0f172a" />
+  <meta name="theme-color" content="#10b981" />
   <meta name="robots" content="index,follow" />
 
-  <link rel="icon" href="uber-logo.svg" />
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="RideCompare" />
+
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="stylesheet" href="style.css" />
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-J0995G3FL0"></script>
@@ -497,5 +506,43 @@
     defer
     onerror="window.__gmapsFail && window.__gmapsFail()"
   ></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((reg) => {
+            console.log("[RideCompare] Service worker registered:", reg.scope);
+
+            // Notify user when a new version is available
+            reg.addEventListener("updatefound", () => {
+              const newWorker = reg.installing;
+              newWorker.addEventListener("statechange", () => {
+                if (
+                  newWorker.state === "installed" &&
+                  navigator.serviceWorker.controller
+                ) {
+                  // New version ready — show a subtle update banner
+                  const banner = document.createElement("div");
+                  banner.style.cssText =
+                    "position:fixed;bottom:16px;left:50%;transform:translateX(-50%);" +
+                    "background:#10b981;color:#fff;padding:12px 20px;border-radius:999px;" +
+                    "font-size:14px;font-weight:600;z-index:9999;cursor:pointer;" +
+                    "box-shadow:0 4px 20px rgba(16,185,129,0.4);";
+                  banner.textContent = "New version available — tap to update";
+                  banner.addEventListener("click", () => window.location.reload());
+                  document.body.appendChild(banner);
+                }
+              });
+            });
+          })
+          .catch((err) => {
+            console.warn("[RideCompare] Service worker registration failed:", err);
+          });
+      });
+    }
+  </script>
 </body>
 </html>
