@@ -62,15 +62,18 @@ input {
   padding: 0 18px;
 }
 
-/* Hero */
+/* ================================================
+   HERO
+   ================================================ */
+
 .hero {
   position: relative;
   min-height: 78vh;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 460px;
+  grid-template-columns: minmax(0, 1fr) 420px;
   align-items: center;
-  gap: 48px;
-  padding: 64px 56px;
+  gap: 36px;
+  padding: 56px 36px;
   color: #fff;
   background: url("hero-bg.jpg") center / cover no-repeat;
   overflow: hidden;
@@ -116,8 +119,8 @@ input {
 
 .hero-left h1 {
   margin: 0 0 14px;
-  font-size: clamp(38px, 5vw, 66px);
-  line-height: 1.04;
+  font-size: clamp(42px, 5vw, 64px);
+  line-height: 1.02;
   letter-spacing: -0.02em;
   text-shadow: 0 10px 28px rgba(0, 0, 0, 0.32);
 }
@@ -188,6 +191,13 @@ input {
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.18);
   color: rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.market-chip:hover {
+  background: rgba(255, 255, 255, 0.24);
+  border-color: rgba(255, 255, 255, 0.38);
 }
 
 .hero-cta {
@@ -218,7 +228,10 @@ input {
   font-weight: 700;
 }
 
-/* Buttons */
+/* ================================================
+   BUTTONS
+   ================================================ */
+
 .btn {
   border: 0;
   cursor: pointer;
@@ -282,6 +295,26 @@ input {
   margin: 0 auto;
 }
 
+.btn-bolt {
+  background: #34d399;
+  color: #06281c;
+  width: 100%;
+}
+
+.btn-yango {
+  background: #ef4444;
+  color: #fff;
+  width: 100%;
+}
+
+.btn-location {
+  width: 100%;
+  margin-top: 8px;
+  padding: 11px 14px;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
 .btn-loading {
   opacity: 0.88;
   pointer-events: none;
@@ -306,13 +339,16 @@ input {
   }
 }
 
-/* Booking card */
+/* ================================================
+   BOOKING CARD
+   ================================================ */
+
 .booking-card {
   width: 100%;
-  max-width: 460px;
+  max-width: 420px;
   justify-self: end;
-  background: var(--card);
-  color: var(--text);
+  background: #ffffff;
+  color: #0f172a;
   border-radius: 18px;
   box-shadow: var(--shadow);
   padding: 26px 26px 22px;
@@ -322,6 +358,25 @@ input {
   margin: 2px 0 16px;
   font-size: 28px;
   letter-spacing: -0.01em;
+  color: #0f172a;
+}
+
+.booking-card .field label {
+  color: #475569;
+}
+
+.booking-card .helper {
+  color: #64748b;
+}
+
+/* Chrome autofill override */
+.booking-card input:-webkit-autofill,
+.booking-card input:-webkit-autofill:hover,
+.booking-card input:-webkit-autofill:focus,
+.booking-card input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #0f172a !important;
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 .field {
@@ -367,7 +422,10 @@ input:focus {
   line-height: 1.45;
 }
 
-/* Sections */
+/* ================================================
+   SECTIONS
+   ================================================ */
+
 .section {
   padding: 60px 0;
   background: #eef2f7;
@@ -393,7 +451,10 @@ input:focus {
   line-height: 1.6;
 }
 
-/* Ride cards */
+/* ================================================
+   RIDE CARDS
+   ================================================ */
+
 .rides-row {
   display: flex;
   gap: 24px;
@@ -405,7 +466,7 @@ input:focus {
 
 .ride-card {
   width: min(520px, 92vw);
-  min-height: 320px;
+  min-height: auto;
   border: 1px solid rgba(15, 23, 42, 0.1);
   border-radius: 22px;
   padding: 28px;
@@ -477,6 +538,24 @@ input:focus {
 
 .logo-badge.lyft {
   background: var(--pink);
+}
+
+.logo-badge.bolt {
+  background: #34d399;
+  color: #06281c;
+  width: auto;
+  min-width: 56px;
+  padding: 0 14px;
+  font-size: 14px;
+}
+
+.logo-badge.yango {
+  background: #ef4444;
+  color: #fff;
+  width: auto;
+  min-width: 56px;
+  padding: 0 14px;
+  font-size: 14px;
 }
 
 .ride-meta {
@@ -564,7 +643,7 @@ input:focus {
   width: 100%;
 }
 
-/* Uber */
+/* Uber card */
 #uberCard .ride-actions {
   align-items: stretch;
 }
@@ -577,10 +656,27 @@ input:focus {
   border-radius: 16px;
 }
 
-/* Lyft */
+/* Lyft card */
+#lyftCard {
+  display: flex;
+  flex-direction: column;
+}
+
+#lyftCard .ride-top,
+#lyftCard .pricebox,
 #lyftCard .ride-actions {
+  width: 100%;
+}
+
+#lyftCard .pricebox {
+  margin-top: 8px;
+}
+
+#lyftCard .ride-actions {
+  margin-top: 14px;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  flex-direction: column;
 }
 
 #lyftCard .btn-lyft {
@@ -592,11 +688,6 @@ input:focus {
   min-height: 56px;
   margin: 0 auto;
   border-radius: 16px;
-  position: static;
-  left: auto;
-  right: auto;
-  transform: none;
-  float: none;
 }
 
 #lyftCard .referral-wrap {
@@ -604,6 +695,7 @@ input:focus {
   max-width: 320px;
   text-align: center;
   align-self: center;
+  margin-top: 10px;
 }
 
 .referral-wrap {
@@ -651,7 +743,10 @@ input:focus {
   line-height: 1.5;
 }
 
-/* Result banner */
+/* ================================================
+   RESULT BANNER & NOTICE
+   ================================================ */
+
 #statusNote {
   max-width: 920px;
   margin: 28px auto 0;
@@ -683,7 +778,10 @@ input:focus {
   color: #7c2d12;
 }
 
-/* Tooltip */
+/* ================================================
+   TOOLTIP
+   ================================================ */
+
 .tooltip-trigger {
   position: relative;
   display: inline-flex;
@@ -754,7 +852,10 @@ input:focus {
   pointer-events: auto;
 }
 
-/* Steps */
+/* ================================================
+   HOW IT WORKS — STEPS
+   ================================================ */
+
 .steps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -793,7 +894,10 @@ input:focus {
   line-height: 1.55;
 }
 
-/* Waitlist */
+/* ================================================
+   WAITLIST
+   ================================================ */
+
 .waitlist-form {
   display: flex;
   gap: 12px;
@@ -812,7 +916,10 @@ input:focus {
   color: #cbd5e1;
 }
 
-/* Accordion / legal */
+/* ================================================
+   ACCORDION / LEGAL FOOTER
+   ================================================ */
+
 .accordion-section {
   padding: 60px 18px;
   background: #0f172a;
@@ -874,7 +981,10 @@ input:focus {
   line-height: 1.6;
 }
 
-/* Footer */
+/* ================================================
+   FOOTER
+   ================================================ */
+
 footer {
   background: #020617;
   color: #cbd5e1;
@@ -884,27 +994,198 @@ footer {
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-/* Mobile sticky CTA */
+/* ================================================
+   MOBILE STICKY CTA
+   ================================================ */
+
 .mobile-sticky-cta {
   display: none;
 }
 
-/* Responsive */
+/* ================================================
+   MARKET VISIBILITY
+   ================================================ */
+
+.gh-only-card {
+  display: none;
+}
+
+body[data-market="us"] #uberCard,
+body[data-market="us"] #lyftCard {
+  display: flex;
+}
+
+body[data-market="us"] #boltCard,
+body[data-market="us"] #yangoCard {
+  display: none;
+}
+
+body[data-market="gh"] #uberCard,
+body[data-market="gh"] #boltCard,
+body[data-market="gh"] #yangoCard {
+  display: flex;
+}
+
+body[data-market="gh"] #lyftCard {
+  display: none;
+}
+
+/* ================================================
+   FEEDBACK CARD
+   ================================================ */
+
+.feedback-card {
+  max-width: 640px;
+  margin: 20px auto 0;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  text-align: center;
+}
+
+.feedback-title {
+  font-weight: 800;
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #0f172a;
+}
+
+.feedback-sub {
+  font-size: 14px;
+  margin: 12px 0 8px;
+  color: #475569;
+  font-weight: 700;
+}
+
+.feedback-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.feedback-actions .btn {
+  min-width: 110px;
+}
+
+/* ================================================
+   RESPONSIVE — 980px (Tablet / Small Desktop)
+   ================================================ */
+
 @media (max-width: 980px) {
   .hero {
-    padding: 44px 18px;
-    min-height: auto;
     grid-template-columns: 1fr;
-    gap: 22px;
-  }
-
-  .booking-card {
-    max-width: 100%;
-    justify-self: start;
+    gap: 20px;
+    padding: 28px 16px 24px;
+    min-height: auto;
+    align-items: start;
   }
 
   .hero::before {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.25));
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.72) 0%,
+      rgba(0, 0, 0, 0.38) 55%,
+      rgba(0, 0, 0, 0.26) 100%
+    );
+  }
+
+  .hero-left,
+  .booking-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    justify-self: stretch;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .hero-topbar {
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  .market-switch-wrap {
+    width: 100%;
+  }
+
+  .market-select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .hero-left h1 {
+    font-size: clamp(34px, 10vw, 46px);
+    line-height: 1.02;
+    margin: 0;
+    max-width: 100%;
+  }
+
+  .hero-left p,
+  #heroSubtitle,
+  .official-notice,
+  .social-proof {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .hero-left p,
+  #heroSubtitle {
+    font-size: 16px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .hero-cta {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    width: 100%;
+    margin-top: 4px;
+  }
+
+  .hero-cta .btn {
+    width: 100%;
+  }
+
+  .market-chips {
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .market-chip {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .official-notice {
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 12px;
+    margin-top: 0;
+  }
+
+  .social-proof {
+    margin-top: 0;
+    font-size: 13px;
+  }
+
+  .booking-card {
+    padding: 20px 16px 20px;
+    border-radius: 18px;
+  }
+
+  .booking-card h2 {
+    font-size: 24px;
+    line-height: 1.1;
+    margin: 0 0 14px;
   }
 
   .steps {
@@ -915,6 +1196,10 @@ footer {
     width: 100%;
   }
 }
+
+/* ================================================
+   RESPONSIVE — 768px (Mobile)
+   ================================================ */
 
 @media (max-width: 768px) {
   .mobile-sticky-cta {
@@ -939,7 +1224,6 @@ footer {
   .ride-card {
     padding: 22px;
     gap: 16px;
-    min-height: auto;
   }
 
   .ride-actions {
@@ -977,8 +1261,6 @@ footer {
     position: sticky;
     bottom: calc(12px + env(safe-area-inset-bottom, 0px));
     z-index: 5;
-    scroll-margin-top: 96px;
-    scroll-margin-bottom: 24px;
     box-shadow: 0 12px 28px rgba(16, 185, 129, 0.24);
   }
 
@@ -995,17 +1277,34 @@ footer {
   }
 }
 
+/* ================================================
+   RESPONSIVE — 640px (Small Mobile)
+   ================================================ */
+
 @media (max-width: 640px) {
+  .hero {
+    padding: 22px 14px 20px;
+  }
+
+  .hero-left h1 {
+    font-size: 32px;
+  }
+
   .datetime {
     grid-template-columns: 1fr;
   }
 
-  .hero-left h1 {
-    font-size: 38px;
+  .section {
+    padding: 44px 0;
   }
 
   .section-title {
-    font-size: 30px;
+    font-size: 28px;
+  }
+
+  .section-subtitle {
+    font-size: 16px;
+    margin-bottom: 22px;
   }
 
   .pricebox {
@@ -1032,447 +1331,4 @@ footer {
   .waitlist-form input {
     min-width: 100%;
   }
-}
-
-/* FORCE Lyft card to match Uber vertical layout */
-#lyftCard {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Stack ALL content vertically */
-#lyftCard .ride-top,
-#lyftCard .pricebox,
-#lyftCard .ride-actions {
-  width: 100%;
-}
-
-/* Ensure fare box is full width */
-#lyftCard .pricebox {
-  margin-top: 8px;
-}
-
-/* Ensure button sits BELOW fare box */
-#lyftCard .ride-actions {
-  margin-top: 14px;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
-/* Button stays centered and consistent */
-#lyftCard .btn-lyft {
-  width: 100%;
-  max-width: 260px;
-  margin: 0 auto;
-}
-
-/* Referral stays below button */
-#lyftCard .referral-wrap {
-  margin-top: 10px;
-}
-
-.logo-badge.bolt {
-  background: #34d399;
-  color: #06281c;
-  width: auto;
-  min-width: 56px;
-  padding: 0 14px;
-  font-size: 14px;
-}
-
-.logo-badge.yango {
-  background: #ef4444;
-  color: #fff;
-  width: auto;
-  min-width: 56px;
-  padding: 0 14px;
-  font-size: 14px;
-}
-
-.btn-bolt {
-  background: #34d399;
-  color: #06281c;
-  width: 100%;
-}
-
-.btn-yango {
-  background: #ef4444;
-  color: #fff;
-  width: 100%;
-}
-
-/* Default state before JS applies market */
-.gh-only-card {
-  display: none;
-}
-
-/* US market */
-body[data-market="us"] #uberCard,
-body[data-market="us"] #lyftCard {
-  display: flex;
-}
-
-body[data-market="us"] #boltCard,
-body[data-market="us"] #yangoCard {
-  display: none;
-}
-
-/* Ghana market */
-body[data-market="gh"] #uberCard,
-body[data-market="gh"] #boltCard,
-body[data-market="gh"] #yangoCard {
-  display: flex;
-}
-
-body[data-market="gh"] #lyftCard {
-  display: none;
-}
-
-/* === FIX HERO PROPORTIONS (restore original feel) === */
-
-.hero {
-  grid-template-columns: minmax(0, 1fr) 420px; /* slightly smaller */
-  gap: 36px; /* tighter spacing */
-}
-
-/* Reduce dominance of booking card */
-.booking-card {
-  max-width: 420px;
-  padding: 22px 22px 20px;
-}
-
-/* Improve text balance */
-.hero-left {
-  max-width: 520px;
-}
-
-/* Headline tuning (this is key) */
-.hero-left h1 {
-  font-size: clamp(36px, 4.5vw, 60px);
-  line-height: 1.05;
-}
-
-/* === FINAL MARKET VISIBILITY OVERRIDES === */
-body[data-market="us"] #uberCard,
-body[data-market="us"] #lyftCard {
-  display: flex !important;
-}
-
-body[data-market="us"] #boltCard,
-body[data-market="us"] #yangoCard {
-  display: none !important;
-}
-
-body[data-market="gh"] #uberCard,
-body[data-market="gh"] #boltCard,
-body[data-market="gh"] #yangoCard {
-  display: flex !important;
-}
-
-body[data-market="gh"] #lyftCard {
-  display: none !important;
-}
-
-/* === FORCE booking card back to original white look === */
-.booking-card {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  border-radius: 18px !important;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18) !important;
-  padding: 26px 26px 22px !important;
-  opacity: 1 !important;
-}
-
-.booking-card h2,
-.booking-card label,
-.booking-card .helper {
-  color: #0f172a !important;
-}
-
-.booking-card .field label {
-  color: #475569 !important;
-}
-
-.booking-card input {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  border: 1px solid rgba(15, 23, 42, 0.12) !important;
-  box-shadow: none !important;
-  -webkit-text-fill-color: #0f172a !important;
-  appearance: none;
-  -webkit-appearance: none;
-}
-
-.booking-card input::placeholder {
-  color: #64748b !important;
-  opacity: 1 !important;
-}
-
-/* Chrome autofill fix */
-.booking-card input:-webkit-autofill,
-.booking-card input:-webkit-autofill:hover,
-.booking-card input:-webkit-autofill:focus,
-.booking-card input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
-  -webkit-text-fill-color: #0f172a !important;
-  transition: background-color 9999s ease-in-out 0s;
-}
-
-/* === Restore original hero feel === */
-.hero {
-  grid-template-columns: minmax(0, 1fr) 420px;
-  gap: 36px;
-  padding: 56px 36px;
-}
-
-.hero-left {
-  max-width: 560px;
-}
-
-.hero-left h1 {
-  font-size: clamp(42px, 5vw, 64px);
-  line-height: 1.02;
-}
-
-.booking-card {
-  width: 100%;
-  max-width: 420px;
-  justify-self: end;
-  background: #ffffff !important;
-  color: #0f172a !important;
-  border-radius: 18px;
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.18) !important;
-  padding: 24px 24px 20px !important;
-  opacity: 1 !important;
-}
-
-.booking-card h2 {
-  color: #0f172a !important;
-}
-
-.booking-card .field label {
-  color: #475569 !important;
-}
-
-.booking-card input {
-  background: #ffffff !important;
-  color: #0f172a !important;
-  border: 1px solid rgba(15, 23, 42, 0.12) !important;
-  box-shadow: none !important;
-  -webkit-text-fill-color: #0f172a !important;
-}
-
-.booking-card input::placeholder {
-  color: #64748b !important;
-  opacity: 1 !important;
-}
-
-.booking-card .helper {
-  color: #64748b !important;
-}
-
-/* Strong market visibility override */
-body[data-market="us"] #uberCard,
-body[data-market="us"] #lyftCard {
-  display: flex !important;
-}
-
-body[data-market="us"] #boltCard,
-body[data-market="us"] #yangoCard {
-  display: none !important;
-}
-
-body[data-market="gh"] #uberCard,
-body[data-market="gh"] #boltCard,
-body[data-market="gh"] #yangoCard {
-  display: flex !important;
-}
-
-body[data-market="gh"] #lyftCard {
-  display: none !important;
-}
-
-/* === MOBILE HERO HOTFIX: append at very end of style.css === */
-@media (max-width: 980px) {
-  .hero {
-    grid-template-columns: 1fr !important;
-    gap: 20px !important;
-    padding: 28px 16px 24px !important;
-    min-height: auto !important;
-    align-items: start !important;
-  }
-
-  .hero::before {
-    background: linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.72) 0%,
-      rgba(0, 0, 0, 0.38) 55%,
-      rgba(0, 0, 0, 0.26) 100%
-    ) !important;
-  }
-
-  .hero-left,
-  .booking-card {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    justify-self: stretch !important;
-  }
-
-  .hero-left {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .hero-topbar {
-    align-items: stretch !important;
-    gap: 10px !important;
-    margin-bottom: 0 !important;
-  }
-
-  .market-switch-wrap {
-    width: 100% !important;
-  }
-
-  .market-select {
-    width: 100% !important;
-    min-width: 0 !important;
-  }
-
-  .hero-left h1 {
-    font-size: clamp(34px, 10vw, 46px) !important;
-    line-height: 1.02 !important;
-    margin: 0 !important;
-    max-width: 100% !important;
-  }
-
-  .hero-left p,
-  #heroSubtitle,
-  .official-notice,
-  .social-proof {
-    max-width: 100% !important;
-    width: 100% !important;
-  }
-
-  .hero-left p,
-  #heroSubtitle {
-    font-size: 16px !important;
-    line-height: 1.5 !important;
-    margin: 0 !important;
-  }
-
-  .hero-cta {
-    display: grid !important;
-    grid-template-columns: 1fr !important;
-    gap: 10px !important;
-    width: 100% !important;
-    margin-top: 4px !important;
-  }
-
-  .hero-cta .btn {
-    width: 100% !important;
-  }
-
-  .market-chips {
-    gap: 8px !important;
-    margin-top: 4px !important;
-  }
-
-  .market-chip {
-    padding: 8px 10px !important;
-    font-size: 11px !important;
-  }
-
-  .official-notice {
-    font-size: 13px !important;
-    line-height: 1.5 !important;
-    padding: 12px !important;
-    margin-top: 0 !important;
-  }
-
-  .social-proof {
-    margin-top: 0 !important;
-    font-size: 13px !important;
-  }
-
-  .booking-card {
-    padding: 20px 16px 20px !important;
-    border-radius: 18px !important;
-  }
-
-  .booking-card h2 {
-    font-size: 24px !important;
-    line-height: 1.1 !important;
-    margin: 0 0 14px !important;
-  }
-}
-
-@media (max-width: 640px) {
-  .hero {
-    padding: 22px 14px 20px !important;
-  }
-
-  .hero-left h1 {
-    font-size: 32px !important;
-  }
-
-  .section {
-    padding: 44px 0 !important;
-  }
-
-  .section-title {
-    font-size: 28px !important;
-  }
-
-  .section-subtitle {
-    font-size: 16px !important;
-    margin-bottom: 22px !important;
-  }
-}
-
-/* === FEEDBACK CARD (SAFE ADDITION) === */
-.feedback-card {
-  max-width: 640px;
-  margin: 20px auto 0;
-  padding: 16px 18px;
-  border-radius: 16px;
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-  text-align: center;
-}
-
-.feedback-title {
-  font-weight: 800;
-  font-size: 16px;
-  margin-bottom: 12px;
-  color: #0f172a;
-}
-
-.feedback-sub {
-  font-size: 14px;
-  margin: 12px 0 8px;
-  color: #475569;
-  font-weight: 700;
-}
-
-.feedback-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.feedback-actions .btn {
-  min-width: 110px;
-}
-
-.btn-location {
-  width: 100%;
-  margin-top: 8px;
-  padding: 11px 14px;
-  font-size: 12px;
-  letter-spacing: 0.02em;
 }
