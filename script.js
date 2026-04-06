@@ -72,13 +72,13 @@ const els = {
   availableSubtitle: document.getElementById("availableSubtitle"),
   resultsNotice: document.getElementById("resultsNotice"),
   boltCard: document.getElementById("boltCard"),
-yangoCard: document.getElementById("yangoCard"),
-btnBolt: document.getElementById("btnBolt"),
-btnYango: document.getElementById("btnYango"),
-boltPrice: document.getElementById("boltPrice"),
-yangoPrice: document.getElementById("yangoPrice"),
-boltEta: document.getElementById("boltEta"),
-yangoEta: document.getElementById("yangoEta"),
+  yangoCard: document.getElementById("yangoCard"),
+  btnBolt: document.getElementById("btnBolt"),
+  btnYango: document.getElementById("btnYango"),
+  boltPrice: document.getElementById("boltPrice"),
+  yangoPrice: document.getElementById("yangoPrice"),
+  boltEta: document.getElementById("boltEta"),
+  yangoEta: document.getElementById("yangoEta"),
   estimateFeedback: document.getElementById("estimateFeedback"),
   feedbackYes: document.getElementById("feedbackYes"),
   feedbackNo: document.getElementById("feedbackNo"),
@@ -127,7 +127,7 @@ const AIRPORT_CODE_MAP = {
   MIA: "Miami International Airport, Miami, FL, USA",
   FLL: "Fort Lauderdale-Hollywood International Airport, Fort Lauderdale, FL, USA",
   ORD: "O'Hare International Airport, Chicago, IL, USA",
-  DFW: "Dallas/Fort Worth International Airport, Dallas, TX, USA",
+  DFW: "Dallas/Fort Worth International Airport, Dallas, TX USA",
   IAH: "George Bush Intercontinental Airport, Houston, TX, USA",
   SEA: "Seattle-Tacoma International Airport, Seattle, WA, USA",
   BOS: "Boston Logan International Airport, Boston, MA, USA",
@@ -152,7 +152,7 @@ const MARKET_CONFIG = {
     locale: "en-US",
     availableTitle: "Available Rides",
     availableSubtitle:
-      "Estimated fares are approximate. Use them to compare quickly, then confirm final pricing inside each provider’s official experience.",
+      "Estimated fares are approximate. Use them to compare quickly, then confirm final pricing inside each provider's official experience.",
     officialNotice:
       "⚠️ <strong>Important:</strong> RideCompare is an independent comparison tool and is not affiliated with Uber or Lyft. <strong>Official booking and final pricing always happen inside the Uber or Lyft app.</strong> RideCompare only provides estimated comparisons to help you choose faster.",
     resultsNotice:
@@ -171,7 +171,7 @@ const MARKET_CONFIG = {
     locale: "en-GH",
     availableTitle: "Available Ride Options",
     availableSubtitle:
-      "Estimated fares are approximate. Use them to compare quickly, then confirm final pricing and availability inside each provider’s official experience.",
+      "Estimated fares are approximate. Use them to compare quickly, then confirm final pricing and availability inside each provider's official experience.",
     officialNotice:
       "⚠️ <strong>Important:</strong> RideCompare is an independent comparison platform and is not affiliated with ride providers. <strong>Official booking and final pricing always happen inside the provider app.</strong> RideCompare only provides estimated comparisons to help you choose faster.",
     resultsNotice:
@@ -234,12 +234,26 @@ function applyMarketUI() {
     els.heroSubtitle.textContent = market.heroSubtitle;
   }
 
+  // FIX: City chips now clickable — auto-fill pickup and scroll to booking form
   if (els.marketChips) {
     els.marketChips.innerHTML = "";
     market.chips.forEach((chip) => {
       const span = document.createElement("span");
       span.className = "market-chip";
       span.textContent = chip;
+
+      span.addEventListener("click", () => {
+        if (els.pickup) {
+          els.pickup.value = chip;
+          clearStoredPlace("pickup");
+        }
+        scrollToBooking();
+        setTimeout(() => {
+          els.dropoff?.focus();
+        }, 450);
+        logEvent("chip_click", { market: currentMarket, city: chip });
+      });
+
       els.marketChips.appendChild(span);
     });
   }
@@ -382,7 +396,7 @@ function updateBestCardUI() {
   badge.textContent = "Best Value";
   rideTopEl.appendChild(badge);
 }
-  
+
 function setLoading(isLoading) {
   if (!els.btnFindRates) return;
 
@@ -545,27 +559,27 @@ function estimateFares(distanceMeters, durationSeconds) {
   };
 
   if (currentMarket === "gh") {
-  const ghSurge = getGhanaSurgeMultiplier();
+    const ghSurge = getGhanaSurgeMultiplier();
 
-  const uberRaw = Math.max(14, (7.0 + 2.1 * km + 0.30 * minutes) * ghSurge);
-  const boltRaw = Math.max(12, (6.0 + 2.4 * km + 0.35 * minutes) * ghSurge);
-  const yangoRaw = Math.max(11, (5.5 + 2.2 * km + 0.32 * minutes) * ghSurge);
+    const uberRaw = Math.max(14, (7.0 + 2.1 * km + 0.30 * minutes) * ghSurge);
+    const boltRaw = Math.max(12, (6.0 + 2.4 * km + 0.35 * minutes) * ghSurge);
+    const yangoRaw = Math.max(11, (5.5 + 2.2 * km + 0.32 * minutes) * ghSurge);
 
-  result.uber = {
-    low: uberRaw * 0.93,
-    high: uberRaw * 1.10
-  };
+    result.uber = {
+      low: uberRaw * 0.93,
+      high: uberRaw * 1.10
+    };
 
-  result.bolt = {
-    low: boltRaw * 0.93,
-    high: boltRaw * 1.10
-  };
+    result.bolt = {
+      low: boltRaw * 0.93,
+      high: boltRaw * 1.10
+    };
 
-  result.yango = {
-    low: yangoRaw * 0.93,
-    high: yangoRaw * 1.10
-  };
-}
+    result.yango = {
+      low: yangoRaw * 0.93,
+      high: yangoRaw * 1.10
+    };
+  }
 
   return result;
 }
@@ -574,13 +588,14 @@ function applyFareUI(estimate) {
   if (!els.uberPrice || !els.lyftPrice || !els.uberEta || !els.lyftEta) return;
 
   if (currentMarket === "gh") {
-  els.uberPrice.textContent = formatRangeGhs(estimate.uber);
-} else {
-  els.uberPrice.textContent = formatMoneyRange(estimate.uber.low, estimate.uber.high);
-}
+    els.uberPrice.textContent = formatRangeGhs(estimate.uber);
+  } else {
+    els.uberPrice.textContent = formatMoneyRange(estimate.uber.low, estimate.uber.high);
+  }
+
   els.lyftPrice.textContent = formatMoneyRange(estimate.lyft.low, estimate.lyft.high);
 
-    const distanceText =
+  const distanceText =
     currentMarket === "gh"
       ? `${(estimate.miles * 1.609344).toFixed(1)} km`
       : `${estimate.miles.toFixed(1)} mi`;
@@ -733,6 +748,7 @@ function applyGhanaEstimateUI(estimate) {
       `Trip ~${Math.round(estimate.minutes)} min · ${distanceKm} km · ETA ${estimateProviderEta(estimate.minutes, "yango")}`;
   }
 }
+
 function resetGhanaEstimateUI() {
   if (els.boltPrice) els.boltPrice.textContent = "GH₵ —";
   if (els.yangoPrice) els.yangoPrice.textContent = "GH₵ —";
@@ -865,44 +881,12 @@ async function useCurrentLocationForPickup() {
   );
 }
 
-function normalizeAirportInput(text) {
-  const raw = String(text || "").trim();
-  if (!raw) return raw;
-
-  const upper = raw.toUpperCase();
-
-  if (AIRPORT_CODE_MAP[upper]) {
-    return AIRPORT_CODE_MAP[upper];
-  }
-
-  return raw;
-}
-
-function applyAirportCodeIfMatched(inputEl, kind) {
-  if (!inputEl) return false;
-
-  const airportAddress = getAirportAddressFromCode(inputEl.value);
-  if (!airportAddress) return false;
-
-  clearStoredPlace(kind);
-  inputEl.value = airportAddress;
-
-  selectedPlaces[kind] = {
-    name: splitAddressLines(airportAddress).line1,
-    formattedAddress: airportAddress,
-    lat: null,
-    lng: null
-  };
-
-  setHelper(`Airport code recognized. Using ${airportAddress}`);
-  return true;
-}
-
 function getAirportAddressFromCode(text) {
   const raw = String(text || "").trim().toUpperCase();
   return AIRPORT_CODE_MAP[raw] || null;
 }
 
+// FIX: Removed duplicate applyAirportCodeIfMatched — single definition kept here
 function applyAirportCodeIfMatched(inputEl, kind) {
   if (!inputEl) return false;
 
@@ -959,7 +943,7 @@ function resetRouteStateForMarketChange() {
 
   resetGhanaEstimateUI();
   resetEstimateFeedback();
-  setStatus("Enter pickup and dropoff above, then click “Find Best Rates”.");
+  setStatus("Enter pickup and dropoff above, then click \u201CFind Best Rates\u201D.");
   setHelper("Start typing pickup and dropoff, then select a suggested address for the best result.");
 
   if (els.mobileStickyCta) {
@@ -1203,7 +1187,7 @@ async function computeRoute() {
 
   return route;
 }
-  
+
 async function refreshEstimates() {
   setLoading(true);
 
@@ -1269,7 +1253,7 @@ async function refreshEstimates() {
   incrementRideCounter();
 
   setStatus(
-    `${lastBestProvider} looks like the best value for this trip: ${els.pickup.value.trim()} → ${els.dropoff.value.trim()}`
+    `${lastBestProvider} looks like the best value for this trip: ${els.pickup.value.trim()} \u2192 ${els.dropoff.value.trim()}`
   );
 
   setLoading(false);
@@ -1358,7 +1342,7 @@ async function shareComparison() {
   const values = validateInputs();
   if (!values) return;
 
-    const url = new URL(window.location.origin + window.location.pathname);
+  const url = new URL(window.location.origin + window.location.pathname);
   url.searchParams.set("pickup", values.pickup);
   url.searchParams.set("dropoff", values.dropoff);
   url.searchParams.set("market", currentMarket);
@@ -1373,7 +1357,7 @@ async function shareComparison() {
 
   try {
     await navigator.clipboard.writeText(url.toString());
-    setStatus("Comparison link copied to clipboard ✅");
+    setStatus("Comparison link copied to clipboard \u2705");
     logEvent("share_compare", { url: url.toString() });
   } catch (error) {
     setStatus("Could not copy link. You can copy the URL from your browser.");
@@ -1419,6 +1403,7 @@ function setDefaultDateTime() {
 }
 
 function initAppEvents() {
+  els.btnUseLocation?.addEventListener("click", useCurrentLocationForPickup);
   els.btnUber?.addEventListener("click", openUber);
   els.btnLyft?.addEventListener("click", openLyft);
   els.btnBolt?.addEventListener("click", openBolt);
@@ -1450,8 +1435,10 @@ function initAppEvents() {
 
   els.mobileCompareBtn?.addEventListener("click", scrollToAvailable);
 
+  // FIX: Reset form inputs when switching markets
   els.marketSelect?.addEventListener("change", (e) => {
     currentMarket = e.target.value || "us";
+    resetRouteStateForMarketChange();
     applyMarketUI();
     logEvent("market_change", { market: currentMarket });
   });
@@ -1488,8 +1475,8 @@ function initAppEvents() {
       if (result.ok) {
         els.waitlistStatus.textContent =
           getCurrentMarketConfig().waitlistCityEnabled && city
-            ? `You're on the waitlist ✅ City noted: ${city}`
-            : "You're on the waitlist ✅";
+            ? `You're on the waitlist \u2705 City noted: ${city}`
+            : "You're on the waitlist \u2705";
 
         els.waitlistEmail.value = "";
         if (els.waitlistCity) els.waitlistCity.value = "";
@@ -1508,7 +1495,7 @@ function initAppEvents() {
           errorText.includes("unique") ||
           errorText.includes("already")
         ) {
-          els.waitlistStatus.textContent = "This email is already on the waitlist ✅";
+          els.waitlistStatus.textContent = "This email is already on the waitlist \u2705";
         } else if (errorText.includes("permission") || errorText.includes("policy")) {
           els.waitlistStatus.textContent =
             "Waitlist permissions need one small Supabase fix.";
@@ -1559,6 +1546,7 @@ function initAppEvents() {
     }
   });
 }
+
 function initMobileDateTimeAssist() {
   const isSmallScreen = () => window.matchMedia("(max-width: 768px)").matches;
   const fields = [els.date, els.time].filter(Boolean);
@@ -1624,7 +1612,7 @@ window.initAutocomplete = function initAutocomplete() {
   attachAutocomplete(els.pickup, "pickup");
   attachAutocomplete(els.dropoff, "dropoff");
 
-    els.pickup?.addEventListener("blur", async () => {
+  els.pickup?.addEventListener("blur", async () => {
     applyAirportCodeIfMatched(els.pickup, "pickup");
 
     if (!coords.pickup && els.pickup.value.trim()) {
@@ -1642,7 +1630,7 @@ window.initAutocomplete = function initAutocomplete() {
     }
   });
 
-    els.dropoff?.addEventListener("blur", async () => {
+  els.dropoff?.addEventListener("blur", async () => {
     applyAirportCodeIfMatched(els.dropoff, "dropoff");
 
     if (!coords.dropoff && els.dropoff.value.trim()) {
@@ -1717,11 +1705,3 @@ document.addEventListener("click", () => {
     tooltip.style.transform = "translateY(6px)";
   });
 });
-
-
-
-
-
-
-
-
