@@ -284,6 +284,11 @@ function applyMarketUI() {
   document.body.setAttribute("data-market", currentMarket);
   updateMarketInUrl();
   applyProviderVisibility();
+
+  // FIX: Reset Uber price symbol to match current market on every market switch & initial load
+  if (els.uberPrice) {
+    els.uberPrice.textContent = currentMarket === "gh" ? "GH\u20B5 \u2014" : "$ \u2014";
+  }
 }
 
 function setStatus(message) {
@@ -1269,21 +1274,32 @@ async function refreshEstimates() {
 }
 
 async function openUber() {
+  const UBER_GH_FALLBACK = "https://m.uber.com/looking";
+
   const values = validateInputs();
-  if (!values) return;
+  if (!values) {
+    // FIX: Ghana fallback — open Uber app/web even without route entered
+    if (currentMarket === "gh") {
+      logEvent("ride_click", { provider: "Uber", market: "gh", mode: "no_route" });
+      window.open(UBER_GH_FALLBACK, "_blank", "noopener,noreferrer");
+    }
+    return;
+  }
 
   const haveCoords = await ensureCoordsFromInputs();
   if (!haveCoords) {
-    setStatus("Please enter a more complete pickup and dropoff address.");
+    // FIX: Ghana fallback — open Uber even when geocoding fails
+    if (currentMarket === "gh") {
+      logEvent("ride_click", { provider: "Uber", market: "gh", mode: "no_coords" });
+      window.open(UBER_GH_FALLBACK, "_blank", "noopener,noreferrer");
+    } else {
+      setStatus("Please enter a more complete pickup and dropoff address.");
+    }
     return;
   }
 
   const url = buildUberLink(values.pickup, values.dropoff);
-  logEvent("ride_click", {
-    provider: "Uber",
-    url
-  });
-
+  logEvent("ride_click", { provider: "Uber", url, market: currentMarket });
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
