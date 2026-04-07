@@ -638,6 +638,7 @@ function renderRideTypeTabs(containerId, types, provider, selectedId, baseEstima
       selectedRideTypes[provider] = type.id;
       renderRideTypeTabs(containerId, types, provider, type.id, baseEstimate, cardId);
       updateProviderPriceDisplay(provider, adjusted);
+      logEvent("ride_type_select", { provider, type: type.id, market: currentMarket });
     });
     container.appendChild(btn);
   });
@@ -913,6 +914,7 @@ function getUSSurgeInfo() {
 function showSurgeBadges(surgeInfo) {
   document.querySelectorAll(".surge-badge").forEach(b => b.remove());
   if (!surgeInfo || !surgeInfo.label) return;
+  logEvent("surge_shown", { level: surgeInfo.level, label: surgeInfo.label, multiplier: surgeInfo.multiplier, market: currentMarket });
 
   const levelStyle = {
     low:    { bg: "#fef3c7", color: "#92400e", dot: "#d97706" },
@@ -1037,6 +1039,7 @@ function applyTransitUI(transit, pickupText, dropoffText) {
   if (!transit) { card.style.display = "none"; return; }
 
   card.style.display = "flex";
+  logEvent("transit_shown", { duration: transit.duration, legs: transit.legs || 0, market: currentMarket });
 
   const timeEl    = document.getElementById("transitTime");
   const detailEl  = document.getElementById("transitDetails");
@@ -1133,6 +1136,7 @@ function renderRecentTrips() {
       clearStoredPlace("pickup");
       clearStoredPlace("dropoff");
       setHelper("Recent trip loaded. Click \"Find Best Rates\" to compare.");
+      logEvent("recent_trip_used", { market: currentMarket });
     });
 
     container.appendChild(chip);
@@ -1979,6 +1983,7 @@ function initAppEvents() {
       passengerCount--;
       updatePassengerDisplay();
       if (lastEstimate) applyFareUI(lastEstimate);
+      logEvent("passenger_count_change", { passenger_count: passengerCount, market: currentMarket });
     }
   });
 
@@ -1987,6 +1992,7 @@ function initAppEvents() {
       passengerCount++;
       updatePassengerDisplay();
       if (lastEstimate) applyFareUI(lastEstimate);
+      logEvent("passenger_count_change", { passenger_count: passengerCount, market: currentMarket });
     }
   });
 
@@ -1995,6 +2001,7 @@ function initAppEvents() {
     isRoundTrip = e.target.checked;
     updateRoundTripIndicator();
     if (lastEstimate) applyFareUI(lastEstimate);
+    logEvent("round_trip_toggle", { enabled: isRoundTrip, market: currentMarket });
   });
 
   els.mobileBestRideBtn?.addEventListener("click", () => {
@@ -2027,7 +2034,7 @@ function initAppEvents() {
 
     resetEstimateFeedback();
 
-    logEvent("search_submit", { market: currentMarket });
+    logEvent("search_submit", { market: currentMarket, passenger_count: passengerCount, is_round_trip: isRoundTrip });
     await refreshEstimates();
     scrollToAvailable();
   });
