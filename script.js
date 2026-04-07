@@ -1067,16 +1067,21 @@ function getRecentTrips() {
   catch(e) { return []; }
 }
 
+function getRecentTripsForMarket() {
+  return getRecentTrips().filter(t => t.market === currentMarket);
+}
+
 function saveRecentTrip(pickup, dropoff) {
   if (!pickup || !dropoff) return;
-  const filtered = getRecentTrips().filter(t => !(t.pickup === pickup && t.dropoff === dropoff));
-  const updated  = [{ pickup, dropoff, ts: Date.now() }, ...filtered].slice(0, 3);
+  const all      = getRecentTrips();
+  const filtered = all.filter(t => !(t.pickup === pickup && t.dropoff === dropoff && t.market === currentMarket));
+  const updated  = [{ pickup, dropoff, market: currentMarket, ts: Date.now() }, ...filtered].slice(0, 10);
   try { localStorage.setItem("rc_recent_trips", JSON.stringify(updated)); } catch(e) {}
   renderRecentTrips();
 }
 
 function renderRecentTrips() {
-  const trips = getRecentTrips();
+  const trips = getRecentTripsForMarket();
   let container = document.getElementById("recentTrips");
 
   if (!container) {
@@ -1097,7 +1102,7 @@ function renderRecentTrips() {
   label.textContent = "Recent trips";
   container.appendChild(label);
 
-  trips.forEach(trip => {
+  trips.slice(0, 3).forEach(trip => {
     const from = splitAddressLines(trip.pickup).line1;
     const to   = splitAddressLines(trip.dropoff).line1;
 
