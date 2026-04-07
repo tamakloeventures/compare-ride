@@ -1879,4 +1879,31 @@ document.querySelectorAll(".tooltip-trigger").forEach((el) => {
 
     if (!box) return;
 
-   
+    const isVisible = box.style.opacity === "1";
+
+    document.querySelectorAll(".tooltip-box").forEach((tooltip) => {
+      tooltip.style.opacity = "0";
+      tooltip.style.visibility = "hidden";
+      tooltip.style.pointerEvents = "none";
+      tooltip.style.transform = "translateY(6px)";
+    });
+
+    if (!isVisible) {
+      box.style.opacity = "1";
+      box.style.visibility = "visible";
+      box.style.pointerEvents = "auto";
+      box.style.transform = "translateY(0)";
+    }
+
+    event.stopPropagation();
+  });
+});
+
+document.addEventListener("click", () => {
+  document.querySelectorAll(".tooltip-box").forEach((tooltip) => {
+    tooltip.style.opacity = "0";
+    tooltip.style.visibility = "hidden";
+    tooltip.style.pointerEvents = "none";
+    tooltip.style.transform = "translateY(6px)";
+  });
+});
