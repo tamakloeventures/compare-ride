@@ -1059,8 +1059,11 @@ function resetRouteStateForMarketChange() {
     duration_s: null
   };
 
+  // Clear all form fields
   if (els.pickup) els.pickup.value = "";
   if (els.dropoff) els.dropoff.value = "";
+  if (els.date) els.date.value = "";
+  if (els.time) els.time.value = "";
 
   if (els.uberPrice) els.uberPrice.textContent = currentMarket === "gh" ? "GH₵ —" : "$ —";
   if (els.lyftPrice) els.lyftPrice.textContent = currentMarket === "gh" ? "—" : "$ —";
@@ -1071,6 +1074,9 @@ function resetRouteStateForMarketChange() {
   resetEstimateFeedback();
   setStatus("Enter pickup and dropoff above, then click \u201CFind Best Rates\u201D.");
   setHelper("Start typing pickup and dropoff, then select a suggested address for the best result.");
+
+  // Update autocomplete to only suggest addresses for the new market
+  updateAutocompleteRestrictions();
 
   if (els.mobileStickyCta) {
     els.mobileStickyCta.style.display = "none";
@@ -1129,6 +1135,13 @@ function attachManualEditReset(inputEl, kind) {
   });
 }
 
+// Stored autocomplete instances so we can update restrictions on market switch
+const autocompleteInstances = { pickup: null, dropoff: null };
+
+function getCountryRestriction() {
+  return currentMarket === "gh" ? "gh" : "us";
+}
+
 function attachAutocomplete(inputEl, kind) {
   if (!inputEl) return null;
 
@@ -1138,6 +1151,7 @@ function attachAutocomplete(inputEl, kind) {
 
   const autocomplete = new google.maps.places.Autocomplete(inputEl, {
     types: ["geocode"],
+    componentRestrictions: { country: getCountryRestriction() },
     fields: ["formatted_address", "geometry", "name"]
   });
 
@@ -1151,8 +1165,16 @@ function attachAutocomplete(inputEl, kind) {
   });
 
   attachManualEditReset(inputEl, kind);
+  autocompleteInstances[kind] = autocomplete;
 
   return autocomplete;
+}
+
+function updateAutocompleteRestrictions() {
+  const country = getCountryRestriction();
+  Object.values(autocompleteInstances).forEach(ac => {
+    if (ac) ac.setComponentRestrictions({ country });
+  });
 }
 
 async function ensureCoordsFromInputs() {
