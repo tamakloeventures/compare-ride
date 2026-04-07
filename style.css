@@ -1031,6 +1031,77 @@ body[data-market="gh"] #lyftCard {
 }
 
 /* ================================================
+   RIDE TYPE TABS
+   ================================================ */
+
+.ride-type-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 4px;
+}
+
+.ride-type-tabs:empty {
+  display: none;
+}
+
+.ride-type-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: #f8fafc;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+  letter-spacing: 0;
+  text-transform: none;
+  box-shadow: none;
+}
+
+.ride-type-btn:hover {
+  border-color: rgba(37, 99, 235, 0.4);
+  background: #eff6ff;
+  filter: none;
+}
+
+.ride-type-btn.active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.rt-icon {
+  font-size: 16px;
+  flex: 0 0 20px;
+  text-align: center;
+}
+
+.rt-label {
+  flex: 1;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.rt-price {
+  font-weight: 800;
+  color: #0f172a;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.ride-type-btn.active .rt-label,
+.ride-type-btn.active .rt-price {
+  color: #1d4ed8;
+}
+
+/* ================================================
    FEEDBACK CARD
    ================================================ */
 
