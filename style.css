@@ -1594,6 +1594,43 @@ body[data-market="gh"] #lyftCard {
    TRANSIT CARD
    ================================================ */
 
+.curb-badge {
+  background: #f59e0b;
+  color: #1c1200;
+  font-size: 22px;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+}
+
+.btn-curb {
+  background: #f59e0b;
+  color: #1c1200;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-size: 15px;
+  width: 100%;
+}
+
+.btn-curb:hover {
+  filter: brightness(1.08);
+}
+
+.tag-nosurge {
+  background: #dcfce7;
+  color: #14532d;
+  font-weight: 900;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
 .transit-badge {
   background: #0f766e;
   font-size: 22px;

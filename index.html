@@ -268,6 +268,29 @@
           </div>
         </div>
 
+        <div class="ride-card" id="curbCard" style="display:none;">
+          <div class="ride-top">
+            <div class="logo-badge curb-badge" aria-hidden="true">🚕</div>
+            <div class="ride-meta">
+              <strong>Curb Taxi</strong>
+              <span>Licensed &amp; metered · no surge</span>
+            </div>
+          </div>
+
+          <div class="pricebox">
+            <div>
+              <div class="price-label">Estimated Fare</div>
+              <b id="curbPrice">$ —</b>
+              <div class="price-eta" id="curbEta">—</div>
+            </div>
+            <span class="tag tag-nosurge" id="curbTag">No Surge</span>
+          </div>
+
+          <div class="ride-actions">
+            <button class="btn btn-curb" id="btnCurb" type="button">Book with Curb</button>
+          </div>
+        </div>
+
         <div class="ride-card transit-card" id="transitCard" style="display:none;">
           <div class="ride-top">
             <div class="logo-badge transit-badge" aria-hidden="true">🚌</div>

@@ -73,12 +73,17 @@ const els = {
   resultsNotice: document.getElementById("resultsNotice"),
   boltCard: document.getElementById("boltCard"),
   yangoCard: document.getElementById("yangoCard"),
+  curbCard: document.getElementById("curbCard"),
   btnBolt: document.getElementById("btnBolt"),
   btnYango: document.getElementById("btnYango"),
+  btnCurb: document.getElementById("btnCurb"),
   boltPrice: document.getElementById("boltPrice"),
   yangoPrice: document.getElementById("yangoPrice"),
+  curbPrice: document.getElementById("curbPrice"),
   boltEta: document.getElementById("boltEta"),
   yangoEta: document.getElementById("yangoEta"),
+  curbEta: document.getElementById("curbEta"),
+  curbTag: document.getElementById("curbTag"),
   estimateFeedback: document.getElementById("estimateFeedback"),
   feedbackYes: document.getElementById("feedbackYes"),
   feedbackNo: document.getElementById("feedbackNo"),
@@ -120,7 +125,7 @@ const DISPLAY_COUNTER_BASE = 127;
 const DEFAULT_MARKET = (CONFIG.DEFAULT_MARKET || "us").toLowerCase();
 
 const MARKET_PROVIDERS = {
-  us: ["uber", "lyft"],
+  us: ["uber", "lyft", "curb"],
   gh: ["uber", "bolt", "yango"]
 };
 
@@ -216,7 +221,8 @@ function applyProviderVisibility() {
     uber: els.uberCard,
     lyft: els.lyftCard,
     bolt: els.boltCard,
-    yango: els.yangoCard
+    yango: els.yangoCard,
+    curb: els.curbCard
   };
 
   Object.entries(providerMap).forEach(([key, el]) => {
@@ -678,6 +684,14 @@ function estimateFares(distanceMeters, durationSeconds) {
     surge: usSurge
   };
 
+  // Curb: regulated metered taxi rates, never surges
+  const curbModel = {
+    base: 3.0,
+    perMile: 2.80,
+    perMin: 0.55,
+    surge: 1.0
+  };
+
   function calculate(model) {
     const raw =
       (model.base + model.perMile * miles + model.perMin * minutes) * model.surge;
@@ -691,6 +705,7 @@ function estimateFares(distanceMeters, durationSeconds) {
   const result = {
     uber: calculate(uberModel),
     lyft: calculate(lyftModel),
+    curb: currentMarket === "us" ? calculate(curbModel) : null,
     miles,
     minutes
   };
@@ -751,6 +766,18 @@ function applyFareUI(estimate) {
   } else {
     els.uberEta.textContent = tripBase;
     els.lyftEta.textContent = tripBase;
+  }
+
+  // Curb taxi fare (US only)
+  if (currentMarket === "us" && estimate.curb) {
+    const curbDisplay = applyRoundTripModifier(estimate.curb);
+    if (els.curbPrice) els.curbPrice.textContent = formatMoneyRange(curbDisplay.low, curbDisplay.high);
+    if (els.curbEta) {
+      const curbPerMile = ((curbDisplay.low + curbDisplay.high) / 2 / estimate.miles).toFixed(2);
+      const surgeInfo = getUSSurgeInfo();
+      const surgeNote = surgeInfo.level !== "normal" ? " · Best during surge" : "";
+      els.curbEta.textContent = `${tripBase} · ~$${curbPerMile}/mi${surgeNote}`;
+    }
   }
 
   // Per-person fare split
@@ -1380,6 +1407,8 @@ function resetRouteStateForMarketChange() {
   if (els.lyftPrice) els.lyftPrice.textContent = currentMarket === "gh" ? "—" : "$ —";
   if (els.uberEta) els.uberEta.textContent = "ETA —";
   if (els.lyftEta) els.lyftEta.textContent = "ETA —";
+  if (els.curbPrice) els.curbPrice.textContent = "$ —";
+  if (els.curbEta) els.curbEta.textContent = "—";
 
   resetGhanaEstimateUI();
   resetEstimateFeedback();
@@ -1882,6 +1911,12 @@ async function openLyft() {
   }, 1200);
 }
 
+function openCurb() {
+  const url = "https://rider.gocurb.com/book";
+  logEvent("ride_click", { provider: "Curb", url, market: currentMarket });
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
 function openBolt() {
   const url = "https://bolt.eu/en/";
   logEvent("ride_click", { market: currentMarket, provider: "Bolt", url });
@@ -1964,6 +1999,7 @@ function initAppEvents() {
   els.btnLyft?.addEventListener("click", openLyft);
   els.btnBolt?.addEventListener("click", openBolt);
   els.btnYango?.addEventListener("click", openYango);
+  els.btnCurb?.addEventListener("click", openCurb);
 
   els.btnCompare?.addEventListener("click", () => {
     logEvent("cta_compare_click", { market: currentMarket });
