@@ -1403,3 +1403,308 @@ body[data-market="gh"] #lyftCard {
   .hero {
     padding: 22px 14px 20px;
   }
+
+  .hero-left h1 {
+    font-size: 32px;
+  }
+
+  .datetime {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    padding: 44px 0;
+  }
+
+  .section-title {
+    font-size: 28px;
+  }
+
+  .section-subtitle {
+    font-size: 16px;
+    margin-bottom: 22px;
+  }
+
+  .pricebox {
+    align-items: flex-start;
+  }
+
+  .pricebox .tag {
+    margin-top: 4px;
+  }
+
+  .ride-top.with-badge {
+    align-items: flex-start;
+  }
+
+  .best-badge {
+    align-self: flex-start;
+  }
+
+  .waitlist-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .waitlist-form input {
+    min-width: 100%;
+  }
+}
+
+/* ================================================
+   SURGE BADGE
+   ================================================ */
+
+.surge-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.surge-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ================================================
+   RECENT TRIPS
+   ================================================ */
+
+.recent-trips {
+  margin-bottom: 12px;
+}
+
+.recent-trips-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-2);
+  margin-bottom: 6px;
+}
+
+.recent-trip-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px 12px;
+  margin-bottom: 6px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #f8fafc;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.12s ease, border-color 0.12s ease;
+  box-shadow: none;
+  text-transform: none;
+  letter-spacing: 0;
+  overflow: hidden;
+}
+
+.recent-trip-chip:hover {
+  background: #eff6ff;
+  border-color: rgba(37, 99, 235, 0.35);
+  filter: none;
+}
+
+.rtrip-from,
+.rtrip-to {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+
+.rtrip-arrow {
+  flex-shrink: 0;
+  color: var(--muted-2);
+  font-size: 11px;
+}
+
+/* ================================================
+   DARK MODE
+   ================================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text:   #f1f5f9;
+    --muted:  #94a3b8;
+    --muted-2: #64748b;
+    --card:   #1e293b;
+    --border: rgba(255, 255, 255, 0.1);
+    --bg:     #0f172a;
+    --dark:   #f1f5f9;
+  }
+
+  body {
+    background: #0f172a;
+    color: #f1f5f9;
+  }
+
+  .booking-card {
+    background: #1e293b;
+    color: #f1f5f9;
+  }
+
+  .booking-card h2 {
+    color: #f1f5f9;
+  }
+
+  .booking-card .field label {
+    color: #94a3b8;
+  }
+
+  .booking-card .helper {
+    color: #64748b;
+  }
+
+  input {
+    background: #0f172a;
+    color: #f1f5f9;
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  input:focus {
+    border-color: rgba(96, 165, 250, 0.6);
+    box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.12);
+  }
+
+  .booking-card input:-webkit-autofill,
+  .booking-card input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
+    -webkit-text-fill-color: #f1f5f9 !important;
+  }
+
+  .market-select {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .section {
+    background: #111827;
+  }
+
+  .section.alt {
+    background: #0f172a;
+  }
+
+  .section-title {
+    color: #f1f5f9;
+  }
+
+  .ride-card {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #f1f5f9;
+  }
+
+  .pricebox {
+    background: #0f172a;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .ride-card.best-pick .pricebox {
+    background: linear-gradient(90deg, #052e16, #0f172a);
+  }
+
+  .ride-meta span {
+    color: #94a3b8;
+  }
+
+  .price-label,
+  .price-eta {
+    color: #94a3b8;
+  }
+
+  .pricebox b {
+    color: #f1f5f9;
+  }
+
+  .tag {
+    background: #334155;
+    color: #f1f5f9;
+  }
+
+  .step-card {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.06);
+    color: #f1f5f9;
+  }
+
+  .step-card p {
+    color: #94a3b8;
+  }
+
+  #statusNote {
+    background: linear-gradient(90deg, #1e3a5f, #0f172a);
+    border-color: rgba(96, 165, 250, 0.2);
+    color: #f1f5f9;
+  }
+
+  .btn-outline {
+    background: rgba(255, 255, 255, 0.08);
+    color: #93c5fd;
+    border-color: rgba(96, 165, 250, 0.3);
+  }
+
+  .ride-type-btn {
+    background: #0f172a;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+  }
+
+  .ride-type-btn:hover {
+    background: #1e293b;
+    border-color: rgba(96, 165, 250, 0.4);
+  }
+
+  .ride-type-btn.active {
+    background: #1e3a5f;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+
+  .ride-type-btn.active .rt-label,
+  .ride-type-btn.active .rt-price {
+    color: #93c5fd;
+  }
+
+  .recent-trip-chip {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.1);
+    color: #f1f5f9;
+  }
+
+  .recent-trip-chip:hover {
+    background: #1e3a5f;
+    border-color: rgba(96, 165, 250, 0.3);
+  }
+
+  .feedback-card {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #f1f5f9;
+  }
+
+  .feedback-title {
+    color: #f1f5f9;
+  }
+
+  footer {
+    background: #020617;
+  }
+}

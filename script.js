@@ -641,18 +641,20 @@ function estimateFares(distanceMeters, durationSeconds) {
   const minutes = durationSeconds / 60;
   const km = distanceMeters / 1000;
 
+  const usSurge = currentMarket === "us" ? getUSSurgeInfo().multiplier : 1.0;
+
   const uberModel = {
     base: 2.5,
     perMile: 1.75,
     perMin: 0.25,
-    surge: 1.0
+    surge: usSurge
   };
 
   const lyftModel = {
     base: 2.3,
     perMile: 1.8,
     perMin: 0.24,
-    surge: 1.0
+    surge: usSurge
   };
 
   function calculate(model) {
@@ -714,9 +716,21 @@ function applyFareUI(estimate) {
       ? `${(estimate.miles * 1.609344).toFixed(1)} km`
       : `${estimate.miles.toFixed(1)} mi`;
 
-  const tripText = `Trip ~${Math.round(estimate.minutes)} min · ${distanceText}`;
-  els.uberEta.textContent = tripText;
-  els.lyftEta.textContent = tripText;
+  const tripBase = `Trip ~${Math.round(estimate.minutes)} min · ${distanceText}`;
+
+  if (currentMarket === "us" && estimate.miles > 0) {
+    const uberPerMile = ((estimate.uber.low + estimate.uber.high) / 2 / estimate.miles).toFixed(2);
+    const lyftPerMile = ((estimate.lyft.low + estimate.lyft.high) / 2 / estimate.miles).toFixed(2);
+    els.uberEta.textContent = `${tripBase} · ~$${uberPerMile}/mi`;
+    els.lyftEta.textContent = `${tripBase} · ~$${lyftPerMile}/mi`;
+  } else {
+    els.uberEta.textContent = tripBase;
+    els.lyftEta.textContent = tripBase;
+  }
+
+  // Show surge indicator
+  const surgeInfo = currentMarket === "us" ? getUSSurgeInfo() : { multiplier: 1.0, label: null, level: "normal" };
+  showSurgeBadges(surgeInfo);
 
   // Reset all tags first
   if (els.uberTag) {
@@ -830,6 +844,142 @@ function getGhanaSurgeMultiplier() {
   if (isWeekend) surge += 0.08;
 
   return surge;
+}
+
+// ── US surge estimator (time-based) ─────────────────────────────────────────
+function getUSSurgeInfo() {
+  const dateInput = document.getElementById("rideDate");
+  const timeInput = document.getElementById("rideTime");
+
+  if (!dateInput?.value || !timeInput?.value) return { multiplier: 1.0, label: null, level: "normal" };
+
+  const tripDate = new Date(`${dateInput.value}T${timeInput.value}`);
+  if (Number.isNaN(tripDate.getTime())) return { multiplier: 1.0, label: null, level: "normal" };
+
+  const hour = tripDate.getHours();
+  const day  = tripDate.getDay(); // 0=Sun, 6=Sat
+
+  // Weekend night (Fri/Sat 9pm–3am)
+  if ((day === 5 || day === 6) && (hour >= 21 || hour < 3)) {
+    return { multiplier: 1.4, label: "Weekend Night", level: "high" };
+  }
+  // Evening rush (weekday 4–7pm)
+  if (day >= 1 && day <= 5 && hour >= 16 && hour < 19) {
+    return { multiplier: 1.28, label: "Evening Rush", level: "medium" };
+  }
+  // Morning rush (weekday 7–9am)
+  if (day >= 1 && day <= 5 && hour >= 7 && hour < 9) {
+    return { multiplier: 1.22, label: "Morning Rush", level: "medium" };
+  }
+  // Late night (10pm–5am)
+  if (hour >= 22 || hour < 5) {
+    return { multiplier: 1.15, label: "Late Night", level: "low" };
+  }
+
+  return { multiplier: 1.0, label: null, level: "normal" };
+}
+
+// ── Surge badge renderer ─────────────────────────────────────────────────────
+function showSurgeBadges(surgeInfo) {
+  document.querySelectorAll(".surge-badge").forEach(b => b.remove());
+  if (!surgeInfo || !surgeInfo.label) return;
+
+  const levelStyle = {
+    low:    { bg: "#fef3c7", color: "#92400e", dot: "#d97706" },
+    medium: { bg: "#fed7aa", color: "#9a3412", dot: "#ea580c" },
+    high:   { bg: "#fee2e2", color: "#991b1b", dot: "#dc2626" }
+  };
+  const s = levelStyle[surgeInfo.level] || levelStyle.low;
+  const cardIds = currentMarket === "gh"
+    ? ["uberCard", "boltCard", "yangoCard"]
+    : ["uberCard", "lyftCard"];
+
+  cardIds.forEach(cardId => {
+    const pricebox = document.getElementById(cardId)?.querySelector(".pricebox");
+    if (!pricebox) return;
+    const badge = document.createElement("div");
+    badge.className = "surge-badge";
+    badge.style.cssText = `background:${s.bg};color:${s.color};`;
+    const dot = document.createElement("span");
+    dot.className = "surge-dot";
+    dot.style.background = s.dot;
+    badge.appendChild(dot);
+    badge.appendChild(document.createTextNode(surgeInfo.label));
+    pricebox.appendChild(badge);
+  });
+}
+
+// ── Recent trips (localStorage) ──────────────────────────────────────────────
+function getRecentTrips() {
+  try { return JSON.parse(localStorage.getItem("rc_recent_trips") || "[]"); }
+  catch(e) { return []; }
+}
+
+function saveRecentTrip(pickup, dropoff) {
+  if (!pickup || !dropoff) return;
+  const filtered = getRecentTrips().filter(t => !(t.pickup === pickup && t.dropoff === dropoff));
+  const updated  = [{ pickup, dropoff, ts: Date.now() }, ...filtered].slice(0, 3);
+  try { localStorage.setItem("rc_recent_trips", JSON.stringify(updated)); } catch(e) {}
+  renderRecentTrips();
+}
+
+function renderRecentTrips() {
+  const trips = getRecentTrips();
+  let container = document.getElementById("recentTrips");
+
+  if (!container) {
+    const anchor = document.querySelector(".datetime");
+    if (!anchor) return;
+    container = document.createElement("div");
+    container.id = "recentTrips";
+    container.className = "recent-trips";
+    anchor.before(container);
+  }
+
+  container.innerHTML = "";
+  if (trips.length === 0) { container.style.display = "none"; return; }
+  container.style.display = "";
+
+  const label = document.createElement("div");
+  label.className = "recent-trips-label";
+  label.textContent = "Recent trips";
+  container.appendChild(label);
+
+  trips.forEach(trip => {
+    const from = splitAddressLines(trip.pickup).line1;
+    const to   = splitAddressLines(trip.dropoff).line1;
+
+    const chip = document.createElement("button");
+    chip.type      = "button";
+    chip.className = "recent-trip-chip";
+    chip.title     = `${trip.pickup} → ${trip.dropoff}`;
+
+    const fromEl  = document.createElement("span");
+    fromEl.className = "rtrip-from";
+    fromEl.textContent = from;
+
+    const arrowEl = document.createElement("span");
+    arrowEl.className = "rtrip-arrow";
+    arrowEl.textContent = "→";
+
+    const toEl    = document.createElement("span");
+    toEl.className = "rtrip-to";
+    toEl.textContent = to;
+
+    chip.appendChild(fromEl);
+    chip.appendChild(arrowEl);
+    chip.appendChild(toEl);
+
+    chip.addEventListener("click", () => {
+      if (els.pickup)  els.pickup.value  = trip.pickup;
+      if (els.dropoff) els.dropoff.value = trip.dropoff;
+      clearStoredPlace("pickup");
+      clearStoredPlace("dropoff");
+      setHelper("Recent trip loaded. Click \"Find Best Rates\" to compare.");
+    });
+
+    container.appendChild(chip);
+  });
 }
 
 function formatRangeGhs(fare) {
@@ -1074,6 +1224,13 @@ function resetRouteStateForMarketChange() {
   resetEstimateFeedback();
   setStatus("Enter pickup and dropoff above, then click \u201CFind Best Rates\u201D.");
   setHelper("Start typing pickup and dropoff, then select a suggested address for the best result.");
+
+  // Clear ride type tabs and surge badges from previous market
+  ["uberRideTypes", "lyftRideTypes", "boltRideTypes", "yangoRideTypes"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  });
+  document.querySelectorAll(".surge-badge").forEach(b => b.remove());
 
   // Update autocomplete to only suggest addresses for the new market
   updateAutocompleteRestrictions();
@@ -1438,6 +1595,9 @@ async function refreshEstimates() {
 
   applyFareUI(estimate);
   applyGhanaEstimateUI(estimate);
+
+  // Save to recent trips
+  saveRecentTrip(els.pickup.value.trim(), els.dropoff.value.trim());
 
   setHelper(
     currentMarket === "gh"
@@ -1892,6 +2052,7 @@ window.addEventListener("load", () => {
   initAppEvents();
   initMobileDateTimeAssist();
   resetEstimateFeedback();
+  renderRecentTrips();
   logEvent("page_view", { supabaseEnabled, market: currentMarket });
 });
 
