@@ -565,14 +565,29 @@ function applyRideTypeMultiplier(base, multiplier) {
   return { low: base.low * multiplier, high: base.high * multiplier };
 }
 
-function renderRideTypeTabs(containerId, types, provider, selectedId, baseEstimate) {
-  const container = document.getElementById(containerId);
+function getRideTypeContainer(containerId, cardId) {
+  // Find existing container, or create + inject it before .ride-actions in the card
+  let container = document.getElementById(containerId);
+  if (!container) {
+    const card = document.getElementById(cardId);
+    if (!card) return null;
+    const actions = card.querySelector(".ride-actions");
+    if (!actions) return null;
+    container = document.createElement("div");
+    container.id = containerId;
+    container.className = "ride-type-tabs";
+    card.insertBefore(container, actions);
+  }
+  return container;
+}
+
+function renderRideTypeTabs(containerId, types, provider, selectedId, baseEstimate, cardId) {
+  const container = getRideTypeContainer(containerId, cardId);
   if (!container) return;
 
   container.innerHTML = "";
   types.forEach(type => {
     const adjusted = applyRideTypeMultiplier(baseEstimate, type.multiplier);
-    const market   = getCurrentMarketConfig();
     const isGh     = currentMarket === "gh";
     const priceStr = isGh
       ? formatRangeGhs(adjusted)
@@ -581,15 +596,27 @@ function renderRideTypeTabs(containerId, types, provider, selectedId, baseEstima
     const btn = document.createElement("button");
     btn.className = "ride-type-btn" + (type.id === selectedId ? " active" : "");
     btn.dataset.typeId = type.id;
-    btn.innerHTML = `
-      <span class="rt-icon">${type.icon}</span>
-      <span class="rt-label">${type.label}</span>
-      <span class="rt-price">${priceStr}</span>
-    `;
     btn.title = type.desc;
+
+    const icon  = document.createElement("span");
+    icon.className = "rt-icon";
+    icon.textContent = type.icon;
+
+    const label = document.createElement("span");
+    label.className = "rt-label";
+    label.textContent = type.label;
+
+    const price = document.createElement("span");
+    price.className = "rt-price";
+    price.textContent = priceStr;
+
+    btn.appendChild(icon);
+    btn.appendChild(label);
+    btn.appendChild(price);
+
     btn.addEventListener("click", () => {
       selectedRideTypes[provider] = type.id;
-      renderRideTypeTabs(containerId, types, provider, type.id, baseEstimate);
+      renderRideTypeTabs(containerId, types, provider, type.id, baseEstimate, cardId);
       updateProviderPriceDisplay(provider, adjusted);
     });
     container.appendChild(btn);
@@ -768,12 +795,12 @@ function applyFareUI(estimate) {
   selectedRideTypes = { uber: "uberx", lyft: "lyft", bolt: "bolt", yango: "yango" };
 
   if (currentMarket === "gh") {
-    renderRideTypeTabs("uberRideTypes",  GHANA_RIDE_TYPES.uber,  "uber",  "uberx",  estimate.uber);
-    renderRideTypeTabs("boltRideTypes",  GHANA_RIDE_TYPES.bolt,  "bolt",  "bolt",   estimate.bolt || { low: 0, high: 0 });
-    renderRideTypeTabs("yangoRideTypes", GHANA_RIDE_TYPES.yango, "yango", "yango",  estimate.yango || { low: 0, high: 0 });
+    renderRideTypeTabs("uberRideTypes",  GHANA_RIDE_TYPES.uber,  "uber",  "uberx", estimate.uber,                        "uberCard");
+    renderRideTypeTabs("boltRideTypes",  GHANA_RIDE_TYPES.bolt,  "bolt",  "bolt",  estimate.bolt  || { low: 0, high: 0 }, "boltCard");
+    renderRideTypeTabs("yangoRideTypes", GHANA_RIDE_TYPES.yango, "yango", "yango", estimate.yango || { low: 0, high: 0 }, "yangoCard");
   } else {
-    renderRideTypeTabs("uberRideTypes", UBER_RIDE_TYPES, "uber", "uberx", estimate.uber);
-    renderRideTypeTabs("lyftRideTypes", LYFT_RIDE_TYPES, "lyft", "lyft",  estimate.lyft);
+    renderRideTypeTabs("uberRideTypes", UBER_RIDE_TYPES, "uber", "uberx", estimate.uber, "uberCard");
+    renderRideTypeTabs("lyftRideTypes", LYFT_RIDE_TYPES, "lyft", "lyft",  estimate.lyft, "lyftCard");
   }
 }
 
@@ -1852,31 +1879,4 @@ document.querySelectorAll(".tooltip-trigger").forEach((el) => {
 
     if (!box) return;
 
-    const isVisible = box.style.opacity === "1";
-
-    document.querySelectorAll(".tooltip-box").forEach((tooltip) => {
-      tooltip.style.opacity = "0";
-      tooltip.style.visibility = "hidden";
-      tooltip.style.pointerEvents = "none";
-      tooltip.style.transform = "translateY(6px)";
-    });
-
-    if (!isVisible) {
-      box.style.opacity = "1";
-      box.style.visibility = "visible";
-      box.style.pointerEvents = "auto";
-      box.style.transform = "translateY(0)";
-    }
-
-    event.stopPropagation();
-  });
-});
-
-document.addEventListener("click", () => {
-  document.querySelectorAll(".tooltip-box").forEach((tooltip) => {
-    tooltip.style.opacity = "0";
-    tooltip.style.visibility = "hidden";
-    tooltip.style.pointerEvents = "none";
-    tooltip.style.transform = "translateY(6px)";
-  });
-});
+   
