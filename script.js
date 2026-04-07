@@ -104,6 +104,16 @@ let lastRoute = {
 };
 
 let lastBestProvider = "Uber";
+let passengerCount   = 1;
+let isRoundTrip      = false;
+let lastEstimate     = null;
+
+// Max passengers per ride type
+const RIDE_CAPACITY = {
+  uberx: 4, comfort: 4, uberxl: 6, ubergreen: 4, uberblack: 4,
+  lyft: 4, lyftxl: 6, extra: 4, lux: 4, luxsuv: 6,
+  bolt: 4, boltxl: 6, yango: 4, yangoxl: 6
+};
 
 const DISPLAY_COUNTER_BASE = 127;
 
@@ -593,10 +603,13 @@ function renderRideTypeTabs(containerId, types, provider, selectedId, baseEstima
       ? formatRangeGhs(adjusted)
       : formatMoneyRange(adjusted.low, adjusted.high);
 
+    const capacity  = RIDE_CAPACITY[type.id] || 4;
+    const tooSmall  = passengerCount > capacity;
+
     const btn = document.createElement("button");
-    btn.className = "ride-type-btn" + (type.id === selectedId ? " active" : "");
+    btn.className = "ride-type-btn" + (type.id === selectedId ? " active" : "") + (tooSmall ? " capacity-warn" : "");
     btn.dataset.typeId = type.id;
-    btn.title = type.desc;
+    btn.title = tooSmall ? `Fits up to ${capacity} passengers — select a larger option` : type.desc;
 
     const icon  = document.createElement("span");
     icon.className = "rt-icon";
@@ -613,6 +626,13 @@ function renderRideTypeTabs(containerId, types, provider, selectedId, baseEstima
     btn.appendChild(icon);
     btn.appendChild(label);
     btn.appendChild(price);
+
+    if (tooSmall) {
+      const warn = document.createElement("span");
+      warn.className = "rt-capacity-warn";
+      warn.textContent = `Max ${capacity}`;
+      btn.appendChild(warn);
+    }
 
     btn.addEventListener("click", () => {
       selectedRideTypes[provider] = type.id;
@@ -703,13 +723,17 @@ function estimateFares(distanceMeters, durationSeconds) {
 function applyFareUI(estimate) {
   if (!els.uberPrice || !els.lyftPrice || !els.uberEta || !els.lyftEta) return;
 
+  // Apply round trip multiplier to displayed fares (best-value logic uses raw fares)
+  const uberDisplay = applyRoundTripModifier(estimate.uber);
+  const lyftDisplay = applyRoundTripModifier(estimate.lyft);
+
   if (currentMarket === "gh") {
-    els.uberPrice.textContent = formatRangeGhs(estimate.uber);
+    els.uberPrice.textContent = formatRangeGhs(uberDisplay);
   } else {
-    els.uberPrice.textContent = formatMoneyRange(estimate.uber.low, estimate.uber.high);
+    els.uberPrice.textContent = formatMoneyRange(uberDisplay.low, uberDisplay.high);
   }
 
-  els.lyftPrice.textContent = formatMoneyRange(estimate.lyft.low, estimate.lyft.high);
+  els.lyftPrice.textContent = formatMoneyRange(lyftDisplay.low, lyftDisplay.high);
 
   const distanceText =
     currentMarket === "gh"
@@ -719,8 +743,8 @@ function applyFareUI(estimate) {
   const tripBase = `Trip ~${Math.round(estimate.minutes)} min · ${distanceText}`;
 
   if (currentMarket === "us" && estimate.miles > 0) {
-    const uberPerMile = ((estimate.uber.low + estimate.uber.high) / 2 / estimate.miles).toFixed(2);
-    const lyftPerMile = ((estimate.lyft.low + estimate.lyft.high) / 2 / estimate.miles).toFixed(2);
+    const uberPerMile = ((uberDisplay.low + uberDisplay.high) / 2 / estimate.miles).toFixed(2);
+    const lyftPerMile = ((lyftDisplay.low + lyftDisplay.high) / 2 / estimate.miles).toFixed(2);
     els.uberEta.textContent = `${tripBase} · ~$${uberPerMile}/mi`;
     els.lyftEta.textContent = `${tripBase} · ~$${lyftPerMile}/mi`;
   } else {
@@ -728,7 +752,13 @@ function applyFareUI(estimate) {
     els.lyftEta.textContent = tripBase;
   }
 
-  // Show surge indicator
+  // Per-person fare split
+  if (currentMarket === "us") showPerPersonFares(uberDisplay, lyftDisplay);
+
+  // Round trip indicator
+  updateRoundTripIndicator();
+
+  // Surge indicator
   const surgeInfo = currentMarket === "us" ? getUSSurgeInfo() : { multiplier: 1.0, label: null, level: "normal" };
   showSurgeBadges(surgeInfo);
 
@@ -907,6 +937,128 @@ function showSurgeBadges(surgeInfo) {
     badge.appendChild(document.createTextNode(surgeInfo.label));
     pricebox.appendChild(badge);
   });
+}
+
+// ── Passenger count helpers ───────────────────────────────────────────────────
+function updatePassengerDisplay() {
+  const el = document.getElementById("passengerDisplay");
+  if (el) el.textContent = passengerCount;
+  const minus = document.getElementById("btnPassMinus");
+  const plus  = document.getElementById("btnPassPlus");
+  if (minus) minus.disabled = passengerCount <= 1;
+  if (plus)  plus.disabled  = passengerCount >= 6;
+}
+
+function applyRoundTripModifier(fare) {
+  return isRoundTrip ? { low: fare.low * 2, high: fare.high * 2 } : fare;
+}
+
+function showPerPersonFares(uberFare, lyftFare) {
+  [
+    { id: "uberPerPerson", fare: uberFare, isGh: false },
+    { id: "lyftPerPerson", fare: lyftFare, isGh: false }
+  ].forEach(({ id, fare }) => {
+    let el = document.getElementById(id);
+    const priceEl = id === "uberPerPerson" ? document.getElementById("uberPrice")
+                                           : document.getElementById("lyftPrice");
+    if (!priceEl) return;
+
+    if (passengerCount <= 1) {
+      if (el) el.remove();
+      return;
+    }
+
+    if (!el) {
+      el = document.createElement("div");
+      el.id = id;
+      el.className = "per-person-fare";
+      priceEl.after(el);
+    }
+
+    const perLow  = fare.low  / passengerCount;
+    const perHigh = fare.high / passengerCount;
+    el.textContent = `~${formatMoneyRange(perLow, perHigh)} per person`;
+  });
+}
+
+function updateRoundTripIndicator() {
+  let indicator = document.getElementById("roundTripIndicator");
+  if (!indicator) {
+    const title = document.querySelector("#available .section-title");
+    if (!title) return;
+    indicator = document.createElement("p");
+    indicator.id        = "roundTripIndicator";
+    indicator.className = "roundtrip-indicator";
+    title.after(indicator);
+  }
+  indicator.style.display = isRoundTrip ? "" : "none";
+  indicator.textContent   = isRoundTrip
+    ? "↩ Round trip — fares shown are estimates for both directions combined"
+    : "";
+}
+
+// ── Transit route ─────────────────────────────────────────────────────────────
+async function computeTransitRoute() {
+  if (currentMarket !== "us") return null;
+  if (!coords.pickup || !coords.dropoff) return null;
+  if (!window.google?.maps?.DirectionsService) return null;
+
+  const service = new google.maps.DirectionsService();
+
+  return new Promise(resolve => {
+    service.route(
+      {
+        origin:      new google.maps.LatLng(coords.pickup.lat,  coords.pickup.lng),
+        destination: new google.maps.LatLng(coords.dropoff.lat, coords.dropoff.lng),
+        travelMode:  google.maps.TravelMode.TRANSIT
+      },
+      (result, status) => {
+        if (status === "OK" && result?.routes?.[0]?.legs?.[0]) {
+          const leg = result.routes[0].legs[0];
+          const transitSteps = (leg.steps || []).filter(s => s.travel_mode === "TRANSIT").length;
+          resolve({
+            duration:   leg.duration.text,
+            duration_s: leg.duration.value,
+            fare:       leg.fare?.text || null,
+            legs:       transitSteps
+          });
+        } else {
+          resolve(null);
+        }
+      }
+    );
+  });
+}
+
+function applyTransitUI(transit, pickupText, dropoffText) {
+  const card = document.getElementById("transitCard");
+  if (!card) return;
+
+  if (!transit) { card.style.display = "none"; return; }
+
+  card.style.display = "flex";
+
+  const timeEl    = document.getElementById("transitTime");
+  const detailEl  = document.getElementById("transitDetails");
+
+  if (timeEl)   timeEl.textContent  = transit.duration;
+  if (detailEl) {
+    let detail = transit.fare ? `Est. fare: ${transit.fare}` : "Check Google Maps for fare";
+    if (transit.legs > 0) detail += ` · ${transit.legs} transit leg${transit.legs > 1 ? "s" : ""}`;
+    detailEl.textContent = detail;
+  }
+
+  const btn = document.getElementById("btnTransit");
+  if (btn) {
+    const url = `https://www.google.com/maps/dir/?api=1` +
+      `&origin=${encodeURIComponent(pickupText)}` +
+      `&destination=${encodeURIComponent(dropoffText)}` +
+      `&travelmode=transit`;
+    btn.onclick = () => {
+      logEvent("ride_click", { provider: "Transit", url, market: currentMarket });
+      window.open(url, "_blank", "noopener,noreferrer");
+    };
+  }
 }
 
 // ── Recent trips (localStorage) ──────────────────────────────────────────────
@@ -1225,12 +1377,23 @@ function resetRouteStateForMarketChange() {
   setStatus("Enter pickup and dropoff above, then click \u201CFind Best Rates\u201D.");
   setHelper("Start typing pickup and dropoff, then select a suggested address for the best result.");
 
-  // Clear ride type tabs and surge badges from previous market
+  // Clear ride type tabs, surge badges, per-person fares, transit card
   ["uberRideTypes", "lyftRideTypes", "boltRideTypes", "yangoRideTypes"].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.remove();
   });
-  document.querySelectorAll(".surge-badge").forEach(b => b.remove());
+  document.querySelectorAll(".surge-badge, .per-person-fare").forEach(b => b.remove());
+  const transitCard = document.getElementById("transitCard");
+  if (transitCard) transitCard.style.display = "none";
+
+  // Reset passenger + round trip state
+  passengerCount = 1;
+  isRoundTrip    = false;
+  lastEstimate   = null;
+  updatePassengerDisplay();
+  const rtToggle = document.getElementById("roundTripToggle");
+  if (rtToggle) rtToggle.checked = false;
+  updateRoundTripIndicator();
 
   // Update autocomplete to only suggest addresses for the new market
   updateAutocompleteRestrictions();
@@ -1576,25 +1739,25 @@ async function refreshEstimates() {
 
   resetGhanaEstimateUI();
 
-  const route = await computeRoute();
+  // Run driving route + transit in parallel
+  const [route, transit] = await Promise.all([
+    computeRoute(),
+    computeTransitRoute()
+  ]);
 
   if (!route) {
-    lastRoute = {
-      distance_m: null,
-      duration_s: null
-    };
-
+    lastRoute = { distance_m: null, duration_s: null };
     setLoading(false);
     setStatus("Could not estimate this route yet. Please select more complete pickup and dropoff addresses.");
     return;
   }
 
-  lastRoute = route;
+  lastRoute    = route;
+  lastEstimate = estimateFares(route.distance_m, route.duration_s);
 
-  const estimate = estimateFares(route.distance_m, route.duration_s);
-
-  applyFareUI(estimate);
-  applyGhanaEstimateUI(estimate);
+  applyFareUI(lastEstimate);
+  applyGhanaEstimateUI(lastEstimate);
+  applyTransitUI(transit, els.pickup.value.trim(), els.dropoff.value.trim());
 
   // Save to recent trips
   saveRecentTrip(els.pickup.value.trim(), els.dropoff.value.trim());
@@ -1804,6 +1967,30 @@ function initAppEvents() {
   });
 
   els.btnShareCompare?.addEventListener("click", shareComparison);
+
+  // ── Passenger stepper ──
+  document.getElementById("btnPassMinus")?.addEventListener("click", () => {
+    if (passengerCount > 1) {
+      passengerCount--;
+      updatePassengerDisplay();
+      if (lastEstimate) applyFareUI(lastEstimate);
+    }
+  });
+
+  document.getElementById("btnPassPlus")?.addEventListener("click", () => {
+    if (passengerCount < 6) {
+      passengerCount++;
+      updatePassengerDisplay();
+      if (lastEstimate) applyFareUI(lastEstimate);
+    }
+  });
+
+  // ── Round trip toggle ──
+  document.getElementById("roundTripToggle")?.addEventListener("change", (e) => {
+    isRoundTrip = e.target.checked;
+    updateRoundTripIndicator();
+    if (lastEstimate) applyFareUI(lastEstimate);
+  });
 
   els.mobileBestRideBtn?.addEventListener("click", () => {
     if (lastBestProvider === "Uber") {

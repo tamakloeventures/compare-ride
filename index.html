@@ -129,6 +129,21 @@
           />
         </div>
 
+        <div class="trip-meta-row">
+          <div class="passenger-wrap">
+            <span class="field-label-sm">Passengers</span>
+            <div class="passenger-stepper">
+              <button type="button" id="btnPassMinus" class="stepper-btn" aria-label="Fewer passengers" disabled>−</button>
+              <span id="passengerDisplay" class="stepper-value">1</span>
+              <button type="button" id="btnPassPlus" class="stepper-btn" aria-label="More passengers">+</button>
+            </div>
+          </div>
+          <label class="roundtrip-label" for="roundTripToggle">
+            <input type="checkbox" id="roundTripToggle" />
+            <span>Round trip</span>
+          </label>
+        </div>
+
         <div class="datetime">
           <div class="field">
             <label for="rideDate">Date</label>
@@ -250,6 +265,29 @@
                 Affiliate disclosure: RideCompare may benefit from some referral links.
               </span>
             </div>
+          </div>
+        </div>
+
+        <div class="ride-card transit-card" id="transitCard" style="display:none;">
+          <div class="ride-top">
+            <div class="logo-badge transit-badge" aria-hidden="true">🚌</div>
+            <div class="ride-meta">
+              <strong>Public Transit</strong>
+              <span>Via Google Maps</span>
+            </div>
+          </div>
+
+          <div class="pricebox">
+            <div>
+              <div class="price-label">Est. Travel Time</div>
+              <b id="transitTime">— min</b>
+              <div class="price-eta" id="transitDetails">—</div>
+            </div>
+            <span class="tag" id="transitTag">Alternative</span>
+          </div>
+
+          <div class="ride-actions">
+            <button class="btn btn-transit" id="btnTransit" type="button">View Route</button>
           </div>
         </div>
 
