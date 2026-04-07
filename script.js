@@ -527,6 +527,88 @@ function formatMoneyRange(min, max) {
   return `${formatter.format(min)}–${formatter.format(max)}`;
 }
 
+// ── Ride type definitions ──────────────────────────────────────────────────
+const UBER_RIDE_TYPES = [
+  { id: "uberx",      label: "UberX",      multiplier: 1.0,  icon: "🚗", desc: "Affordable everyday rides" },
+  { id: "comfort",    label: "Comfort",     multiplier: 1.3,  icon: "🛋️", desc: "Newer cars, extra legroom" },
+  { id: "uberxl",     label: "UberXL",     multiplier: 1.6,  icon: "🚐", desc: "Up to 6 passengers" },
+  { id: "ubergreen",  label: "Green",       multiplier: 1.1,  icon: "🌿", desc: "Hybrid & electric vehicles" },
+  { id: "uberblack",  label: "Black",       multiplier: 2.2,  icon: "🖤", desc: "Premium luxury vehicles" }
+];
+
+const LYFT_RIDE_TYPES = [
+  { id: "lyft",       label: "Lyft",        multiplier: 1.0,  icon: "🚗", desc: "Affordable everyday rides" },
+  { id: "lyftxl",     label: "Lyft XL",     multiplier: 1.6,  icon: "🚐", desc: "Up to 6 passengers" },
+  { id: "extra",      label: "Extra Comfort",multiplier: 1.3,  icon: "🛋️", desc: "Top-rated drivers, quiet mode" },
+  { id: "lux",        label: "Lux",         multiplier: 2.2,  icon: "🖤", desc: "Premium luxury vehicles" },
+  { id: "luxsuv",     label: "Lux SUV",     multiplier: 2.8,  icon: "🚙", desc: "Premium SUV, up to 6" }
+];
+
+const GHANA_RIDE_TYPES = {
+  uber:  [
+    { id: "uberx",   label: "UberX",   multiplier: 1.0, icon: "🚗", desc: "Standard ride" },
+    { id: "comfort", label: "Comfort", multiplier: 1.4, icon: "🛋️", desc: "Newer, comfortable cars" }
+  ],
+  bolt:  [
+    { id: "bolt",    label: "Bolt",    multiplier: 1.0, icon: "🚗", desc: "Standard Bolt ride" },
+    { id: "boltxl",  label: "Bolt XL", multiplier: 1.5, icon: "🚐", desc: "Up to 6 passengers" }
+  ],
+  yango: [
+    { id: "yango",   label: "Yango",   multiplier: 1.0, icon: "🚗", desc: "Standard Yango ride" },
+    { id: "yangoxl", label: "Yango XL",multiplier: 1.5, icon: "🚐", desc: "Larger vehicle option" }
+  ]
+};
+
+let selectedRideTypes = { uber: "uberx", lyft: "lyft" };
+
+function applyRideTypeMultiplier(base, multiplier) {
+  return { low: base.low * multiplier, high: base.high * multiplier };
+}
+
+function renderRideTypeTabs(containerId, types, provider, selectedId, baseEstimate) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = "";
+  types.forEach(type => {
+    const adjusted = applyRideTypeMultiplier(baseEstimate, type.multiplier);
+    const market   = getCurrentMarketConfig();
+    const isGh     = currentMarket === "gh";
+    const priceStr = isGh
+      ? formatRangeGhs(adjusted)
+      : formatMoneyRange(adjusted.low, adjusted.high);
+
+    const btn = document.createElement("button");
+    btn.className = "ride-type-btn" + (type.id === selectedId ? " active" : "");
+    btn.dataset.typeId = type.id;
+    btn.innerHTML = `
+      <span class="rt-icon">${type.icon}</span>
+      <span class="rt-label">${type.label}</span>
+      <span class="rt-price">${priceStr}</span>
+    `;
+    btn.title = type.desc;
+    btn.addEventListener("click", () => {
+      selectedRideTypes[provider] = type.id;
+      renderRideTypeTabs(containerId, types, provider, type.id, baseEstimate);
+      updateProviderPriceDisplay(provider, adjusted);
+    });
+    container.appendChild(btn);
+  });
+}
+
+function updateProviderPriceDisplay(provider, adjusted) {
+  const isGh = currentMarket === "gh";
+  if (provider === "uber") {
+    if (els.uberPrice) els.uberPrice.textContent = isGh ? formatRangeGhs(adjusted) : formatMoneyRange(adjusted.low, adjusted.high);
+  } else if (provider === "lyft") {
+    if (els.lyftPrice) els.lyftPrice.textContent = formatMoneyRange(adjusted.low, adjusted.high);
+  } else if (provider === "bolt") {
+    if (els.boltPrice) els.boltPrice.textContent = formatRangeGhs(adjusted);
+  } else if (provider === "yango") {
+    if (els.yangoPrice) els.yangoPrice.textContent = formatRangeGhs(adjusted);
+  }
+}
+
 function estimateFares(distanceMeters, durationSeconds) {
   const miles = milesFromMeters(distanceMeters);
   const minutes = durationSeconds / 60;
@@ -681,6 +763,18 @@ function applyFareUI(estimate) {
   }
 
   updateBestCardUI();
+
+  // ── Render ride type tabs after fares are displayed ──
+  selectedRideTypes = { uber: "uberx", lyft: "lyft", bolt: "bolt", yango: "yango" };
+
+  if (currentMarket === "gh") {
+    renderRideTypeTabs("uberRideTypes",  GHANA_RIDE_TYPES.uber,  "uber",  "uberx",  estimate.uber);
+    renderRideTypeTabs("boltRideTypes",  GHANA_RIDE_TYPES.bolt,  "bolt",  "bolt",   estimate.bolt || { low: 0, high: 0 });
+    renderRideTypeTabs("yangoRideTypes", GHANA_RIDE_TYPES.yango, "yango", "yango",  estimate.yango || { low: 0, high: 0 });
+  } else {
+    renderRideTypeTabs("uberRideTypes", UBER_RIDE_TYPES, "uber", "uberx", estimate.uber);
+    renderRideTypeTabs("lyftRideTypes", LYFT_RIDE_TYPES, "lyft", "lyft",  estimate.lyft);
+  }
 }
 
 function getGhanaSurgeMultiplier() {
@@ -1101,6 +1195,34 @@ function buildUberPlaceObject(addressText, coordObj, selectedPlaceObj) {
   };
 }
 
+// Maps our internal ride type IDs → Lyft's official URL "id" parameter values
+const LYFT_TYPE_URL_MAP = {
+  lyft:    "lyft",
+  lyftxl:  "lyft_plus",
+  extra:   "lyft_premier",
+  lux:     "lyft_lux",
+  luxsuv:  "lyft_luxsuv"
+};
+
+// ── Uber links ────────────────────────────────────────────────────────────────
+
+// Mobile app deep link — opens Uber app directly into the user's existing account
+function buildUberAppLink(pickupText, dropoffText) {
+  if (!coords.pickup || !coords.dropoff) return null;
+
+  const params = new URLSearchParams();
+  params.set("action",             "setPickup");
+  params.set("pickup[latitude]",   String(coords.pickup.lat));
+  params.set("pickup[longitude]",  String(coords.pickup.lng));
+  params.set("pickup[nickname]",   pickupText);
+  params.set("dropoff[latitude]",  String(coords.dropoff.lat));
+  params.set("dropoff[longitude]", String(coords.dropoff.lng));
+  params.set("dropoff[nickname]",  dropoffText);
+
+  return `uber://?${params.toString()}`;
+}
+
+// Web fallback — product-selection page with pickup/dropoff pre-filled
 function buildUberLink(pickupText, dropoffText) {
   const pickupObj = buildUberPlaceObject(
     pickupText,
@@ -1115,25 +1237,44 @@ function buildUberLink(pickupText, dropoffText) {
   );
 
   const params = new URLSearchParams();
-  params.set("pickup", JSON.stringify(pickupObj));
+  params.set("pickup",   JSON.stringify(pickupObj));
   params.set("drop[0]", JSON.stringify(dropoffObj));
 
   return `https://m.uber.com/go/product-selection?${params.toString()}`;
 }
 
-function buildLyftLink(pickupText, dropoffText) {
+// ── Lyft links ────────────────────────────────────────────────────────────────
+
+// Mobile app deep link — opens Lyft app into user's account with ride type pre-selected
+function buildLyftAppLink(pickupText, dropoffText) {
+  if (!coords.pickup || !coords.dropoff) return null;
+
+  const rideTypeId = LYFT_TYPE_URL_MAP[selectedRideTypes.lyft] || "lyft";
   const params = new URLSearchParams();
-  params.set("id", "lyft");
+  params.set("id",                        rideTypeId);
+  params.set("pickup[latitude]",          String(coords.pickup.lat));
+  params.set("pickup[longitude]",         String(coords.pickup.lng));
+  params.set("destination[latitude]",     String(coords.dropoff.lat));
+  params.set("destination[longitude]",    String(coords.dropoff.lng));
+
+  return `lyft://ridetype?${params.toString()}`;
+}
+
+// Web fallback — ride page with ride type + coordinates pre-filled
+function buildLyftLink(pickupText, dropoffText) {
+  const rideTypeId = LYFT_TYPE_URL_MAP[selectedRideTypes.lyft] || "lyft";
+  const params = new URLSearchParams();
+  params.set("id", rideTypeId);
 
   if (coords.pickup) {
-    params.set("pickup[latitude]", String(coords.pickup.lat));
+    params.set("pickup[latitude]",  String(coords.pickup.lat));
     params.set("pickup[longitude]", String(coords.pickup.lng));
   } else {
     params.set("pickup[formatted_address]", pickupText);
   }
 
   if (coords.dropoff) {
-    params.set("destination[latitude]", String(coords.dropoff.lat));
+    params.set("destination[latitude]",  String(coords.dropoff.lat));
     params.set("destination[longitude]", String(coords.dropoff.lng));
   } else {
     params.set("destination[formatted_address]", dropoffText);
@@ -1278,7 +1419,6 @@ async function openUber() {
 
   const values = validateInputs();
   if (!values) {
-    // FIX: Ghana fallback — open Uber app/web even without route entered
     if (currentMarket === "gh") {
       logEvent("ride_click", { provider: "Uber", market: "gh", mode: "no_route" });
       window.open(UBER_GH_FALLBACK, "_blank", "noopener,noreferrer");
@@ -1288,7 +1428,6 @@ async function openUber() {
 
   const haveCoords = await ensureCoordsFromInputs();
   if (!haveCoords) {
-    // FIX: Ghana fallback — open Uber even when geocoding fails
     if (currentMarket === "gh") {
       logEvent("ride_click", { provider: "Uber", market: "gh", mode: "no_coords" });
       window.open(UBER_GH_FALLBACK, "_blank", "noopener,noreferrer");
@@ -1298,9 +1437,30 @@ async function openUber() {
     return;
   }
 
-  const url = buildUberLink(values.pickup, values.dropoff);
-  logEvent("ride_click", { provider: "Uber", url, market: currentMarket });
-  window.open(url, "_blank", "noopener,noreferrer");
+  const webUrl   = buildUberLink(values.pickup, values.dropoff);
+  const rideType = selectedRideTypes.uber || "uberx";
+
+  if (isMobileDevice()) {
+    // Try native app deep link first → opens straight into user's Uber account
+    const appUrl = buildUberAppLink(values.pickup, values.dropoff);
+    logEvent("ride_click", { provider: "Uber", url: appUrl || webUrl, mode: "mobile_deeplink", rideType, market: currentMarket });
+
+    if (appUrl) {
+      const start = Date.now();
+      window.location.href = appUrl;
+      // If app didn't open within 1.2 s, fall back to mobile web
+      setTimeout(() => {
+        if (Date.now() - start < 1800) {
+          window.location.href = webUrl;
+        }
+      }, 1200);
+    } else {
+      window.open(webUrl, "_blank", "noopener,noreferrer");
+    }
+  } else {
+    logEvent("ride_click", { provider: "Uber", url: webUrl, mode: "desktop", rideType, market: currentMarket });
+    window.open(webUrl, "_blank", "noopener,noreferrer");
+  }
 }
 
 async function openLyft() {
@@ -1313,28 +1473,27 @@ async function openLyft() {
     return;
   }
 
-  const deepLink = buildLyftLink(values.pickup, values.dropoff);
+  const webUrl   = buildLyftLink(values.pickup, values.dropoff);
+  const rideType = selectedRideTypes.lyft || "lyft";
 
   if (!isMobileDevice()) {
-    logEvent("ride_click", {
-      provider: "Lyft",
-      url: LYFT_REFERRAL_URL,
-      mode: "desktop_referral"
-    });
-
+    // Desktop — referral link (Lyft app is required; web booking is unreliable)
+    logEvent("ride_click", { provider: "Lyft", url: LYFT_REFERRAL_URL, mode: "desktop_referral", rideType });
     window.open(LYFT_REFERRAL_URL, "_blank", "noopener,noreferrer");
     return;
   }
 
-  logEvent("ride_click", {
-    provider: "Lyft",
-    url: deepLink,
-    mode: "mobile_deeplink"
-  });
+  // Mobile — try native app deep link first → opens into user's Lyft account
+  // with the selected ride type pre-selected
+  const appUrl   = buildLyftAppLink(values.pickup, values.dropoff);
+  const launchUrl = appUrl || webUrl;
+
+  logEvent("ride_click", { provider: "Lyft", url: launchUrl, mode: "mobile_deeplink", rideType });
 
   const startTime = Date.now();
-  window.location.href = deepLink;
+  window.location.href = launchUrl;
 
+  // If Lyft app isn't installed, fall back to referral web link after 1.2 s
   setTimeout(() => {
     if (Date.now() - startTime < 1800) {
       window.location.href = LYFT_REFERRAL_URL;
