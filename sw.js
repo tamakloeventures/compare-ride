@@ -1,6 +1,6 @@
 // RideCompare Service Worker
 // Version — bump this string to force a cache refresh on all users
-const CACHE_VERSION = "ridecompare-v9";
+const CACHE_VERSION = "ridecompare-v10";
 
 // App shell — files that make the app work offline
 const APP_SHELL = [

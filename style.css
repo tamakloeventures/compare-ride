@@ -1427,10 +1427,42 @@ body[data-market="gh"] #lyftCard {
 
   .pricebox {
     align-items: flex-start;
+    gap: 8px;
+  }
+
+  .pricebox > div:first-child {
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .pricebox b {
+    display: block;
+    white-space: nowrap;
+    font-size: 18px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .price-eta {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
   }
 
   .pricebox .tag {
-    margin-top: 4px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+
+  /* Hide tooltip icon on mobile — avoids price overlap; info is in FAQ */
+  .tooltip-icon {
+    display: none;
+  }
+
+  .tooltip-box {
+    display: none;
   }
 
   .ride-top.with-badge {

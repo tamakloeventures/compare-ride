@@ -523,6 +523,16 @@ function validateInputs() {
     return null;
   }
 
+  const date = els.date?.value || "";
+  const time = els.time?.value || "";
+
+  if (!date || !time) {
+    setStatus("Please select a date and time for your ride.");
+    setHelper("Pick a date and time above, then tap \"Find Best Rates\".");
+    els.date?.scrollIntoView({ behavior: "smooth", block: "center" });
+    return null;
+  }
+
   return { pickup, dropoff };
 }
 
@@ -2000,6 +2010,20 @@ function initAppEvents() {
   els.btnBolt?.addEventListener("click", openBolt);
   els.btnYango?.addEventListener("click", openYango);
   els.btnCurb?.addEventListener("click", openCurb);
+
+  // Hide sticky CTA when date/time pickers are open so their OK button isn't covered
+  [els.date, els.time].forEach(input => {
+    input?.addEventListener("focus", () => {
+      if (els.mobileStickyCta) els.mobileStickyCta.style.display = "none";
+    });
+    input?.addEventListener("blur", () => {
+      setTimeout(() => {
+        if (els.mobileStickyCta && isMobileDevice() && lastEstimate) {
+          els.mobileStickyCta.style.display = "flex";
+        }
+      }, 350);
+    });
+  });
 
   els.btnCompare?.addEventListener("click", () => {
     logEvent("cta_compare_click", { market: currentMarket });
