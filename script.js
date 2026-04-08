@@ -1528,7 +1528,20 @@ function attachAutocomplete(inputEl, kind) {
     const ok = setSelectedPlace(kind, place, inputEl);
 
     if (ok) {
-      setHelper("Autocomplete active. Select a suggested address for the best transfer.");
+      if (kind === "dropoff") {
+        // After dropoff is selected, guide user to date/time instead of
+        // letting keyboard dismiss cause the page to scroll to results
+        setHelper("Great! Now pick a date and time, then tap \"Find Best Rates\".");
+        setTimeout(() => {
+          if (!els.date?.value) {
+            els.date?.focus();
+          } else if (!els.time?.value) {
+            els.time?.focus();
+          }
+        }, 300);
+      } else {
+        setHelper("Now enter your dropoff location.");
+      }
     }
   });
 
@@ -2011,17 +2024,21 @@ function initAppEvents() {
   els.btnYango?.addEventListener("click", openYango);
   els.btnCurb?.addEventListener("click", openCurb);
 
-  // Hide sticky CTA when date/time pickers are open so their OK button isn't covered
+  // Hide sticky CTA when date/time pickers open so their OK button isn't covered.
+  // Use click + touchstart (not just focus) so the CTA is hidden BEFORE
+  // the native picker renders on Android.
   [els.date, els.time].forEach(input => {
-    input?.addEventListener("focus", () => {
-      if (els.mobileStickyCta) els.mobileStickyCta.style.display = "none";
+    ["click", "touchstart", "focus"].forEach(evtName => {
+      input?.addEventListener(evtName, () => {
+        if (els.mobileStickyCta) els.mobileStickyCta.style.display = "none";
+      }, { passive: true });
     });
     input?.addEventListener("blur", () => {
       setTimeout(() => {
         if (els.mobileStickyCta && isMobileDevice() && lastEstimate) {
           els.mobileStickyCta.style.display = "flex";
         }
-      }, 350);
+      }, 600);
     });
   });
 
