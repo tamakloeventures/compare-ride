@@ -2013,7 +2013,214 @@ function setDefaultDateTime() {
 
   if (els.time && !els.time.value) {
     els.time.value = `${hh}:${min}`;
+    // Sync to the custom time display
+    const h12   = rounded.getHours() % 12 || 12;
+    const ampm  = rounded.getHours() >= 12 ? "PM" : "AM";
+    const textEl = document.getElementById("rideTimeText");
+    const dispEl = document.getElementById("rideTimeDisplay");
+    if (textEl) textEl.textContent = `${pad(h12)}:${min} ${ampm}`;
+    if (dispEl) dispEl.classList.add("tp-has-value");
   }
+}
+
+// ── Custom Time Picker ───────────────────────────────────────────────────────
+
+const tpState = { phase: "hour", hour: 12, minute: 0, ampm: "AM" };
+const TP_ACCENT = "#10b981";
+const TP_CLOCK_BG = "rgba(255,255,255,0.07)";
+const TP_TEXT = "#e2e8f0";
+
+function tpOpen() {
+  // Pre-fill from existing hidden input value if any
+  const existing = els.time?.value;
+  if (existing) {
+    const [h, m] = existing.split(":").map(Number);
+    tpState.ampm  = h >= 12 ? "PM" : "AM";
+    tpState.hour  = h % 12 || 12;
+    tpState.minute = m;
+  } else {
+    const now = new Date();
+    const h = now.getHours();
+    tpState.ampm   = h >= 12 ? "PM" : "AM";
+    tpState.hour   = h % 12 || 12;
+    tpState.minute = Math.round(now.getMinutes() / 5) * 5 % 60;
+  }
+  tpState.phase = "hour";
+
+  const modal = document.getElementById("timePickerModal");
+  if (modal) modal.style.display = "flex";
+
+  if (els.mobileStickyCta) els.mobileStickyCta.style.display = "none";
+  tpRender();
+}
+
+function tpClose() {
+  const modal = document.getElementById("timePickerModal");
+  if (modal) modal.style.display = "none";
+  setTimeout(() => {
+    if (els.mobileStickyCta && isMobileDevice() && lastEstimate) {
+      els.mobileStickyCta.style.display = "flex";
+    }
+  }, 300);
+}
+
+function tpConfirm() {
+  let h24 = tpState.hour % 12;
+  if (tpState.ampm === "PM") h24 += 12;
+
+  const hStr = String(h24).padStart(2, "0");
+  const mStr = String(tpState.minute).padStart(2, "0");
+
+  if (els.time) els.time.value = `${hStr}:${mStr}`;
+
+  const display  = document.getElementById("rideTimeDisplay");
+  const textSpan = document.getElementById("rideTimeText");
+  if (textSpan) textSpan.textContent = `${String(tpState.hour).padStart(2,"0")}:${mStr} ${tpState.ampm}`;
+  if (display)  display.classList.add("tp-has-value");
+
+  tpClose();
+}
+
+function tpRender() {
+  const hourSeg = document.getElementById("tpHourSeg");
+  const minSeg  = document.getElementById("tpMinSeg");
+  const amBtn   = document.getElementById("tpAmBtn");
+  const pmBtn   = document.getElementById("tpPmBtn");
+
+  if (hourSeg) {
+    hourSeg.textContent = String(tpState.hour);
+    hourSeg.classList.toggle("tp-seg-active", tpState.phase === "hour");
+  }
+  if (minSeg) {
+    minSeg.textContent = String(tpState.minute).padStart(2, "0");
+    minSeg.classList.toggle("tp-seg-active", tpState.phase === "minute");
+  }
+  if (amBtn) amBtn.classList.toggle("tp-ampm-active", tpState.ampm === "AM");
+  if (pmBtn) pmBtn.classList.toggle("tp-ampm-active", tpState.ampm === "PM");
+
+  tpDrawClock();
+}
+
+function tpDrawClock() {
+  const svg = document.getElementById("tpClockSvg");
+  if (!svg) return;
+
+  const cx = 150, cy = 150, numR = 110, selR = 22;
+  const isHour = tpState.phase === "hour";
+  const numbers = isHour
+    ? [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    : [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+  const selected = isHour ? tpState.hour : Math.round(tpState.minute / 5) * 5 % 60;
+  const selIdx = numbers.indexOf(selected);
+  const selAngle = ((selIdx >= 0 ? selIdx : 0) / 12) * 2 * Math.PI - Math.PI / 2;
+  const selX = cx + numR * Math.cos(selAngle);
+  const selY = cy + numR * Math.sin(selAngle);
+
+  const parts = [
+    `<circle cx="${cx}" cy="${cy}" r="130" fill="${TP_CLOCK_BG}"/>`,
+    `<line x1="${cx}" y1="${cy}" x2="${selX}" y2="${selY}" stroke="${TP_ACCENT}" stroke-width="2" stroke-linecap="round"/>`,
+    `<circle cx="${cx}" cy="${cy}" r="5" fill="${TP_ACCENT}"/>`
+  ];
+
+  numbers.forEach((num, i) => {
+    const angle = (i / 12) * 2 * Math.PI - Math.PI / 2;
+    const x = cx + numR * Math.cos(angle);
+    const y = cy + numR * Math.sin(angle);
+    const active = num === selected;
+    const label  = isHour ? String(num) : String(num).padStart(2, "0");
+
+    if (active) {
+      parts.push(`<circle cx="${x}" cy="${y}" r="${selR}" fill="${TP_ACCENT}"/>`);
+      parts.push(`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="14" font-weight="600" font-family="system-ui,sans-serif">${label}</text>`);
+    } else {
+      parts.push(`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="central" fill="${TP_TEXT}" font-size="14" font-family="system-ui,sans-serif">${label}</text>`);
+    }
+  });
+
+  svg.innerHTML = parts.join("");
+}
+
+function tpHandleClockInteraction(clientX, clientY) {
+  const svg = document.getElementById("tpClockSvg");
+  if (!svg) return;
+
+  const rect = svg.getBoundingClientRect();
+  const scaleX = 300 / rect.width;
+  const scaleY = 300 / rect.height;
+  const x = (clientX - rect.left) * scaleX;
+  const y = (clientY - rect.top) * scaleY;
+
+  const cx = 150, cy = 150;
+  const dx = x - cx;
+  const dy = y - cy;
+  // Ignore clicks very close to center
+  if (Math.sqrt(dx * dx + dy * dy) < 20) return;
+
+  const angle = Math.atan2(dy, dx) + Math.PI / 2;
+  const normalized = ((angle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+  const idx = Math.round(normalized / (2 * Math.PI) * 12) % 12;
+
+  if (tpState.phase === "hour") {
+    const hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    tpState.hour = hours[idx];
+    tpRender();
+    // Auto-advance to minutes after short delay
+    setTimeout(() => { tpState.phase = "minute"; tpRender(); }, 250);
+  } else {
+    const minutes = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+    tpState.minute = minutes[idx];
+    tpRender();
+  }
+}
+
+function initCustomTimePicker() {
+  const display = document.getElementById("rideTimeDisplay");
+
+  // Open picker on click/tap of the display trigger
+  display?.addEventListener("click", tpOpen);
+  display?.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tpOpen(); } });
+
+  // Clock interactions (click + touch)
+  const svg = document.getElementById("tpClockSvg");
+  svg?.addEventListener("click", e => tpHandleClockInteraction(e.clientX, e.clientY));
+  svg?.addEventListener("touchend", e => {
+    e.preventDefault();
+    const t = e.changedTouches[0];
+    tpHandleClockInteraction(t.clientX, t.clientY);
+  }, { passive: false });
+
+  // Display segment switches
+  document.getElementById("tpHourSeg")?.addEventListener("click", () => { tpState.phase = "hour"; tpRender(); });
+  document.getElementById("tpMinSeg")?.addEventListener("click",  () => { tpState.phase = "minute"; tpRender(); });
+
+  // AM/PM
+  document.getElementById("tpAmBtn")?.addEventListener("click", () => { tpState.ampm = "AM"; tpRender(); });
+  document.getElementById("tpPmBtn")?.addEventListener("click", () => { tpState.ampm = "PM"; tpRender(); });
+
+  // Footer buttons
+  document.getElementById("tpCancelBtn")?.addEventListener("click", tpClose);
+  document.getElementById("tpOkBtn")?.addEventListener("click", tpConfirm);
+
+  // Keyboard fallback: switch the display to a plain text time input
+  document.getElementById("tpKbdBtn")?.addEventListener("click", () => {
+    const hStr = String(tpState.hour).padStart(2, "0");
+    const mStr = String(tpState.minute).padStart(2, "0");
+    const input = prompt(`Enter time (HH:MM) — current: ${hStr}:${mStr} ${tpState.ampm}`);
+    if (input) {
+      const match = input.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
+      if (match) {
+        tpState.hour   = parseInt(match[1], 10) % 12 || 12;
+        tpState.minute = parseInt(match[2], 10);
+        if (match[3]) tpState.ampm = match[3].toUpperCase();
+        tpRender();
+      }
+    }
+  });
+
+  // Dismiss on overlay tap
+  document.getElementById("timePickerModal")?.addEventListener("click", e => {
+    if (e.target.id === "timePickerModal") tpClose();
+  });
 }
 
 function initAppEvents() {
@@ -2024,22 +2231,16 @@ function initAppEvents() {
   els.btnYango?.addEventListener("click", openYango);
   els.btnCurb?.addEventListener("click", openCurb);
 
-  // Hide sticky CTA when date/time pickers open so their OK button isn't covered.
-  // Use click + touchstart (not just focus) so the CTA is hidden BEFORE
-  // the native picker renders on Android.
-  [els.date, els.time].forEach(input => {
-    ["click", "touchstart", "focus"].forEach(evtName => {
-      input?.addEventListener(evtName, () => {
-        if (els.mobileStickyCta) els.mobileStickyCta.style.display = "none";
-      }, { passive: true });
-    });
-    input?.addEventListener("blur", () => {
-      setTimeout(() => {
-        if (els.mobileStickyCta && isMobileDevice() && lastEstimate) {
-          els.mobileStickyCta.style.display = "flex";
-        }
-      }, 600);
-    });
+  // Hide sticky CTA when the date input is focused (native date picker)
+  els.date?.addEventListener("focus", () => {
+    if (els.mobileStickyCta) els.mobileStickyCta.style.display = "none";
+  });
+  els.date?.addEventListener("blur", () => {
+    setTimeout(() => {
+      if (els.mobileStickyCta && isMobileDevice() && lastEstimate) {
+        els.mobileStickyCta.style.display = "flex";
+      }
+    }, 600);
   });
 
   els.btnCompare?.addEventListener("click", () => {
@@ -2326,6 +2527,7 @@ window.addEventListener("load", () => {
   hydrateRideCounter();
   setDefaultDateTime();
   initAppEvents();
+  initCustomTimePicker();
   initMobileDateTimeAssist();
   resetEstimateFeedback();
   renderRecentTrips();

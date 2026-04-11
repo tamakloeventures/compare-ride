@@ -1979,3 +1979,221 @@ body[data-market="gh"] #lyftCard {
     color: #fca5a5;
   }
 }
+
+/* ================================================
+   CUSTOM TIME PICKER
+   ================================================ */
+
+.time-display-trigger {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 15px;
+  color: #0f172a;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  transition: border-color 0.15s;
+}
+
+.time-display-trigger:hover,
+.time-display-trigger:focus {
+  border-color: #10b981;
+  outline: none;
+}
+
+.time-display-trigger span {
+  color: #64748b;
+  font-size: 15px;
+}
+
+.time-display-trigger.tp-has-value span {
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* Overlay */
+.tp-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 16px;
+}
+
+/* Dialog */
+.tp-dialog {
+  background: #1e293b;
+  border-radius: 24px;
+  padding: 24px 24px 16px;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Header */
+.tp-header {
+  font-size: 13px;
+  font-weight: 500;
+  color: #94a3b8;
+  letter-spacing: 0.04em;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+/* Hour:Minute display row */
+.tp-display {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 20px;
+}
+
+.tp-seg {
+  background: #273549;
+  border: none;
+  border-radius: 10px;
+  color: #f1f5f9;
+  font-size: 42px;
+  font-weight: 300;
+  width: 88px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+  line-height: 1;
+}
+
+.tp-seg.tp-seg-active {
+  background: #10b981;
+  color: #fff;
+  font-weight: 500;
+}
+
+.tp-sep {
+  color: #f1f5f9;
+  font-size: 42px;
+  font-weight: 300;
+  padding: 0 2px;
+  margin-bottom: 4px;
+}
+
+.tp-ampm-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-left: 10px;
+}
+
+.tp-ampm-btn {
+  background: transparent;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 52px;
+}
+
+.tp-ampm-btn.tp-ampm-active {
+  background: #10b981;
+  border-color: #10b981;
+  color: #fff;
+}
+
+/* Clock SVG */
+.tp-clock {
+  width: 100%;
+  aspect-ratio: 1;
+  max-width: 280px;
+  align-self: center;
+  cursor: pointer;
+  touch-action: none;
+  margin-bottom: 8px;
+}
+
+/* Footer */
+.tp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+}
+
+.tp-kbd-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.tp-kbd-btn:hover {
+  color: #94a3b8;
+}
+
+.tp-foot-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.tp-cancel-btn,
+.tp-ok-btn {
+  background: none;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.15s;
+}
+
+.tp-cancel-btn {
+  color: #94a3b8;
+}
+
+.tp-cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.tp-ok-btn {
+  color: #10b981;
+}
+
+.tp-ok-btn:hover {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+/* Dark mode adjustments for time display trigger */
+@media (prefers-color-scheme: dark) {
+  .time-display-trigger {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f1f5f9;
+  }
+
+  .time-display-trigger.tp-has-value span {
+    color: #f1f5f9;
+  }
+}

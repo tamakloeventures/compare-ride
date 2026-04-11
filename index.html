@@ -151,8 +151,12 @@
           </div>
 
           <div class="field">
-            <label for="rideTime">Time</label>
-            <input id="rideTime" name="rideTime" type="time" required />
+            <label>Time</label>
+            <div class="time-display-trigger" id="rideTimeDisplay" role="button" tabindex="0" aria-label="Select time">
+              <span id="rideTimeText">Select time</span>
+            </div>
+            <!-- Hidden input keeps the value for validateInputs() -->
+            <input id="rideTime" name="rideTime" type="hidden" />
           </div>
         </div>
 
@@ -531,8 +535,8 @@
           <summary>Contact</summary>
           <div class="accordion-content">
             <p>RideCompare is developed and operated by <strong>Tamakloe Ventures LLC</strong>.</p>
-            <p>Support email coming soon. Planned contact address:</p>
-            <p><strong>support@tamakloeventures.com</strong></p>
+            <p>Reach us at:</p>
+            <p><a href="mailto:support@tamakloeventures.com"><strong>support@tamakloeventures.com</strong></a></p>
             <p>We welcome feedback, product suggestions, and partnership inquiries.</p>
           </div>
         </details>
@@ -551,6 +555,33 @@
   <footer>
     © 2024–2026 Tamakloe Ventures LLC. All rights reserved.
   </footer>
+
+  <!-- Custom Time Picker Modal -->
+  <div id="timePickerModal" class="tp-overlay" role="dialog" aria-modal="true" aria-label="Select time" style="display:none;">
+    <div class="tp-dialog">
+      <div class="tp-header">Select time</div>
+
+      <div class="tp-display">
+        <button class="tp-seg" id="tpHourSeg" aria-label="Select hour">12</button>
+        <span class="tp-sep">:</span>
+        <button class="tp-seg" id="tpMinSeg" aria-label="Select minutes">00</button>
+        <div class="tp-ampm-wrap">
+          <button class="tp-ampm-btn" id="tpAmBtn">AM</button>
+          <button class="tp-ampm-btn" id="tpPmBtn">PM</button>
+        </div>
+      </div>
+
+      <svg id="tpClockSvg" class="tp-clock" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg>
+
+      <div class="tp-footer">
+        <button class="tp-kbd-btn" id="tpKbdBtn" aria-label="Switch to keyboard input">⌨</button>
+        <div class="tp-foot-actions">
+          <button class="tp-cancel-btn" id="tpCancelBtn">Cancel</button>
+          <button class="tp-ok-btn" id="tpOkBtn">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div class="mobile-sticky-cta" id="mobileStickyCta" style="display: none;">
     <button class="btn btn-primary" id="mobileBestRideBtn" type="button">Open Best Value</button>
