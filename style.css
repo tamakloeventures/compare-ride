@@ -1425,12 +1425,15 @@ body[data-market="gh"] #lyftCard {
     margin-bottom: 22px;
   }
 
+  /* Pricebox: price takes full top row, tag + surge wrap below */
   .pricebox {
+    flex-wrap: wrap;
     align-items: flex-start;
-    gap: 8px;
+    gap: 6px 8px;
   }
 
   .pricebox > div:first-child {
+    flex: 1 1 100%;
     overflow: hidden;
     min-width: 0;
   }
@@ -1450,10 +1453,21 @@ body[data-market="gh"] #lyftCard {
     max-width: 100%;
   }
 
-  .pricebox .tag {
-    margin-top: 2px;
-    flex-shrink: 0;
-    align-self: flex-start;
+  /* Tag wraps to its own row below the price */
+  .pricebox .tag,
+  .pricebox .tag-nosurge {
+    flex: 0 0 auto;
+    order: 2;
+    margin: 0;
+    font-size: 11px;
+  }
+
+  /* Surge badge also wraps below price, beside tag */
+  .surge-badge {
+    flex: 0 0 auto;
+    order: 3;
+    margin: 0 !important;
+    font-size: 11px;
   }
 
   /* Hide tooltip icon on mobile — avoids price overlap; info is in FAQ */
