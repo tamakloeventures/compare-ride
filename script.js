@@ -2532,6 +2532,17 @@ window.addEventListener("load", () => {
   resetEstimateFeedback();
   renderRecentTrips();
   logEvent("page_view", { supabaseEnabled, market: currentMarket });
+
+  // Cookie banner — show once, remember in localStorage
+  const cookieBanner = document.getElementById("cookieBanner");
+  const cookieAccept = document.getElementById("cookieAccept");
+  if (cookieBanner && !localStorage.getItem("rc_cookie_ok")) {
+    cookieBanner.style.display = "flex";
+  }
+  cookieAccept?.addEventListener("click", () => {
+    localStorage.setItem("rc_cookie_ok", "1");
+    cookieBanner.style.display = "none";
+  });
 });
 
 document.querySelectorAll(".tooltip-trigger").forEach((el) => {
