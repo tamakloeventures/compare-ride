@@ -68,13 +68,18 @@
       content: "Uber";
     }
 
-    /* FIX 4: Darker hero overlay on Ghana market */
+    /* FIX 4: Ghana market hero — custom Accra landmark background */
+    body[data-market="gh"] .hero {
+      background-image: url(hero-ghana.svg);
+      background-size: cover;
+      background-position: center;
+    }
     body[data-market="gh"] .hero::before {
       background: linear-gradient(
         90deg,
-        rgba(0, 0, 0, 0.88) 0%,
-        rgba(0, 0, 0, 0.72) 55%,
-        rgba(0, 0, 0, 0.55) 100%
+        rgba(0, 0, 0, 0.82) 0%,
+        rgba(0, 0, 0, 0.62) 55%,
+        rgba(0, 0, 0, 0.35) 100%
       );
     }
 
