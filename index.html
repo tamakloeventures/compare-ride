@@ -642,6 +642,48 @@
   <script src="script.js"></script>
   <script src="saferoute-widget.js"></script>
 
+  <!-- FIX 5 (part A): Patch Google Maps Autocomplete constructor BEFORE Maps loads.
+       Runs synchronously here so our wrapper is in place before the async Maps callback fires. -->
+  <script>
+    (function () {
+      var market = (new URLSearchParams(window.location.search).get("market") || "us").toLowerCase();
+      if (market === "us") return; // no-op for US market
+
+      var COUNTRY = market; // e.g. "gh"
+      window._rcACInstances = [];
+
+      // Poll until google.maps.places.Autocomplete is defined, then wrap the constructor
+      function patchAC() {
+        if (
+          !window.google ||
+          !window.google.maps ||
+          !window.google.maps.places ||
+          !window.google.maps.places.Autocomplete
+        ) {
+          setTimeout(patchAC, 20);
+          return;
+        }
+        if (window._rcACPatched) return;
+        window._rcACPatched = true;
+
+        var Orig = window.google.maps.places.Autocomplete;
+
+        function PatchedAC(input, opts) {
+          // Force the country restriction at construction time
+          opts = opts || {};
+          opts.componentRestrictions = { country: COUNTRY };
+          var inst = new Orig(input, opts);
+          window._rcACInstances.push(inst);
+          return inst;
+        }
+        PatchedAC.prototype = Orig.prototype;
+        window.google.maps.places.Autocomplete = PatchedAC;
+      }
+
+      patchAC();
+    })();
+  </script>
+
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBz8nr961uD8aCTea3XfLt8hku6BXfKXL4&libraries=places&callback=initAutocomplete"
     async
@@ -649,7 +691,7 @@
     onerror="window.__gmapsFail && window.__gmapsFail()"
   ></script>
 
-  <!-- FIX 1, 2 & 5: Market-aware page title, Step 3 copy, and autocomplete restrictions -->
+  <!-- FIX 1, 2 & 5 (part B): Market-aware page title, Step 3 copy, and autocomplete fallback -->
   <script>
     (function () {
       var TITLES = {
@@ -661,47 +703,54 @@
         gh: "Open Uber, Bolt, or Yango directly and complete your booking in the official provider app."
       };
 
-      function applyMarketPatches(market) {
-        // FIX 2: Update page title
-        document.title = TITLES[market] || TITLES.us;
+      function getMarket() {
+        return (
+          new URLSearchParams(window.location.search).get("market") ||
+          document.body.getAttribute("data-market") ||
+          "us"
+        ).toLowerCase();
+      }
 
-        // FIX 1: Update Step 3 copy
+      function applyMarketPatches(market) {
+        document.title = TITLES[market] || TITLES.us;
         var el = document.getElementById("howItWorksStep3Text");
         if (el) el.textContent = STEP3[market] || STEP3.us;
       }
 
-      // FIX 5: Wrap initAutocomplete so that after Google Maps initialises the
-      // autocomplete fields, we immediately apply the correct country restrictions
-      // for whichever market the page loaded with.
-      var _origInitAutocomplete = window.initAutocomplete;
-      window.initAutocomplete = function () {
-        // Call the original function first so autocomplete objects are created
-        if (typeof _origInitAutocomplete === "function") {
-          _origInitAutocomplete.apply(this, arguments);
+      // FIX 5 fallback: also call updateAutocompleteRestrictions in case
+      // the constructor patch missed already-created instances.
+      function applyACFallback(market, attempts) {
+        if (market === "us") return;
+        // Strategy A: update captured instances directly
+        if (window._rcACInstances && window._rcACInstances.length > 0) {
+          window._rcACInstances.forEach(function (ac) {
+            try { ac.setComponentRestrictions({ country: market }); } catch (e) {}
+          });
         }
-        // Then apply market-specific restrictions
-        var params = new URLSearchParams(window.location.search);
-        var market = (params.get("market") || document.body.getAttribute("data-market") || "us").toLowerCase();
-        if (market !== "us" && typeof window.updateAutocompleteRestrictions === "function") {
-          window.updateAutocompleteRestrictions();
+        // Strategy B: call script.js's own update function
+        if (typeof window.updateAutocompleteRestrictions === "function") {
+          try { window.updateAutocompleteRestrictions(); } catch (e) {}
         }
-      };
+        if (attempts < 15) {
+          setTimeout(function () { applyACFallback(market, attempts + 1); }, 300);
+        }
+      }
 
       // Apply on market dropdown change
       var select = document.getElementById("marketSelect");
       if (select) {
         select.addEventListener("change", function () {
           applyMarketPatches(this.value);
+          applyACFallback(this.value, 0);
         });
       }
 
-      // Apply on initial load — wait for script.js to finish setting the market from URL
+      // Apply on initial load
       window.addEventListener("load", function () {
-        var params = new URLSearchParams(window.location.search);
-        var market = (params.get("market") || "us").toLowerCase();
+        var market = getMarket();
         applyMarketPatches(market);
+        applyACFallback(market, 0);
 
-        // Also observe body[data-market] attribute changes set by script.js
         var observer = new MutationObserver(function (mutations) {
           mutations.forEach(function (m) {
             if (m.attributeName === "data-market") {
