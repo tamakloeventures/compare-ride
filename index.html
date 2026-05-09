@@ -50,6 +50,35 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="stylesheet" href="style.css" />
 
+  <!-- FIX 3 & 4: Ghana market CSS patches (no changes to style.css) -->
+  <style>
+    /* FIX 3: Uber badge on Ghana market — show "Uber" text label like Bolt/Yango */
+    body[data-market="gh"] .logo-badge.uber {
+      background: #111;
+      width: auto;
+      padding: 0 10px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+    }
+    body[data-market="gh"] .logo-badge.uber img {
+      display: none;
+    }
+    body[data-market="gh"] .logo-badge.uber::after {
+      content: "Uber";
+    }
+
+    /* FIX 4: Darker hero overlay on Ghana market to reduce US-branded phone image visibility */
+    body[data-market="gh"] .hero::before {
+      background: linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.88) 0%,
+        rgba(0, 0, 0, 0.72) 55%,
+        rgba(0, 0, 0, 0.55) 100%
+      );
+    }
+  </style>
+
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-J0995G3FL0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -116,6 +145,9 @@
             Use My Current Location
           </button>
         </div>
+
+        <!-- SafeRoute: shows nearby safety alerts after pickup is set -->
+        <div id="saferoute-widget" style="display:none;margin:-4px 0 10px;"></div>
 
         <div class="field">
           <label for="dropoff">Dropoff</label>
@@ -430,7 +462,8 @@
         <div class="step-card">
           <div class="step-number">3</div>
           <h4>Launch your ride</h4>
-          <p>Open Uber or Lyft directly and complete your booking in the official provider experience.</p>
+          <!-- FIX 1: id added so JS can update this text per market -->
+          <p id="howItWorksStep3Text">Open Uber or Lyft directly and complete your booking in the official provider experience.</p>
         </div>
       </div>
     </div>
@@ -599,12 +632,15 @@
     SUPABASE_URL: "https://prglhlctcswjccajsvxr.supabase.co",
     SUPABASE_ANON_KEY: "sb_publishable_BM9ApnCCqHYai5ZaZPf0Pw_l1N4Vatk",
     LYFT_REFERRAL_URL: "https://www.lyft.com/i/ELVIS98387",
-    DEFAULT_MARKET: "us"
+    DEFAULT_MARKET: "us",
+    SAFEROUTE_API_KEY: "rc_test_saferoute_a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4e5f6",
+    SAFEROUTE_API_URL: "http://localhost:3001"
   };
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
+  <script src="saferoute-widget.js"></script>
 
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBz8nr961uD8aCTea3XfLt8hku6BXfKXL4&libraries=places&callback=initAutocomplete"
@@ -612,6 +648,54 @@
     defer
     onerror="window.__gmapsFail && window.__gmapsFail()"
   ></script>
+
+  <!-- FIX 1 & 2: Market-aware page title and Step 3 copy patch (runs after script.js) -->
+  <script>
+    (function () {
+      var TITLES = {
+        us: "RideCompare by Tamakloe Ventures LLC | Compare Uber & Lyft Instantly",
+        gh: "RideCompare Ghana | Compare Uber, Bolt & Yango Fares"
+      };
+      var STEP3 = {
+        us: "Open Uber or Lyft directly and complete your booking in the official provider experience.",
+        gh: "Open Uber, Bolt, or Yango directly and complete your booking in the official provider app."
+      };
+
+      function applyMarketPatches(market) {
+        // FIX 2: Update page title
+        document.title = TITLES[market] || TITLES.us;
+
+        // FIX 1: Update Step 3 copy
+        var el = document.getElementById("howItWorksStep3Text");
+        if (el) el.textContent = STEP3[market] || STEP3.us;
+      }
+
+      // Apply on market dropdown change
+      var select = document.getElementById("marketSelect");
+      if (select) {
+        select.addEventListener("change", function () {
+          applyMarketPatches(this.value);
+        });
+      }
+
+      // Apply on initial load — wait for script.js to finish setting the market from URL
+      window.addEventListener("load", function () {
+        var params = new URLSearchParams(window.location.search);
+        var market = (params.get("market") || "us").toLowerCase();
+        applyMarketPatches(market);
+
+        // Also observe body[data-market] attribute changes set by script.js
+        var observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (m) {
+            if (m.attributeName === "data-market") {
+              applyMarketPatches(document.body.getAttribute("data-market") || "us");
+            }
+          });
+        });
+        observer.observe(document.body, { attributes: true });
+      });
+    })();
+  </script>
 
   <!-- PWA Service Worker Registration -->
   <script>
