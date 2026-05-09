@@ -649,7 +649,7 @@
     onerror="window.__gmapsFail && window.__gmapsFail()"
   ></script>
 
-  <!-- FIX 1 & 2: Market-aware page title and Step 3 copy patch (runs after script.js) -->
+  <!-- FIX 1, 2 & 5: Market-aware page title, Step 3 copy, and autocomplete restrictions -->
   <script>
     (function () {
       var TITLES = {
@@ -669,6 +669,23 @@
         var el = document.getElementById("howItWorksStep3Text");
         if (el) el.textContent = STEP3[market] || STEP3.us;
       }
+
+      // FIX 5: Wrap initAutocomplete so that after Google Maps initialises the
+      // autocomplete fields, we immediately apply the correct country restrictions
+      // for whichever market the page loaded with.
+      var _origInitAutocomplete = window.initAutocomplete;
+      window.initAutocomplete = function () {
+        // Call the original function first so autocomplete objects are created
+        if (typeof _origInitAutocomplete === "function") {
+          _origInitAutocomplete.apply(this, arguments);
+        }
+        // Then apply market-specific restrictions
+        var params = new URLSearchParams(window.location.search);
+        var market = (params.get("market") || document.body.getAttribute("data-market") || "us").toLowerCase();
+        if (market !== "us" && typeof window.updateAutocompleteRestrictions === "function") {
+          window.updateAutocompleteRestrictions();
+        }
+      };
 
       // Apply on market dropdown change
       var select = document.getElementById("marketSelect");
