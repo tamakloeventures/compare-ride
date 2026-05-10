@@ -83,6 +83,111 @@
       );
     }
 
+    /* Footer grid — replaces accordion layout */
+    .footer-info-section {
+      background: #0b1120;
+      padding: 3.5rem 2rem 2.5rem;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .footer-grid-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2.5rem;
+    }
+    @media (max-width: 760px) {
+      .footer-grid-wrap { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    }
+    @media (max-width: 480px) {
+      .footer-grid-wrap { grid-template-columns: 1fr; }
+    }
+    .footer-col-head {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0 0 1rem;
+      letter-spacing: 0.01em;
+    }
+    .footer-col-text {
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.65;
+      margin: 0 0 10px;
+    }
+    .footer-link {
+      display: block;
+      color: #9ca3af;
+      font-size: 13px;
+      margin-bottom: 9px;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+    .footer-link:hover { color: #10b981; }
+    .footer-details summary {
+      color: #9ca3af;
+      font-size: 13px;
+      margin-bottom: 9px;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.15s;
+    }
+    .footer-details summary::-webkit-details-marker { display: none; }
+    .footer-details summary::after {
+      content: "+";
+      font-size: 14px;
+      color: #4b5563;
+      margin-left: auto;
+      transition: transform 0.2s;
+    }
+    .footer-details[open] summary::after { content: "−"; }
+    .footer-details summary:hover { color: #10b981; }
+    .footer-details-body {
+      padding: 10px 0 6px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 12px;
+    }
+    .footer-details-body p {
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.65;
+      margin: 0 0 8px;
+    }
+    .footer-details-body strong { color: #9ca3af; }
+    .waitlist-form-compact {
+      display: flex;
+      gap: 6px;
+      margin: 10px 0 8px;
+    }
+    .waitlist-form-compact input[type="email"] {
+      flex: 1;
+      background: #1a2235;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 7px 10px;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+    }
+    .waitlist-form-compact input[type="email"]::placeholder { color: #4b5563; }
+    .waitlist-form-compact .btn-sm {
+      padding: 7px 14px;
+      font-size: 12px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+    .footer-bottom {
+      max-width: 1100px;
+      margin: 2.5rem auto 0;
+      padding-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: #4b5563;
+      font-size: 12px;
+    }
+
     /* FIX 6: Signup / new-user links below booking buttons */
     .signup-link {
       display: block;
@@ -510,125 +615,92 @@
     </div>
   </section>
 
-  <section class="accordion-section" id="info">
-    <div class="accordion-wrap">
-      <div class="accordion-grid">
-        <details class="accordion-item">
-          <summary>Get early access to new cities and features</summary>
-          <div class="accordion-content">
-            <p>
-              Join the RideCompare waitlist to hear about cheaper ride alerts, new providers,
-              and future city rollouts.
-            </p>
+  <section class="footer-info-section" id="info">
+    <div class="footer-grid-wrap">
 
-            <form id="waitlistForm" class="waitlist-form">
-              <input type="email" id="waitlistEmail" placeholder="Enter your email" required />
-              <input
-                type="text"
-                id="waitlistCity"
-                placeholder="Request your city (optional)"
-                style="display:none"
-              />
-              <button type="submit" class="btn btn-primary">Join Waitlist</button>
-            </form>
+      <!-- Col 1: Early access / waitlist -->
+      <div class="footer-col">
+        <h4 class="footer-col-head">Get early access</h4>
+        <p class="footer-col-text">
+          Join the waitlist for cheaper ride alerts, new providers, and city rollouts.
+        </p>
+        <form id="waitlistForm" class="waitlist-form-compact">
+          <input type="email" id="waitlistEmail" placeholder="Your email" required />
+          <button type="submit" class="btn btn-primary btn-sm">Join</button>
+        </form>
+        <div class="smallnote waitlist-status" id="waitlistStatus" style="color:#4b5563;font-size:12px;">
+          No spam. Just product updates.
+        </div>
+      </div>
 
-            <div class="smallnote waitlist-status" id="waitlistStatus">
-              No spam. Just product updates and launch news.
-            </div>
+      <!-- Col 2: Help / FAQ -->
+      <div class="footer-col">
+        <h4 class="footer-col-head">Help</h4>
+        <details class="footer-details">
+          <summary>Are these live fares?</summary>
+          <div class="footer-details-body">
+            <p>Fares are estimated from route distance and time. Final pricing is confirmed inside the provider app.</p>
           </div>
         </details>
-
-        <details class="accordion-item">
-          <summary>Frequently Asked Questions</summary>
-          <div class="accordion-content">
-            <p>
-              <strong>Are these live fares?</strong><br />
-              These are estimated fares based on route distance and time. Final pricing and
-              availability are confirmed inside Uber and Lyft.
-            </p>
-            <p>
-              <strong>Do I book inside RideCompare?</strong><br />
-              No. RideCompare helps you compare quickly, then launches the provider so you can
-              complete booking there.
-            </p>
-            <p>
-              <strong>Why does Lyft sometimes redirect differently on desktop?</strong><br />
-              Lyft is increasingly app-first. On desktop, RideCompare sends users to Lyft's app
-              or referral flow instead of a broken web booking page.
-            </p>
-            <p>
-              <strong>Who is RideCompare for?</strong><br />
-              Anyone who wants to save time comparing rides — commuters, students, airport
-              travelers, and people who simply want a better ride-booking workflow.
-            </p>
+        <details class="footer-details">
+          <summary>Do I book inside RideCompare?</summary>
+          <div class="footer-details-body">
+            <p>No. RideCompare helps you compare, then launches the provider so you book there.</p>
           </div>
         </details>
-
-        <details class="accordion-item">
-          <summary>Privacy Policy</summary>
-          <div class="accordion-content">
-            <p>RideCompare is operated by <strong>Tamakloe Ventures LLC</strong>.</p>
-            <p>
-              We may collect search details such as pickup and dropoff locations, general usage
-              analytics, and device/browser information to improve the platform experience.
-            </p>
-            <p>
-              RideCompare does not process ride payments. Final booking, pricing, and payment are
-              completed inside the official ride provider's app or website.
-            </p>
-            <p>
-              RideCompare may redirect users to third-party services such as Uber and Lyft. Those
-              services operate under their own privacy policies and terms.
-            </p>
+        <details class="footer-details">
+          <summary>Who is RideCompare for?</summary>
+          <div class="footer-details-body">
+            <p>Commuters, students, airport travelers — anyone who wants a faster way to compare rides before booking.</p>
           </div>
         </details>
+        <a href="mailto:support@tamakloeventures.com" class="footer-link">Contact support</a>
+      </div>
 
-        <details class="accordion-item">
-          <summary>Terms of Use</summary>
-          <div class="accordion-content">
-            <p>
-              RideCompare is a comparison platform designed to help users quickly review ride
-              options and launch bookings through official transportation providers.
-            </p>
-            <p>
-              RideCompare is not affiliated with, endorsed by, or operated by Uber, Lyft, or any
-              other ride provider shown on the platform.
-            </p>
-            <p>
-              Fare estimates shown on RideCompare are approximate and may differ from the final
-              fare displayed by the ride provider.
-            </p>
-            <p>
-              Users are responsible for verifying ride details, availability, and final pricing
-              directly with the provider before booking.
-            </p>
+      <!-- Col 3: Legal -->
+      <div class="footer-col">
+        <h4 class="footer-col-head">Legal</h4>
+        <details class="footer-details">
+          <summary>Privacy policy</summary>
+          <div class="footer-details-body">
+            <p>Operated by <strong>Tamakloe Ventures LLC</strong>. We may collect pickup/dropoff search details and usage analytics to improve the platform.</p>
+            <p>RideCompare does not process payments. Final booking and payment happen inside the provider's app.</p>
+            <p>Third-party services (Uber, Lyft, Bolt, Yango) operate under their own privacy policies.</p>
           </div>
         </details>
-
-        <details class="accordion-item">
-          <summary>Contact</summary>
-          <div class="accordion-content">
-            <p>RideCompare is developed and operated by <strong>Tamakloe Ventures LLC</strong>.</p>
-            <p>Reach us at:</p>
-            <p><a href="mailto:support@tamakloeventures.com"><strong>support@tamakloeventures.com</strong></a></p>
-            <p>We welcome feedback, product suggestions, and partnership inquiries.</p>
+        <details class="footer-details">
+          <summary>Terms of use</summary>
+          <div class="footer-details-body">
+            <p>RideCompare is a comparison platform. It is not affiliated with, endorsed by, or operated by any ride provider shown.</p>
+            <p>Fare estimates are approximate. Users must verify final pricing inside the provider app before booking.</p>
+          </div>
+        </details>
+        <details class="footer-details">
+          <summary>Affiliate disclosure</summary>
+          <div class="footer-details-body">
+            <p>Some links (e.g. Lyft referral) may benefit Tamakloe Ventures LLC. Final pricing and booking always happen inside the provider's official app.</p>
           </div>
         </details>
       </div>
 
-      <div class="faq-item">
-        <h4>Feedback and partnerships</h4>
-        <p>
+      <!-- Col 4: Company -->
+      <div class="footer-col">
+        <h4 class="footer-col-head">Company</h4>
+        <p class="footer-col-text">Tamakloe Ventures LLC</p>
+        <a href="mailto:support@tamakloeventures.com" class="footer-link">support@tamakloeventures.com</a>
+        <p class="footer-col-text" style="margin-top:14px;">
           We welcome product feedback, partnership opportunities, and suggestions to improve
           the RideCompare experience.
         </p>
+        <a href="mailto:support@tamakloeventures.com" class="footer-link">Send feedback</a>
       </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      © 2024–2026 Tamakloe Ventures LLC. All rights reserved.
     </div>
   </section>
-
-  <footer>
-    © 2024–2026 Tamakloe Ventures LLC. All rights reserved.
-  </footer>
 
   <!-- Custom Time Picker Modal -->
   <div id="timePickerModal" class="tp-overlay" role="dialog" aria-modal="true" aria-label="Select time" style="display:none;">
