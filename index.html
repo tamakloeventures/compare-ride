@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>RideCompare by Tamakloe Ventures LLC | Compare Uber & Lyft Instantly</title>
+  <meta
+    name="description"
+    content="Compare Uber and Lyft fares instantly. Find the cheapest ride and launch it in seconds with RideCompare by Tamakloe Ventures."
+  />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://ride.tamakloeventures.com/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="RideCompare — Compare Uber & Lyft Fares Instantly" />
+  <meta
+    property="og:description"
+    content="Find the cheapest ride in seconds. Compare Uber and Lyft fare estimates and launch your best option fast."
+  />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ride.tamakloeventures.com/" />
+  <meta property="og:image" content="https://ride.tamakloeventures.com/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:site_name" content="RideCompare by Tamakloe Ventures" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="RideCompare — Compare Uber & Lyft Fares Instantly" />
+  <meta
+    name="twitter:description"
+    content="Find the cheapest ride in seconds. Compare Uber and Lyft fare estimates and launch your best option fast."
+  />
+  <meta name="twitter:image" content="https://ride.tamakloeventures.com/og-image.jpg" />
+
+  <meta name="theme-color" content="#10b981" />
+  <meta name="robots" content="index,follow" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="RideCompare" />
+
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="stylesheet" href="style.css" />
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-J0995G3FL0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+    gtag("config", "G-J0995G3FL0");
+  </script>
+</head>
+<body>
+  <header class="hero" id="top">
+  <div class="hero-left">
+    <div class="hero-topbar">
+      <div class="eyebrow" id="marketEyebrow">RideCompare US</div>
+
+      <div class="market-switch-wrap">
+        <label for="marketSelect" class="market-label">Market</label>
+        <select id="marketSelect" class="market-select" aria-label="Choose market">
+          <option value="us">United States</option>
+          <option value="gh">Ghana</option>
+        </select>
+      </div>
+    </div>
+
+    <h1 id="heroTitle">Compare Uber and Lyft fares instantly</h1>
+    <p id="heroSubtitle">
+      Find the cheapest ride and launch it in seconds. Built for everyday commuters, airport travelers, and anyone who wants a faster way to compare ride options.
+    </p>
+
+    <div class="hero-cta">
+      <button class="btn btn-primary" id="btnCompare" type="button">Compare Rides Now</button>
+      <button class="btn btn-outline" id="btnScrollBooking" type="button">Find Best Rates</button>
+    </div>
+
+    <div class="market-chips" id="marketChips"></div>
+
+    <div class="official-notice" id="officialNotice">
+      ⚠️ <strong>Important:</strong> RideCompare is an independent comparison tool and is not affiliated with Uber or Lyft.
+      <strong>Official booking and final pricing always happen inside the provider app.</strong>
+      RideCompare only provides estimated comparisons to help you choose faster.
+    </div>
+
+    <div class="social-proof">
+      <span id="ridesComparedCount">0</span> ride comparisons generated
+    </div>
+  </div>
+
+    <div class="booking-card" id="bookingCard">
+      <h2>Compare &amp; Book Your Ride</h2>
+
+      <form id="rideForm">
+        <div class="field">
+          <label for="pickup">Pickup</label>
+          <input
+            id="pickup"
+            name="pickup"
+            type="text"
+            placeholder="Pickup location"
+            autocomplete="off"
+            required
+          />
+          <button type="button" class="btn btn-outline btn-location" id="btnUseLocation">
+            Use My Current Location
+          </button>
+        </div>
+
+        <div class="field">
+          <label for="dropoff">Dropoff</label>
+          <input
+            id="dropoff"
+            name="dropoff"
+            type="text"
+            placeholder="Where to?"
+            autocomplete="off"
+            required
+          />
+        </div>
+
+        <div class="trip-meta-row">
+          <div class="passenger-wrap">
+            <span class="field-label-sm">Passengers</span>
+            <div class="passenger-stepper">
+              <button type="button" id="btnPassMinus" class="stepper-btn" aria-label="Fewer passengers" disabled>−</button>
+              <span id="passengerDisplay" class="stepper-value">1</span>
+              <button type="button" id="btnPassPlus" class="stepper-btn" aria-label="More passengers">+</button>
+            </div>
+          </div>
+          <label class="roundtrip-label" for="roundTripToggle">
+            <input type="checkbox" id="roundTripToggle" />
+            <span>Round trip</span>
+          </label>
+        </div>
+
+        <div class="datetime">
+          <div class="field">
+            <label for="rideDate">Date</label>
+            <input id="rideDate" name="rideDate" type="date" required />
+          </div>
+
+          <div class="field">
+            <label>Time</label>
+            <div class="time-display-trigger" id="rideTimeDisplay" role="button" tabindex="0" aria-label="Select time">
+              <span id="rideTimeText">Select time</span>
+            </div>
+            <!-- Hidden input keeps the value for validateInputs() -->
+            <input id="rideTime" name="rideTime" type="hidden" />
+          </div>
+        </div>
+
+        <button class="btn btn-find" type="submit" id="btnFindRates">Find Best Rates</button>
+
+        <div class="helper" id="helperText">
+          Start typing pickup and dropoff, or use your current location for pickup, then select a suggested address for the best result.
+        </div>
+      </form>
+    </div>
+  </header>
+
+  <section class="section" id="available">
+    <div class="container">
+      <h2 class="section-title" id="availableTitle">Available Rides</h2>
+      <p class="section-subtitle" id="availableSubtitle">
+        Estimated fares are approximate. Use them to compare quickly, then confirm final pricing
+        inside each provider's official experience.
+      </p>
+
+      <div class="rides-row">
+        <div class="ride-card" id="uberCard">
+          <div class="ride-top">
+            <div class="logo-badge uber" aria-hidden="true" title="Uber">
+              <img
+                src="uber-logo.svg"
+                alt="Uber logo"
+                onerror="this.style.display='none'; this.parentNode.textContent='U';"
+              />
+            </div>
+
+            <div class="ride-meta">
+              <strong>Uber</strong>
+              <span>Book instantly with Uber</span>
+            </div>
+          </div>
+
+          <div class="pricebox">
+            <div>
+              <div class="price-label tooltip-trigger">
+                Estimated Fare
+                <span class="tooltip-icon">?</span>
+                <div class="tooltip-box">
+                  These are estimated fares based on distance and time.
+                  Most accurate for trips happening now or soon.
+                  Future trips may vary due to traffic, demand, and surge pricing.
+                </div>
+              </div>
+              <b id="uberPrice">$ —</b>
+              <div class="price-eta" id="uberEta">ETA —</div>
+            </div>
+            <span class="tag" id="uberTag">Estimate</span>
+          </div>
+
+          <div id="uberRideTypes" class="ride-type-tabs"></div>
+
+          <div class="ride-actions">
+            <button class="btn btn-uber" id="btnUber" type="button">Book with Uber</button>
+
+            <div class="referral-wrap">
+              <a
+                href="https://www.uber.com/us/en/ride/new-user/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="referral-link"
+              >
+                New to Uber? Get a discount
+              </a>
+              <span class="referral-note">
+                Affiliate disclosure: RideCompare may benefit from some referral links.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ride-card" id="lyftCard">
+          <div class="ride-top">
+            <div class="logo-badge lyft" aria-hidden="true" title="Lyft">
+              <img
+                src="lyft-logo.svg"
+                alt="Lyft logo"
+                onerror="this.style.display='none'; this.parentNode.textContent='L';"
+              />
+            </div>
+
+            <div class="ride-meta">
+              <strong>Lyft</strong>
+              <span id="lyftSubtitle">Open in Lyft app</span>
+            </div>
+          </div>
+
+          <div class="pricebox">
+            <div>
+              <div class="price-label tooltip-trigger">
+                Estimated Fare
+                <span class="tooltip-icon">?</span>
+                <div class="tooltip-box">
+                  These are estimated fares based on distance and time.
+                  Most accurate for trips happening now or soon.
+                  Future trips may vary due to traffic, demand, and surge pricing.
+                </div>
+              </div>
+              <b id="lyftPrice">$ —</b>
+              <div class="price-eta" id="lyftEta">ETA —</div>
+            </div>
+            <span class="tag" id="lyftTag">Estimate</span>
+          </div>
+
+          <div id="lyftRideTypes" class="ride-type-tabs"></div>
+
+          <div class="ride-actions">
+            <button class="btn btn-lyft" id="btnLyft" type="button">Get Lyft App</button>
+
+            <div class="referral-wrap">
+              <a
+                href="https://www.lyft.com/i/ELVIS98387"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="referral-link"
+              >
+                Use referral link
+              </a>
+              <span class="referral-note">
+                Affiliate disclosure: RideCompare may benefit from some referral links.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ride-card" id="curbCard" style="display:none;">
+          <div class="ride-top">
+            <div class="logo-badge curb-badge" aria-hidden="true">🚕</div>
+            <div class="ride-meta">
+              <strong>Curb Taxi</strong>
+              <span>Licensed &amp; metered · no surge</span>
+            </div>
+          </div>
+
+          <div class="pricebox">
+            <div>
+              <div class="price-label">Estimated Fare</div>
+              <b id="curbPrice">$ —</b>
+              <div class="price-eta" id="curbEta">—</div>
+            </div>
+            <span class="tag tag-nosurge" id="curbTag">No Surge</span>
+          </div>
+
+          <div class="ride-actions">
+            <button class="btn btn-curb" id="btnCurb" type="button">Book with Curb</button>
+          </div>
+        </div>
+
+        <div class="ride-card transit-card" id="transitCard" style="display:none;">
+          <div class="ride-top">
+            <div class="logo-badge transit-badge" aria-hidden="true">🚌</div>
+            <div class="ride-meta">
+              <strong>Public Transit</strong>
+              <span>Via Google Maps</span>
+            </div>
+          </div>
+
+          <div class="pricebox">
+            <div>
+              <div class="price-label">Est. Travel Time</div>
+              <b id="transitTime">— min</b>
+              <div class="price-eta" id="transitDetails">—</div>
+            </div>
+            <span class="tag" id="transitTag">Alternative</span>
+          </div>
+
+          <div class="ride-actions">
+            <button class="btn btn-transit" id="btnTransit" type="button">View Route</button>
+          </div>
+        </div>
+
+        <div class="ride-card gh-only-card" id="boltCard">
+          <div class="ride-top">
+            <div class="logo-badge bolt">Bolt</div>
+            <div class="ride-meta">
+              <strong>Bolt</strong>
+              <span>Popular in Ghana</span>
+            </div>
+          </div>
+
+          <div class="pricebox">
+            <div>
+              <div class="price-label">Estimated Fare</div>
+              <b id="boltPrice">GH₵ —</b>
+              <div class="price-eta" id="boltEta">ETA —</div>
+            </div>
+            <span class="tag" id="boltTag">Estimate</span>
+          </div>
+
+          <div id="boltRideTypes" class="ride-type-tabs"></div>
+
+          <div class="ride-actions">
+            <button class="btn btn-bolt" id="btnBolt" type="button">Open Bolt</button>
+          </div>
+        </div>
+
+        <div class="ride-card gh-only-card" id="yangoCard">
+          <div class="ride-top">
+            <div class="logo-badge yango">Yango</div>
+            <div class="ride-meta">
+              <strong>Yango</strong>
+              <span>Available in Ghana</span>
+            </div>
+          </div>
+
+          <div class="pricebox">
+            <div>
+              <div class="price-label">Estimated Fare</div>
+              <b id="yangoPrice">GH₵ —</b>
+              <div class="price-eta" id="yangoEta">ETA —</div>
+            </div>
+            <span class="tag" id="yangoTag">Estimate</span>
+          </div>
+
+          <div id="yangoRideTypes" class="ride-type-tabs"></div>
+
+          <div class="ride-actions">
+            <button class="btn btn-yango" id="btnYango" type="button">Open Yango</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="smallnote" id="statusNote">
+        Enter pickup and dropoff above, then click "Find Best Rates".
+      </div>
+
+      <!-- Estimate Feedback -->
+      <div id="estimateFeedback" class="feedback-card" style="display:none;">
+        <div class="feedback-title">Was this estimate accurate?</div>
+
+        <div class="feedback-actions">
+          <button class="btn btn-outline" id="feedbackYes">Yes</button>
+          <button class="btn btn-outline" id="feedbackNo">No</button>
+        </div>
+
+        <div id="feedbackFollowup" class="feedback-followup" style="display:none;">
+          <div class="feedback-sub">How far off?</div>
+          <div class="feedback-actions">
+            <button class="btn btn-outline feedback-detail" data-level="slight">Slightly</button>
+            <button class="btn btn-outline feedback-detail" data-level="medium">Somewhat</button>
+            <button class="btn btn-outline feedback-detail" data-level="high">Very</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="smallnote" style="margin-top: 12px;">
+        <button class="btn btn-outline" id="btnShareCompare" type="button">
+          Share This Comparison
+        </button>
+      </div>
+
+      <div class="notice-bar" id="resultsNotice">
+        <strong>Important:</strong> RideCompare is an independent comparison tool and is not
+        affiliated with Uber or Lyft. Fare estimates are approximate, and final pricing,
+        availability, and booking are completed inside the official provider experience.
+        Lyft links may include a referral code.
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt">
+    <div class="container">
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-subtitle">
+        RideCompare is designed to make comparing ride options fast, simple, and transparent.
+      </p>
+
+      <div class="steps">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h4>Enter your trip</h4>
+          <p>Type your pickup and destination to generate quick ride options and fare estimates.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h4>Compare your options</h4>
+          <p>See estimated pricing and identify the better value before you commit.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h4>Launch your ride</h4>
+          <p>Open Uber or Lyft directly and complete your booking in the official provider experience.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="accordion-section" id="info">
+    <div class="accordion-wrap">
+      <div class="accordion-grid">
+        <details class="accordion-item">
+          <summary>Get early access to new cities and features</summary>
+          <div class="accordion-content">
+            <p>
+              Join the RideCompare waitlist to hear about cheaper ride alerts, new providers,
+              and future city rollouts.
+            </p>
+
+            <form id="waitlistForm" class="waitlist-form">
+              <input type="email" id="waitlistEmail" placeholder="Enter your email" required />
+              <input
+                type="text"
+                id="waitlistCity"
+                placeholder="Request your city (optional)"
+                style="display:none"
+              />
+              <button type="submit" class="btn btn-primary">Join Waitlist</button>
+            </form>
+
+            <div class="smallnote waitlist-status" id="waitlistStatus">
+              No spam. Just product updates and launch news.
+            </div>
+          </div>
+        </details>
+
+        <details class="accordion-item">
+          <summary>Frequently Asked Questions</summary>
+          <div class="accordion-content">
+            <p>
+              <strong>Are these live fares?</strong><br />
+              These are estimated fares based on route distance and time. Final pricing and
+              availability are confirmed inside Uber and Lyft.
+            </p>
+            <p>
+              <strong>Do I book inside RideCompare?</strong><br />
+              No. RideCompare helps you compare quickly, then launches the provider so you can
+              complete booking there.
+            </p>
+            <p>
+              <strong>Why does Lyft sometimes redirect differently on desktop?</strong><br />
+              Lyft is increasingly app-first. On desktop, RideCompare sends users to Lyft's app
+              or referral flow instead of a broken web booking page.
+            </p>
+            <p>
+              <strong>Who is RideCompare for?</strong><br />
+              Anyone who wants to save time comparing rides — commuters, students, airport
+              travelers, and people who simply want a better ride-booking workflow.
+            </p>
+          </div>
+        </details>
+
+        <details class="accordion-item">
+          <summary>Privacy Policy</summary>
+          <div class="accordion-content">
+            <p>RideCompare is operated by <strong>Tamakloe Ventures LLC</strong>.</p>
+            <p>
+              We may collect search details such as pickup and dropoff locations, general usage
+              analytics, and device/browser information to improve the platform experience.
+            </p>
+            <p>
+              RideCompare does not process ride payments. Final booking, pricing, and payment are
+              completed inside the official ride provider's app or website.
+            </p>
+            <p>
+              RideCompare may redirect users to third-party services such as Uber and Lyft. Those
+              services operate under their own privacy policies and terms.
+            </p>
+          </div>
+        </details>
+
+        <details class="accordion-item">
+          <summary>Terms of Use</summary>
+          <div class="accordion-content">
+            <p>
+              RideCompare is a comparison platform designed to help users quickly review ride
+              options and launch bookings through official transportation providers.
+            </p>
+            <p>
+              RideCompare is not affiliated with, endorsed by, or operated by Uber, Lyft, or any
+              other ride provider shown on the platform.
+            </p>
+            <p>
+              Fare estimates shown on RideCompare are approximate and may differ from the final
+              fare displayed by the ride provider.
+            </p>
+            <p>
+              Users are responsible for verifying ride details, availability, and final pricing
+              directly with the provider before booking.
+            </p>
+          </div>
+        </details>
+
+        <details class="accordion-item">
+          <summary>Contact</summary>
+          <div class="accordion-content">
+            <p>RideCompare is developed and operated by <strong>Tamakloe Ventures LLC</strong>.</p>
+            <p>Reach us at:</p>
+            <p><a href="mailto:support@tamakloeventures.com"><strong>support@tamakloeventures.com</strong></a></p>
+            <p>We welcome feedback, product suggestions, and partnership inquiries.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="faq-item">
+        <h4>Feedback and partnerships</h4>
+        <p>
+          We welcome product feedback, partnership opportunities, and suggestions to improve
+          the RideCompare experience.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    © 2024–2026 Tamakloe Ventures LLC. All rights reserved.
+  </footer>
+
+  <!-- Custom Time Picker Modal -->
+  <div id="timePickerModal" class="tp-overlay" role="dialog" aria-modal="true" aria-label="Select time" style="display:none;">
+    <div class="tp-dialog">
+      <div class="tp-header">Select time</div>
+
+      <div class="tp-display">
+        <button class="tp-seg" id="tpHourSeg" aria-label="Select hour">12</button>
+        <span class="tp-sep">:</span>
+        <button class="tp-seg" id="tpMinSeg" aria-label="Select minutes">00</button>
+        <div class="tp-ampm-wrap">
+          <button class="tp-ampm-btn" id="tpAmBtn">AM</button>
+          <button class="tp-ampm-btn" id="tpPmBtn">PM</button>
+        </div>
+      </div>
+
+      <svg id="tpClockSvg" class="tp-clock" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"></svg>
+
+      <div class="tp-footer">
+        <button class="tp-kbd-btn" id="tpKbdBtn" aria-label="Switch to keyboard input">⌨</button>
+        <div class="tp-foot-actions">
+          <button class="tp-cancel-btn" id="tpCancelBtn">Cancel</button>
+          <button class="tp-ok-btn" id="tpOkBtn">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mobile-sticky-cta" id="mobileStickyCta" style="display: none;">
+    <button class="btn btn-primary" id="mobileBestRideBtn" type="button">Open Best Value</button>
+    <button class="btn btn-outline" id="mobileCompareBtn" type="button">Compare</button>
+  </div>
+
+  <script>
+  window.RIDECOMPARE_CONFIG = {
+    SUPABASE_URL: "https://prglhlctcswjccajsvxr.supabase.co",
+    SUPABASE_ANON_KEY: "sb_publishable_BM9ApnCCqHYai5ZaZPf0Pw_l1N4Vatk",
+    LYFT_REFERRAL_URL: "https://www.lyft.com/i/ELVIS98387",
+    DEFAULT_MARKET: "us"
+  };
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBz8nr961uD8aCTea3XfLt8hku6BXfKXL4&libraries=places&callback=initAutocomplete"
+    async
+    defer
+    onerror="window.__gmapsFail && window.__gmapsFail()"
+  ></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then((reg) => {
+            console.log("[RideCompare] Service worker registered:", reg.scope);
+
+            // Notify user when a new version is available
+            reg.addEventListener("updatefound", () => {
+              const newWorker = reg.installing;
+              newWorker.addEventListener("statechange", () => {
+                if (
+                  newWorker.state === "installed" &&
+                  navigator.serviceWorker.controller
+                ) {
+                  // New version ready — show a subtle update banner
+                  const banner = document.createElement("div");
+                  banner.style.cssText =
+                    "position:fixed;bottom:16px;left:50%;transform:translateX(-50%);" +
+                    "background:#10b981;color:#fff;padding:12px 20px;border-radius:999px;" +
+                    "font-size:14px;font-weight:600;z-index:9999;cursor:pointer;" +
+                    "box-shadow:0 4px 20px rgba(16,185,129,0.4);";
+                  banner.textContent = "New version available — tap to update";
+                  banner.addEventListener("click", () => window.location.reload());
+                  document.body.appendChild(banner);
+                }
+              });
+            });
+          })
+          .catch((err) => {
+            console.warn("[RideCompare] Service worker registration failed:", err);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
